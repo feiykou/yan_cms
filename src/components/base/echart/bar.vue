@@ -1,0 +1,79 @@
+<template>
+    <div>
+        <div :class="className" :id="id" :style="{width: width, height: height}"></div>
+    </div>
+</template>
+
+<script>
+export default {
+    props: {
+        className: {
+            type: String,
+            default: 'echart'
+        },
+        id: String,
+        width: String,
+        height: String,
+        odata: {
+            type: Array,
+            default: function() {
+                return [
+                    { value: 235, name: '视频广告' },
+                    { value: 274, name: '联盟广告' },
+                    { value: 310, name: '邮件营销' },
+                    { value: 335, name: '直接访问' },
+                    { value: 400, name: '搜索引擎' }
+                ]
+            }
+        }
+    },
+    data() {
+        return {
+            chart: null
+        }
+    },
+    mounted() {
+    },
+    methods: {
+        initChart() {
+            const that = this
+            // var i=0;
+            // 基于准备好的dom，初始化echarts实例
+            let myChart = this.$echarts.init(document.getElementById(this.id));
+            // var color = ["#19D672", "#FD517D"];
+            // 绘制图表
+            const option = {
+                title: {
+                    text: '未跟进数量'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: that.odata['x']
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        data: that.odata['value'],
+                        type: 'bar',
+                        showBackground: true,
+                        backgroundStyle: {
+                            color: 'rgba(180, 180, 180, 0.2)'
+                        }
+                    }
+                ]
+            };
+        
+            myChart.setOption(option);
+        }
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+    
+</style>

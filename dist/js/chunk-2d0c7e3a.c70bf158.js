@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0c7e3a"],{5317:function(e,n,a){"use strict";a.r(n);var p={CAT:{type:1,name:"猫咪"},DOG:{type:2,name:"狗狗"}};n["default"]=p}}]);

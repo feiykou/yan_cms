@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0aef18"],{"0be5":function(n,e,p){"use strict";p.r(e);var s={1:"搜索",2:"spu",3:"分类",4:"文创"};e["default"]=s}}]);

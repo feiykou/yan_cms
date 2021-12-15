@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d2091de"],{a84e:function(n,e,w){"use strict";w.r(e);var a={1:"待支付",2:"已支付",3:"已发货",4:"已支付，但库存不足",5:"已处理PAID_BUT_OUT_OF",0:"已删除",6:"已取消",7:"确认收货",8:"已评价",9:"退款中",91:"退款成功",90:"退款失败",10:"退货退款中",101:"退货退款成功",100:"退货退款失败"};e["default"]=a}}]);

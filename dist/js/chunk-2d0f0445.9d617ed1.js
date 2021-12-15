@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0f0445"],{"9c49":function(o,n,p){o.exports=p.p+"img/mobile-logo.002e4f69.png"}}]);

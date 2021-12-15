@@ -1,6 +1,6 @@
 const Config = {
   baseURL: process.env.VUE_APP_BASE_URL,
-  apiBaseURL: process.env.VUE_APP_API_BASE_URL,
+  apiBaseURL: process.env.VUE_APP_CMS_BASE_URL,
   imgBaseURL: process.env.VUE_APP_CMS_BASE_URL + '/uploads/',
   stagnateTime: 1 * 60 * 60 * 1000, // 无操作停滞时间  默认1小时
   openAutoJumpOut: true, // 是否开启无操作跳出

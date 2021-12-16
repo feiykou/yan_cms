@@ -10,7 +10,7 @@ import log from "../models/log";
 
 
 const config = {
-  baseURL: Config.apiBaseURL || process.env.apiUrl || '',
+  baseURL: Config.baseURL || process.env.apiUrl || '',
   timeout: 5 * 1000, // 请求超时时间设置
   crossDomain: true,
   // withCredentials: true, // Check cross-site Access-Control
@@ -35,7 +35,7 @@ _axios.interceptors.request.use(
     const reqConfig = { ...originConfig }
  
 
-    
+
     // step1: 容错处理
     if (!reqConfig.url) {
       /* eslint-disable-next-line */

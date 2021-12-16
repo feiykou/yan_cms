@@ -37,7 +37,7 @@ module.exports = {
   devServer: {
     proxy: {
       '^/v1|^/cms|^/cloud': {
-        target: 'api.szfxws.com/',
+        target: 'http://api.szfxws.com',
         ws: true,
         changeOrigin: true
       },

@@ -33,7 +33,9 @@ _axios.interceptors.request.use(
     Vue.prototype.$_lin_jump()
 
     const reqConfig = { ...originConfig }
+ 
 
+    
     // step1: 容错处理
     if (!reqConfig.url) {
       /* eslint-disable-next-line */

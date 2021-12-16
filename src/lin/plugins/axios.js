@@ -104,7 +104,7 @@ _axios.interceptors.request.use(
         reqConfig.headers.Authorization = accessToken
       }
     }
-    reqConfig.headers["Access-Control-Allow-Origin"] = config.baseURL;
+    // reqConfig.headers["Access-Control-Allow-Origin"] = config.baseURL;
     return reqConfig
   },
   error => {

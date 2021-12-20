@@ -35,18 +35,19 @@ module.exports = {
     },
   },
   devServer: {
-    proxy: {
-      '^/v1|^/cms|^/cloud': {
-        target: 'http://api.szfxws.com',
-        ws: true,
-        changeOrigin: true
-      },
-      '^/api': {
-        target: 'https://sapi.mgoi.net/',
-        ws: true,
-        changeOrigin: true
-      }
-    }
+    proxy:"http://api.szfxws.com"
+    // proxy: {
+    //   '^/v1|^/cms|^/cloud': {
+    //     target: 'http://api.szfxws.com',
+    //     ws: true,
+    //     changeOrigin: true
+    //   },
+    //   '^/api': {
+    //     target: 'https://sapi.mgoi.net/',
+    //     ws: true,
+    //     changeOrigin: true
+    //   }
+    // }
   },
   // node_modules依赖项es6语法未转换问题
   transpileDependencies: [

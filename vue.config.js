@@ -35,8 +35,6 @@ module.exports = {
     },
   },
   devServer: {
-    host: "127.0.0.1",
-    port: 8080,
     proxy: {
       '^/v1|^/cms|^/cloud': {
         target: 'http://api.szfxws.com',

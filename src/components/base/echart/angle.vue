@@ -34,6 +34,7 @@ export default {
             ],
         }
     },
+
     mounted() {
     },
     methods: {
@@ -41,14 +42,16 @@ export default {
             // var i=0;
             // 基于准备好的dom，初始化echarts实例
             let myChart = this.$echarts.init(document.getElementById(this.id));
-            var color = ["#d76662", "#79211f", "#982926", "#b4312d", "#c83732"];
+            var color = ["#5470c6", "#91cc75", "#fac858", "#ee6666", "#73c0de", "#3ba272", "#fc8452", "#9a60b4", "#ea7ccc"];
             // 绘制图表
+            const that = this
+            console.log(this.odata)
             myChart.setOption({
                 backgroundColor: '#fff',
                 title: {
                     text: '各渠道来源客户数'
                 },
-                color: color,
+                // color: color,
                 tooltip: {
                     trigger: 'item'
                 },
@@ -63,40 +66,42 @@ export default {
                 },
                 visualMap: {
                     show: false,
-                    min: 80,
-                    max: 600,
+                    min: 0,
+                    max: 250,
                     inRange: {
                         colorLightness: [0, 1]
-                    }
+                    },
+                    color: color
                 },
                 series: [
                     {
-                    name: '访问来源',
-                    type: 'pie',
-                    radius: '55%',
-                    data: this.odata,
-                    roseType: 'angle',
-                    label: {
-                        normal: {
-                            textStyle: {
-                                color: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    },
-                    labelLine: {
-                        normal: {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: '55%',
+                        data: that.odata,
+                        roseType: 'radius',
+                        colorBy: 'data',
+                        label: {
+                            color: 'rgba(0, 0, 0, 0.3)'
+                        },
+                        labelLine: {
                             lineStyle: {
-                                color: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    },
-                    itemStyle: {
-                        normal: {
-                            color: '#c23531',
-                            shadowBlur: 0,
+                                color: 'rgba(0, 0, 0, 0.3)'
+                            },
+                            smooth: 0.2,
+                            length: 10,
+                            length2: 20
+                        },
+                        itemStyle: {
+                            // color: '#c23531',
+                            shadowBlur: 200,
                             shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        },
+                        animationType: 'scale',
+                        animationEasing: 'elasticOut',
+                        animationDelay: function (idx) {
+                            return Math.random() * 200;
                         }
-                    }
                     }
                 ]
             });

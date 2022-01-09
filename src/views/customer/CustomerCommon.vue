@@ -48,16 +48,10 @@
 					{ prop: 'user_code', label: '客户编码', width: 150 },
 					{ prop: 'name', label: '客户名', width: 150 },
 					{ prop: 'contacts_name', label: '联系人', width: 150 },
-					{ prop: 'telephone', label: '联系人电话', width: 200 },
 					{ prop: 'email', label: '邮箱', width: 150 },
 					{ prop: 'address', label: '地址', width: 150 },
 					{ prop: 'purpose', label: '项目用途', width: 150 },
-					{ prop: 'channel', label: '客户来源', width: 150 },
-					{ prop: 'author', label: '录入员工', width: 150 },
 					{ prop: 'create_time', label: '录入时间' }
-				],
-				channelData: [
-					"抖音","百度","淘宝","公众号","转介绍","业务员推销","代理","扩容"
 				],
 				tableData: [],
 				operate: [],
@@ -106,7 +100,6 @@
 							val['address'] = val['address'][0] + '-' + val['address'][1]
 						}
 					}
-					val['channel'] = this.channelData[val['channel']]
 				})
 				this.tableData = customerLists.collection
 				this.loading = false

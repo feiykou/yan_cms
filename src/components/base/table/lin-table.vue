@@ -58,16 +58,21 @@
 
       <el-table-column v-if="operate.length > 0" label="操作" fixed="right" width="205">
         <template slot-scope="scope">
-          <el-button
-            v-for="(item, index) in operate"
-            :type="item.type"
-            plain
-            :key="index"
-            size="mini"
-            v-auth="{ auth: item.auth ? item.auth : '', type: 'disabled' }"
-            @click.native.prevent.stop="buttonMethods(item.func, scope.$index, scope.row)"
-            >{{ item.name }}</el-button
-          >
+          <template v-for="(item, index) in operate">
+            <el-button
+              :type="item.type"
+              plain
+              :key="index"
+              size="mini"
+              v-auth="{ auth: item.auth ? item.auth : '', type: 'disabled' }"
+              @click.native.prevent.stop="buttonMethods(item.func, scope.$index, scope.row)"
+              >
+                <i v-if="item.icon" :class="'el-icon-'+item.icon"></i>
+                <span v-else>{{ item.name }}</span>
+              </el-button
+            >
+          </template>
+          
         </template>
       </el-table-column>
     </el-table>
@@ -203,13 +208,19 @@ export default {
     handleEdit(_this, index, row) {
       _this.$emit('handleEdit', { index, row })
     },
-    handleLog(_this, index, row) {
-      _this.$emit('handleLog', { index, row })
-    },
+    
     // 行内删除
     handleDelete(_this, index, row) {
       _this.$emit('handleDelete', { index, row })
     },
+    /* 自定义 start */ 
+    handleLog(_this, index, row) {
+      _this.$emit('handleLog', { index, row })
+    },
+    handleProject(_this, index, row) {
+      _this.$emit('handleProject', { index, row })
+    },
+    /* 自定义 end */ 
     // 多选-选中checkbox
     toggleSelection(rows, flag) {
       if (rows) {

@@ -54,7 +54,7 @@
 								<el-form-item label="客户来源" prop="channel">
 									<el-select size="medium" filterable v-model="form.channel" placeholder="请选择客户来源">
 										<template v-for="(val, index) in channelData">
-											<el-option :value="index" :key="val" :label="val">
+											<el-option :value="val" :key="val" :label="val">
 												<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 												<span>{{ val }}</span>
 											</el-option>
@@ -81,7 +81,7 @@
 										</template>
 									</el-select>
 								</el-form-item>
-								<el-form-item label="维护中客户" prop="is_release_user">
+								<el-form-item label="释放客户" prop="is_release_user">
 									<el-switch
 										v-model="form.is_release_user"
 										active-color="#3963bc"
@@ -90,87 +90,6 @@
 								<el-form-item class="submit">
 									<el-button type="primary" @click="submitForm('form')">保 存</el-button>
 									<el-button @click="resetForm('form')">重 置</el-button>
-								</el-form-item>
-							</el-form>
-						</el-col>
-					</el-row>
-				</div>
-			</el-tab-pane>
-			<el-tab-pane label="跟进信息" name="second">
-				<div class="wrap">
-					<el-row>
-						<el-col :lg="16" :md="20" :sm="24" :xs="24">
-							<el-form :model="form" status-icon ref="followForm" v-loading="followLoading" :rules="rules" label-width="120px" @submit.native.prevent>
-								
-								<el-form-item label="使用场景" prop="scene">
-									<el-input size="medium" v-model="followForm.scene" placeholder="请填写使用场景"></el-input>
-								</el-form-item>
-								<el-form-item label="客户行业" prop="industry">
-									<el-select size="medium" filterable v-model="followForm.industry" placeholder="请选择客户行业">
-										<template v-for="(val, index) in industryData">
-											<el-option :value="val" :key="index" :label="val">
-												<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
-												<span>{{ val }}</span>
-											</el-option>
-										</template>
-									</el-select>
-									<el-input class="mt10" :disabled="!industryDisplay?'disabled':false" size="medium" v-model="industry_other" placeholder="请填写客户行业"></el-input>
-								</el-form-item>
-								<el-form-item label="产品类型" prop="product_type">
-									<el-select size="medium" filterable v-model="followForm.product_type" placeholder="请选择产品类型">
-										<template v-for="(val, index) in productTypeData">
-											<el-option :value="index" :key="val" :label="val">
-												<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
-												<span>{{ val }}</span>
-											</el-option>
-										</template>
-									</el-select>
-								</el-form-item>
-								<el-form-item label="产品规格" prop="product_spec" class="form-item">
-									<el-input size="medium" v-model="followForm.product_spec" placeholder="请填写产品规格"></el-input>
-								</el-form-item>
-								<el-form-item label="产品数量" prop="product_num">
-									<el-input-number v-model="followForm.product_num" :min="1" :max="10" label="产品数量"></el-input-number>
-								</el-form-item>
-								<el-form-item label="产品报价" prop="product_price">
-									<el-input size="medium" v-model="followForm.product_price" placeholder="请填写产品报价"></el-input>
-								</el-form-item>
-								<el-form-item label="客户需求背景" prop="demand_bg">
-									<el-select size="medium" filterable v-model="followForm.demand_bg" placeholder="请选择客户需求背景">
-										<template v-for="(val, index) in demandBgData">
-											<el-option :value="val" :key="index" :label="val">
-												<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
-												<span>{{ val }}</span>
-											</el-option>
-										</template>
-									</el-select>
-									<el-input class="mt10" size="medium" :disabled="!demandBgDisplay?'disabled':false" v-model="demand_bg_other" placeholder="请填写客户需求背景"></el-input>
-								</el-form-item>
-								<el-form-item label="需求描述" prop="demand_desc">
-									<el-input type="textarea" size="medium" v-model="followForm.demand_desc" placeholder="请填写需求描述"></el-input>
-								</el-form-item>
-								<el-form-item label="提供对应解决方案" prop="solution">
-									<el-input type="textarea" size="medium" v-model="followForm.solution" placeholder="请填写对应解决方案"></el-input>
-								</el-form-item>
-								<el-form-item label="工程安装解决方案" prop="install_solution">
-									<el-input type="textarea" size="medium" v-model="followForm.install_solution" placeholder="请填写工程安装解决方案"></el-input>
-								</el-form-item>
-								<el-form-item label="客户关注产品亮点" prop="product_lights">
-									<el-input type="textarea" size="medium" v-model="followForm.product_lights" placeholder="请填写客户关注产品亮点"></el-input>
-								</el-form-item>
-								<el-form-item label="客户价值" prop="custom_value">
-									<el-input type="textarea" size="medium" v-model="followForm.custom_value" placeholder="请填写客户价值"></el-input>
-								</el-form-item>
-								<el-form-item label="业务跟进困难点" prop="follow_difficulty">
-									<el-input type="textarea" size="medium" v-model="followForm.follow_difficulty" placeholder="请填写业务跟进困难点"></el-input>
-								</el-form-item>
-								<el-form-item label="客户反馈" prop="custom_feedback">
-									<el-input type="textarea" size="medium" v-model="followForm.custom_feedback" placeholder="请填写客户反馈"></el-input>
-								</el-form-item>
-								
-								<el-form-item class="submit">
-									<el-button type="primary" @click="submitFollowForm('followForm')">保 存</el-button>
-									<el-button @click="resetForm('followForm')">重 置</el-button>
 								</el-form-item>
 							</el-form>
 						</el-col>
@@ -220,6 +139,7 @@
 	import { provinceAndCityData, regionDataPlus, TextToCode } from 'element-china-area-data'
 	import customer from "@/models/customer"
 	import store from '@/store'
+	import type from "@/models/type"
   	import Admin from '@/lin/models/admin'
 	export default {
 		name: 'ColumnEdit',
@@ -230,23 +150,21 @@
 			return {
 				activeName: 'first',
 				addressData: regionDataPlus,
-				formAddresData: provinceAndCityData,
-				industry_other: '', // 客户行业其他内容填写
-				demand_bg_other: '',
-				demandBgDisplay: false,  // 客户需求背景是否禁用
-				industryDisplay: false,  // 客户行业其他是否禁用
+				formAddresData: provinceAndCityData,	
+				fieldObj: {
+					"channel": "channelData",
+					"follow_status": "followStatuslData",
+					"customer_type": "customerTypeData",
+					"level": "levelData"
+				},			
 				channelData: [
 					"抖音","百度","淘宝","公众号","转介绍","业务员推销","代理","扩容"
 				],
 				customerTypeData: ['业主','施工方'],
 				levelData: ['A','B','C'],
-				followStatuslData: ['无意向客户','成交客户','长期跟进','重点跟进','非目标客户'],
-				demandBgData: ['已受灾','应付检查','系统统一安装','领导要求','其他'],
-				productTypeData: ['不锈钢开启式','不锈钢密闭式','铝合金组合式','水动力','ABS'],
-				industryData: ['商场','工厂','其他'],
+				followStatuslData: ['无意向客户','成交客户','长期跟进','重点跟进','非目标客户'],				
 				loading: false,
 				mainLoading: false,
-				followLoading: false,
 				customerData: [], 
 				cuserLists: [], // cms管理员
 				form: {
@@ -258,25 +176,9 @@
 					follow_status: '',
 					purpose: '',
 					channel: '',
-					is_release_user: true,
+					is_release_user: false,
 					customer_type: '',
 					dicider_user: ''
-				},
-				followForm: {					
-					scene: '',
-					industry: '',
-					product_type: '',
-					product_spec: '',
-					product_num: '',
-					product_price: '',
-					demand_bg: '',
-					demand_desc: '',
-					solution: '',
-					install_solution: '',
-					product_lights: '',
-					custom_value: '',
-					follow_difficulty: '',
-					custom_feedback: ''
 				},
 				mainForm: {
 					main_name: '',
@@ -287,13 +189,13 @@
 				},
 				// statusAuth: store.state.auths.includes('获取客户审核权限') || store.state.user.isSuper,
 				rules: {
-					name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
+					// name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
 					contacts_name: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
 					telephone: [
-						{ required: true, message: '请输入联系电话', trigger: 'blur' }
+						// { required: true, message: '请输入联系电话', trigger: 'blur' }
 					],
 					email: [ 
-						{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
+						// { required: true, message: '请输入邮箱地址', trigger: 'blur' },
 						{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
 					],
 					address: [
@@ -304,31 +206,11 @@
 				},
 			}
 		},
-		watch: {
-			followForm: {
-				handler(val, oldVal) {
-					// 客户行业
-					if(val.industry == '其他') {
-						this.industryDisplay = true
-					} else {
-						this.industryDisplay = false
-						this.industry_other = ''
-					}
-					// 客户需求背景
-					if(val.demand_bg == '其他') {
-						this.demandBgDisplay = true
-					} else {
-						this.demandBgDisplay = false
-						this.demand_bg_other = ''
-					}
-				},
-				deep: true
-			}
-		},
+		
 		created() {
 			// 数据初始化
 			this._initialize()
-			
+			this.getTypes()
 		},
 		methods: {
 			_initialize() {
@@ -343,6 +225,28 @@
 					this.cuserLists = [...res.items]
 				} catch (e) {
 				}
+			},
+			// 获取类型
+			async getTypes() {
+				let fields = []
+				const fieldObj = this.fieldObj
+				for(let obj in fieldObj) {
+					fields.push(obj)
+				}
+				fields = fields.join()
+				let result = await type.getTypeByField(fields)
+				if(!result || result.length == 0) return;
+				
+				for(let obj in fieldObj) {
+					const key = fieldObj[obj]
+					const curData = result.find(val => {
+						return val['field'] == obj
+					})
+					if(curData) {
+						this[key] = curData['value']
+					}
+				}
+				
 			},
 			async getCustomer() {
 				this.loading = true
@@ -399,43 +303,7 @@
 					}
 				})
 			},
-			settingFollow() {
-				const formData = this.followForm
-				formData.user_id = this.editID
-				formData.link_code = this.form.link_code
-				if(formData.industry == '其他') {
-					formData.industry = '其他-'+ this.industry_other
-				}
-				if(formData.demand_bg == '其他') {
-					formData.demand_bg = '其他-'+ this.demand_bg_other
-				}
-				return formData
-			},
-			submitFollowForm(formName) {
-				this.$refs[formName].validate(async valid => {
-					if(valid) {
-						this.followLoading = true
-						try {
-							const res = await customer.updateFollowCustomer(this.settingFollow())
-							if (res.error_code === 0) {
-								this.$message.success(`${res.msg}`)
-							}
-						} catch (error) {
-							let message = error.data.msg
-							if(message && typeof message === 'object'){
-								for (const key in message){
-									this.$message.error(message[key])
-									await setTimeout(function () {}, 1000)
-								}
-							}
-						}
-						this.followLoading = false
-					} else {
-						this.$message.error('请填写正确的信息')
-						return false
-					}
-				})
-			},
+			
 			submitMainForm(formName) {
 				this.$refs[formName].validate(async valid => {
 					if(valid) {
@@ -475,29 +343,12 @@
 			_handleCustomerResData(form) {
 				// 把数字转化成boolean值
 				// excel导入的数据是没有user_id值的，解决customer_add或customer_main不存在的情况
-				let isExcel = (form['customer_add'] && form['customer_add']['user_id'] == 0) || 
-								(form['customer_main'] && form['customer_main']['user_id'] == 0)
+				let isExcel = (form['customer_main'] && form['customer_main']['user_id'] == 0)
 				form['level'] = !form['level']||form['level'] == 0?'':form['level']
 				form['is_release_user'] = !!form['is_release_user']
-				if(form['customer_add']) {
-					const customerAdd = form['customer_add']
-					if(customerAdd['industry'].indexOf('其他') != -1) {
-						const arr = customerAdd['industry'].split('-')
-						customerAdd['industry'] = arr[0]
-						this.industry_other = arr[1]
-					}
-					if(customerAdd['demand_bg'].indexOf('其他') != -1) {
-						const arr = customerAdd['demand_bg'].split('-')
-						customerAdd['demand_bg'] = arr[0]
-						this.demand_bg_other = arr[1]
-					}
-					
-					this.followForm = form['customer_add']
-					delete form['customer_add']
-				}
 				if(form['customer_main']) {
 					const mainData = form['customer_main']
-					if(mainData['main_address']) {
+					if(mainData['main_address'] && mainData['main_address'].length > 0) {
 						if(!mainData['user_id'] && mainData['main_address'][0]) {
 							const city = mainData['main_address'][1],
 								provice = mainData['main_address'][0],
@@ -515,13 +366,17 @@
 							mainData['main_address'] = addressArr
 						} 
 					}
+					if(mainData['main_address'].length == 0) {
+						mainData['main_address'] = '';
+					}
 					this.mainForm = mainData
 					delete form['customer_main']
 				}
 				if(form['address']) {
 					// 判断是否是excel导入的mainData['user_id']
 					// 判断地址是否存在，判断地址是否是中文
-					if(isExcel && form['address'][0] && this.isChinese(form['address'][0])) {
+					console.log(form['address'])
+					if(form['address'][0] && this.isChinese(form['address'][0])) {
 						const city = form['address'][1],
 						provice = form['address'][0],
 						cityCode = TextToCode[provice][city].code,

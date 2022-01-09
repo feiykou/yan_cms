@@ -109,7 +109,7 @@
 			</template>
 			<!-- 操作列 -->
 			<el-table-column label="操作" fixed="right" :width="operateStyle.width" v-if="operate.length > 0">
-				<template slot-scope="scope">
+				<template slot-scope="scope" v-if="operate.icon">
 					<el-button
 						v-for="(item, index) in operate"
 						:type="item.type"
@@ -119,6 +119,8 @@
 						@click.native.prevent.stop="buttonMethods(item.func, scope.$index, scope.row)"
 					>{{ item.name }}</el-button
 					>
+
+					
 				</template>
 			</el-table-column>
 		</el-table>

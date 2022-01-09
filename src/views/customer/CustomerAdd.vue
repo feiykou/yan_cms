@@ -51,7 +51,7 @@
 						<el-form-item label="客户来源" prop="channel">
 							<el-select size="medium" filterable v-model="form.channel" placeholder="请选择客户来源">
 								<template v-for="(val, index) in channelData">
-									<el-option :value="index" :key="index" :label="val">
+									<el-option :value="val" :key="index" :label="val">
 										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 										<span>{{ val }}</span>
 									</el-option>
@@ -68,7 +68,17 @@
 								</template>
 							</el-select>
 						</el-form-item>
-						<el-form-item label="释放客户信息" prop="is_release_user">
+						<el-form-item label="分配用户" prop="dicider_user" v-if="adminName=='super'">
+							<el-select size="medium" filterable v-model="form.dicider_user" placeholder="请选择分配用户">
+								<template v-for="(val, index) in cuserLists">
+									<el-option :value="val.id" :key="index" :label="val.username">
+										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
+										<span>{{ val.username }}</span>
+									</el-option>
+								</template>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="释放客户" prop="is_release_user">
 							<el-switch
 								v-model="form.is_release_user"
 								active-color="#3963bc"
@@ -88,15 +98,26 @@
 <script>
   import { provinceAndCityData } from 'element-china-area-data'
   import customer from "@/models/customer"
+  import type from "@/models/type"
+  import Admin from '@/lin/models/admin'
+  import store from '@/store'
+
+
+  
   export default {
 	  name: 'CustomerAdd',
 	  data() {
 		  return {
 			addressData: provinceAndCityData,
-			channelData: [
-				"抖音","百度","淘宝","公众号","转介绍","业务员推销","代理","扩容"
-			],
-			followStatuslData: ['无意向客户','成交客户','长期跟进','重点跟进','非目标客户'],
+			adminName: store.state.user.username,
+			fieldObj: {
+				"channel": "channelData",
+				"follow_status": "followStatuslData",
+				"customer_type": "customerTypeData",
+				"level": "levelData"
+			},
+			channelData: [],
+			followStatuslData: [],
 			levelData: ['A','B','C'],
 			customerTypeData: ['业主','施工方'],
 			loading: false,
@@ -112,17 +133,16 @@
 				follow_status: '',
 				purpose: '',
 				channel: '',
-				is_release_user: true,
-				customer_type: ''				
+				is_release_user: false,
+				customer_type: '',
+				dicider_user: ''	
 			},
 			rules: {
-				name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
+				// name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
 				contacts_name: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
 				telephone: [
-					{ required: true, message: '请输入联系电话', trigger: 'blur' }
 				],
 				email: [ 
-					{ required: true, message: '请输入邮箱地址', trigger: 'blur' },
 					{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur'] }
 				],
 				address: [
@@ -134,36 +154,68 @@
 		  }
 	  },
 	  created() {
+		  this.getAdminUsers()
+		  this.getTypes()
 	  },
 	  methods: {
-		  submitForm(formName) {
-			  this.$refs[formName].validate(async valid => {
-				  if(valid) {
-					  this.loading = true
-					  try {
-						  const res = await customer.addCustomer(this.form)
-						  if (res.error_code === 0) {
-							  this.$message.success(`${res.msg}`)
-							  this.resetForm(formName)
-							  this.back()
-						  }
-					  } catch (error) {
-						  let message = error.data.msg
-						  if(message && typeof message === 'object'){
-							  for (const key in message){
-								  this.$message.error(message[key])
-								  await setTimeout(function () {}, 1000)
-							  }
-						  }
-					  }
-					  this.loading = false
-				  } else {
-					  this.$message.error('请填写正确的信息')
-					  return false
-				  }
-			  })
-		  },
-		  
+		submitForm(formName) {
+			this.$refs[formName].validate(async valid => {
+				if(valid) {
+					this.loading = true
+					try {
+						const res = await customer.addCustomer(this.form)
+						if (res.error_code === 0) {
+							this.$message.success(`${res.msg}`)
+							this.resetForm(formName)
+							this.back()
+						}
+					} catch (error) {
+						let message = error.data.msg
+						if(message && typeof message === 'object'){
+							for (const key in message){
+								this.$message.error(message[key])
+								await setTimeout(function () {}, 1000)
+							}
+						}
+					}
+					this.loading = false
+				} else {
+					this.$message.error('请填写正确的信息')
+					return false
+				}
+			})
+		},
+		// 获取类型
+		async getTypes() {
+			let fields = []
+			const fieldObj = this.fieldObj
+			for(let obj in fieldObj) {
+				fields.push(obj)
+			}
+			fields = fields.join()
+			let result = await type.getTypeByField(fields)
+			if(!result || result.length == 0) return;
+			
+			for(let obj in fieldObj) {
+				const key = fieldObj[obj]
+				const curData = result.find(val => {
+					return val['field'] == obj
+				})
+				if(curData) {
+					this[key] = curData['value']
+				}
+			}
+			
+		},
+		// 根据分组 刷新/获取分组内的用户
+		async getAdminUsers() {
+			let res
+			try {
+				res = await Admin.getAdminUsers({ count: 30, page: 0 }) // eslint-disable-line
+				this.cuserLists = [...res.items]
+			} catch (e) {
+			}
+		},
 		  // 重置表单
 		  resetForm(formName) {
 			  this.$refs[formName].resetFields()

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<!-- 列表页面 -->
-		<div class="container" v-if="redirectType === 'list'">
+		<div class="container yan-container" v-if="redirectType === 'list'">
 			<sticky-top>
 				<div class="order-header">
 					<div class="header-left"><p class="title">客户列表</p></div>
@@ -25,15 +25,28 @@
 				<el-divider></el-divider>
 				<div class="header">
 					<div class="title">
-						<!-- <span>客户列表</span>   -->
-						<el-button class="add-banner-item" type="primary" plain @click="handleAdd">添加客户</el-button>
-						<el-upload
-							class="upload-demo"
-							action=""
-							:on-change="handleChange"
-							:file-list="fileList">
-							<el-button size="small" type="primary">导入excel数据</el-button>
-						</el-upload>
+						<div class="left-wrap">
+							<el-button class="add-banner-item" type="primary" plain @click="handleAdd">添加客户</el-button>
+							<el-button class="add-banner-item" type="primary" @click="handleCommonPond">释放进公域池</el-button>
+						</div>
+						<div class="right-wrap">
+							<el-upload
+								class="upload-demo"
+								action=""
+								:on-change="handleChange"
+								:file-list="fileList">
+								<el-button size="small" plain type="primary">导出excel数据</el-button>
+							</el-upload>
+							<el-upload
+								class="upload-demo"
+								action=""
+								:on-change="handleChange"
+								:file-list="fileList">
+								<el-button size="small" type="primary">导入excel数据</el-button>
+							</el-upload>
+						</div>
+						
+						
 					</div>
 				</div>
 				<!-- 表格 -->
@@ -43,11 +56,14 @@
 					:operate="operate"
 					:pagination="pagination"
 					:curPage="currentPage"
+					type="selection"
 					@currentChange="currentChange"
 					@handleEdit="handleEdit"
 					@handleLog="handleLog"
+					@handleProject="handleProject"
 					@handleDelete="handleDelete"
 					@row-click="rowClick"
+					@selection-change="handleSelectionChange"
 					v-loading="loading"
 				></lin-table>
 			</div>
@@ -57,7 +73,7 @@
 		<customer-add v-else-if="redirectType === 'add'" @close="closePage"></customer-add>
 		<customer-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></customer-edit>
 		<customer-log-list v-else-if="redirectType === 'log'" :customerID="editID" @close="closePage"></customer-log-list>
-		
+		<customer-project-list v-else-if="redirectType === 'project'" :customerID="linkCode" @close="closePage"></customer-project-list>
 	</div>
 </template>
 
@@ -65,10 +81,12 @@
 	import LinSearch from '@/components/base/search/lin-search'
     import LinDatePicker from '@/components/base/date-picker/lin-date-picker'
 	import customer from '@/models/customer'
+	import type from "@/models/type"
 	import { CodeToText } from 'element-china-area-data'
 	import CustomerAdd from "./CustomerAdd";
 	import CustomerEdit from "./CustomerEdit";
 	import CustomerLogList from "../customer_log/CustomerLogList";
+	import CustomerProjectList from "../customer_project/ProjectList";
 	import store from '@/store'
 	import excel from "@/models/excel"
 	export default {
@@ -77,6 +95,7 @@
 			CustomerAdd,
 			CustomerEdit,
 			CustomerLogList,
+			CustomerProjectList,
 			LinSearch,
 			LinDatePicker
 		},
@@ -84,6 +103,10 @@
 			return {
 				loading: false,
 				fileList: [],
+				fieldObj: {
+					"follow_status": "followStatusData",
+				},
+				checkselId: [], // check选中的id值
 				curFollowStatus: -1, // 跟进状态 -1是全部状态
 				searchKeyword: '', // 搜索内容
 				searchDate: '', // 日期
@@ -101,15 +124,13 @@
 					{ prop: 'contacts_name', label: '联系人', width: 100 },
 					{ prop: 'telephone', label: '联系人电话', width: 150 },
 					{ prop: 'level', label: '客户等级', width: 100 },
-					{ prop: 'address', label: '地址', width: 150 },
+					{ prop: 'follow_status', label: '跟进状态', width: 150 },
 					{ prop: 'channel', label: '客户来源', width: 150 },
+					{ prop: 'address', label: '地址', width: 150 },
 					{ prop: 'author', label: '责任人', width: 150 },
 					{ prop: 'create_time', label: '录入时间' }
 				],
-				channelData: [
-					"抖音","百度","淘宝","公众号","转介绍","业务员推销","代理","扩容"
-				],
-				followStatusData: ['无意向客户','成交客户','长期跟进','重点跟进','非目标客户'],
+				followStatusData: [],
 				tableData: [],
 				operate: [],
 				pagination: {
@@ -117,6 +138,7 @@
 				},
 				showEdit: false,
 				editID: 1,
+				linkCode: 0,
 				redirectType: 'list',
 				currentPage: 1,
 				excelLock: true
@@ -124,11 +146,18 @@
 		},
 		created() {
 			this.operate = [
-				{ name: '编辑', func: 'handleEdit', type: 'primary' },
+				{ name: '编辑', func: 'handleEdit', type: 'primary', icon: 'edit' },
 				{
 					name: '日志',
 					func: 'handleLog',
 					type: 'danger',
+					icon: 'chat-line-round'
+				},
+				{
+					name: '项目',
+					func: 'handleProject',
+					type: 'danger',
+					icon: 'service',
 				}
 			]
 			if(store.state.auths.includes('删除客户') || store.state.user.username == 'super') {
@@ -136,19 +165,49 @@
 					name: '删除',
 					func: 'handleDelete',
 					type: 'danger',
+					icon: 'delete',
 					auth: '删除客户'
 				})
 			}
 			this.getCustomers()
+			this.getTypes()
 		},
 		methods: {
+			// 触发多选checkbox
+			handleSelectionChange(data) {
+				const checkselId = []
+				data.forEach(ele => {
+					checkselId.push(ele.id)
+				})
+				this.checkselId = checkselId
+			},
 			followStatusChange(val) {
 				this.curFollowStatus = val
 				this.searchParam()
 				this.getCustomers()
 			},
+			// 获取类型
+			async getTypes() {
+				let fields = []
+				const fieldObj = this.fieldObj
+				for(let obj in fieldObj) {
+					fields.push(obj)
+				}
+				fields = fields.join()
+				let result = await type.getTypeByField(fields)
+				if(!result || result.length == 0) return;
+				for(let obj in fieldObj) {
+					const key = fieldObj[obj]
+					const curData = result.find(val => {
+						return val['field'] == obj
+					})
+					if(curData) {
+						this[key] = curData['value']
+					}
+				}
+				
+			},
 			onSelectChange(query) {
-				console.log(query)
 				this.curSearchIndex = query
 			},
 			onQueryChange(query) {
@@ -209,22 +268,49 @@
 				let res
 				if(this.excelLock) {
 					this.excelLock = false
-					res = await excel.importCustomer(file)
+					try {
+						res = await excel.importCustomer(file)
+						if (res.error_code === 0) {
+							this.getCustomers(this.currentPage - 1)
+							this.$message({
+								type: 'success',
+								message: `${res.msg}`,
+							})
+						}
+					} catch (error) {
+						console.log(error)
+						let message = error.data.msg
+						if(message) {
+							if( typeof message === 'object') {
+								for (const key in message){
+									this.$message.error(message[key])
+									await setTimeout(function () {}, 1000)
+								}
+							} else {
+								this.$message.error(message)
+							}
+						} else {
+							this.$message({
+								type: 'error',
+								message: `导入失败，请重新尝试`,
+							})
+						}
+					}
 				}
 				this.loading = false
 				this.excelLock = true
-				if (res.error_code === 0) {
-					this.getCustomers(this.currentPage - 1)
-					this.$message({
-						type: 'success',
-						message: `${res.msg}`,
-					})
-				} else {
-					this.$message({
-						type: 'error',
-						message: `导入失败，请重新尝试`,
-					})
-				}
+				// if (res.error_code === 0) {
+				// 	this.getCustomers(this.currentPage - 1)
+				// 	this.$message({
+				// 		type: 'success',
+				// 		message: `${res.msg}`,
+				// 	})
+				// } else {
+				// 	this.$message({
+				// 		type: 'success',
+				// 		message: `导入失败，请重新尝试`,
+				// 	})
+				// }
 			},
 			async handleChange(file, fileList) {
 				await this.importCustomerLog(file)
@@ -251,6 +337,7 @@
 				customerLists.collection.forEach(val => {
 					val['is_release_user'] = val['is_release_user'] === 0 ? '正常' : '已释放'
 					val['status'] = val['status'] === 0 ? '未通过' : '通过'
+					val["key"] = val.id
 					if(val['address']) {
 						if(!this.isChinese(val['address'][0])) {
 							val['address'] = CodeToText[val['address'][0]] + '-' + CodeToText[val['address'][1]]
@@ -258,15 +345,12 @@
 							val['address'] = val['address'][0] + '-' + val['address'][1]
 						}
 					}
-					val['channel'] = this.channelData[val['channel']]
 				})
 				this.tableData = customerLists.collection
 				this.loading = false
 			},
 			// 3天未跟进
 			noFollowPass() {
-				console.log(111)
-				console.log(this.searchParams)
 				if(!this.isActiveNoFollow) {
 					this.isActiveNoFollow = true
 					this.searchParams['type'] = 1
@@ -287,6 +371,26 @@
 				this.currentPage = page + 1
 				this.getCustomers(page)
 			},
+			async handleCommonPond() {
+				const selIds = this.checkselId
+				if(selIds.length <= 0) {
+					this.$message({
+						type: 'warning',
+						message: `请先选中客户`,
+					})
+					return;
+				}
+				this.loading = true
+				const res = await customer.updateCustomersEntryPublic(selIds)
+				this.loading = false
+				if (res.error_code === 0) {
+					this.getCustomers(this.currentPage - 1)
+					this.$message({
+						type: 'success',
+						message: `${res.msg}`,
+					})
+				}
+			},
 			handleAdd() {
 				this.redirectType = 'add'
 			},
@@ -297,6 +401,11 @@
 			handleLog({ row }) {
 				this.editID = row.id
 				this.redirectType = 'log'
+			},
+			handleProject({ row }) {
+				this.editID = row.id
+				this.linkCode = row.link_code
+				this.redirectType = 'project'
 			},
 			handleDelete(val) {
 				
@@ -341,6 +450,9 @@
         }
     }
 	.container {
+		&.yan-container{
+			padding-bottom: 60px;
+		}
 		.header-table-box{
 			padding: 0 30px;
 		}
@@ -350,6 +462,9 @@
 			align-items: center;
 
 			.title {
+				flex: 1;
+				display:flex;
+				justify-content: space-between;
 				height: 59px;
 				line-height: 59px;
 				color: $parent-title-color;

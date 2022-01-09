@@ -9,6 +9,13 @@
                         <el-button class="add-banner-item" type="primary" plain @click="handleAdd">添加客户日志</el-button>
                         <el-upload
                             class="upload-demo"
+                            action=""
+                            :on-change="handleChange"
+                            :file-list="fileList">
+                            <el-button size="small" plain type="primary">导出excel数据</el-button>
+                        </el-upload>
+                        <el-upload
+                            class="upload-demo"
                             action="https://jsonplaceholder.typicode.com/posts/"
                             :on-change="handleChange"
                             :file-list="fileList">

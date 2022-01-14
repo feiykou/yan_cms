@@ -403,7 +403,6 @@
 				this.redirectType = 'log'
 			},
 			handleProject({ row }) {
-				this.editID = row.id
 				this.linkCode = row.link_code
 				this.redirectType = 'project'
 			},

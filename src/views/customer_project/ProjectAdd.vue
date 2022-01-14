@@ -160,7 +160,7 @@ export default {
 	methods: {
 		settingFollow() {
 			const formData = this.form
-			formData.link_code = this.customerID
+			formData.link_code = this.linkCode
 			if(formData.industry == '其他') {
 				formData.industry = '其他-'+ this.industry_other
 			}

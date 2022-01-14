@@ -34,15 +34,15 @@ const categoryRouter = {
         //   inNav: true,
         //   icon: 'iconfont icon-tushuguanli',
         // },
-        {
-            title: '设置',
-            type: 'view',
-            name: 'Setting',
-            route: '/setting/list',
-            filePath: 'views/setting/list.vue',
-            inNav: true,
-            icon: 'iconfont icon-tushuguanli',
-        },
+        // {
+        //     title: '设置',
+        //     type: 'view',
+        //     name: 'Setting',
+        //     route: '/setting/list',
+        //     filePath: 'views/setting/list.vue',
+        //     inNav: true,
+        //     icon: 'iconfont icon-tushuguanli',
+        // },
     ],
 }
 

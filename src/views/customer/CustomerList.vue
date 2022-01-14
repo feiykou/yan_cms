@@ -73,7 +73,7 @@
 		<customer-add v-else-if="redirectType === 'add'" @close="closePage"></customer-add>
 		<customer-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></customer-edit>
 		<customer-log-list v-else-if="redirectType === 'log'" :customerID="editID" @close="closePage"></customer-log-list>
-		<customer-project-list v-else-if="redirectType === 'project'" :customerID="linkCode" @close="closePage"></customer-project-list>
+		<customer-project-list v-else-if="redirectType === 'project'" :linkCode="linkCode" @close="closePage"></customer-project-list>
 	</div>
 </template>
 

@@ -3,7 +3,7 @@
 		<!-- 列表页面 -->
 		<div class="container" v-if="redirectType === 'list'">
 			<div class="header"><div class="title"><span>客户项目列表</span>  
-				<el-button v-if="CustomerID" class="add-banner-item" type="primary" plain @click="handleAdd">添加文创</el-button>
+				<el-button v-if="linkCode" class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button>
 			</div></div>
 			<!-- 表格 -->
 			<lin-table
@@ -17,7 +17,7 @@
 				@handleDelete="handleDelete"></lin-table>
 		</div>
 		<!-- 编辑页面 -->
-		<project-add v-else-if="redirectType === 'add'" :CustomerID="CustomerID" @close="closePage"></project-add>
+		<project-add v-else-if="redirectType === 'add'" :linkCode="linkCode" @close="closePage"></project-add>
 		<project-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></project-edit>
 	</div>
 </template>
@@ -34,7 +34,7 @@ export default {
 		ProjectAdd
 	},
 	props: {
-		CustomerID: Number
+		linkCode: Number
 	},
 	data() {
 		return {

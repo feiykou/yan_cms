@@ -23,7 +23,7 @@
 
 		<!-- 编辑页面 -->
 	
-		<project-add v-else-if="redirectType === 'add'" :customerID="customerID" @close="closePage"></project-add>
+		<project-add v-else-if="redirectType === 'add'" :linkCode="linkCode" @close="closePage"></project-add>
 		<project-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></project-edit>
 	</div>
 </template>
@@ -40,7 +40,7 @@ export default {
 		ProjectAdd
 	},
 	props: {
-		customerID: {
+		linkCode: {
 			type: Number,
 			default: 0
 		}
@@ -65,7 +65,7 @@ export default {
 	},
 	created() {
 			this.operate = []
-			if(this.customerID) {
+			if(this.linkCode) {
 				this.operate.push({ name: '编辑', func: 'handleEdit', type: 'primary' })
 			}
 			this.operate.push({
@@ -79,14 +79,14 @@ export default {
 	methods: {
 		async getProjects(page = 0) {
 			this.loading = true
-			if(this.customerID <= 0) {
+			if(this.linkCode <= 0) {
 				this.$message({
 					type: 'success',
-					message: `客户id错误`,
+					message: `客户错误`,
 				})
 				return
 			}
-			let projectLists = await project.getCustomerProjects(page, this.customerID, 0)
+			let projectLists = await project.getCustomerProjects(page, this.linkCode, 0)
 			if (projectLists.total_nums <=0 ){
 				this.tableData = []
 				this.loading = false

@@ -94,7 +94,7 @@ import project from '@/models/customer_project'
 export default {
 	name: 'CulturalAdd',
 	props: {
-		customerID: Number
+		linkCode: Number
 	},
 	data() {
 		return {
@@ -160,7 +160,7 @@ export default {
 	methods: {
 		settingFollow() {
 			const formData = this.form
-			formData.customer_id = this.customerID
+			formData.link_code = this.customerID
 			if(formData.industry == '其他') {
 				formData.industry = '其他-'+ this.industry_other
 			}

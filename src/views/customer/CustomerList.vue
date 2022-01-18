@@ -329,7 +329,7 @@
 					this.loading = false
 					return;
 				}
-				if (!this.pagination.pageTotal){
+				if (!this.pagination.pageTotal || this.pagination.pageTotal != customerLists.total_nums){
 					this.pagination = {
 						pageTotal: customerLists.total_nums
 					}

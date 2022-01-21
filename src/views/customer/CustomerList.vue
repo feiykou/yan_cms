@@ -30,20 +30,19 @@
 							<el-button class="add-banner-item" type="primary" @click="handleCommonPond">释放进公域池</el-button>
 						</div>
 						<div class="right-wrap">
+							<div class="excel-btn">
+								<el-button size="small" type="primary" plain @click="handleExport">导出excel数据</el-button>
+							</div>
 							<el-upload
-								class="upload-demo"
-								action=""
-								:on-change="handleChange"
-								:file-list="fileList">
-								<el-button size="small" plain type="primary">导出excel数据</el-button>
-							</el-upload>
-							<el-upload
-								class="upload-demo"
+								class="upload-demo excel-btn"
 								action=""
 								:on-change="handleChange"
 								:file-list="fileList">
 								<el-button size="small" type="primary">导入excel数据</el-button>
 							</el-upload>
+							<div class="download-icon">
+								<a href="http://yan.cn/static/file/客户信息模板.xlsx" class="link"><img src="@/assets/img/icon/download@icon.png"> 下载模板</a>
+							</div>
 						</div>
 						
 						
@@ -89,6 +88,7 @@
 	import CustomerProjectList from "../customer_project/ProjectList";
 	import store from '@/store'
 	import excel from "@/models/excel"
+	import Config from '@/config'
 	export default {
 		name: 'CustomerList',
 		components: {
@@ -141,7 +141,8 @@
 				linkCode: 0,
 				redirectType: 'list',
 				currentPage: 1,
-				excelLock: true
+				excelLock: true,
+				exportExcelLock: true
 			}
 		},
 		created() {
@@ -263,7 +264,7 @@
 				this.searchParams = searchParams
 				this.isSearch = true
 			},
-			async importCustomerLog(file) {
+			async importCustomer(file) {
 				this.loading = true
 				let res
 				if(this.excelLock) {
@@ -312,8 +313,60 @@
 				// 	})
 				// }
 			},
+			async exportCustomer(selIds=[]) {
+				this.loading = true
+				let res
+				if(this.exportExcelLock) {
+					this.exportExcelLock = false
+					try {
+						res = await excel.exportCustomer(selIds)
+						if (res.error_code === 0) {
+							this.$message({
+								type: 'success',
+								message: `${res.msg}`,
+							})
+						}
+					} catch (error) {
+						let message = error.data.msg
+						if(message) {
+							if( typeof message === 'object') {
+								for (const key in message){
+									this.$message.error(message[key])
+									await setTimeout(function () {}, 1000)
+								}
+							} else {
+								this.$message.error(message)
+							}
+						} else {
+							this.$message({
+								type: 'error',
+								message: `导出失败，请重新尝试`,
+							})
+						}
+					}
+				}
+				this.loading = false
+				this.exportExcelLock = true
+			},
+			// 导出excel
+			handleExport() {
+				const selIds = this.checkselId
+				if(selIds.length <= 0) {
+					this.$message({
+						type: 'warning',
+						message: `请先选中客户，再导出`,
+					})
+					return;
+				}
+				console.log(selIds)
+				console.log(`http://api.szfxws.com/v1/excel/customer?ids=${selIds}`)
+				// this.exportCustomer(selIds)
+				// const baseURL = Config.baseURL || process.env.apiUrl || ''
+				window.location = `http://api.szfxws.com/v1/excel/customer?ids=${selIds}`
+			},
+			// 导入excel
 			async handleChange(file, fileList) {
-				await this.importCustomerLog(file)
+				await this.importCustomer(file)
 			},
 			async getCustomers(page = 0) {
 				this.loading = true
@@ -436,18 +489,39 @@
 </script>
 
 <style lang="scss" scoped>
+	
+	.right-wrap{
+		display: flex;
+		align-items: center;
+
+	}
 	// 上传
-    .upload-demo{
-        display: inline-block;
-        margin-left: 20px;
-        /deep/ .el-button{
+	.excel-btn{
+		/deep/ .el-button{
             padding: 8px 16px;
             font-size: 15px;
         }
+	}
+    .upload-demo{
+        display: inline-block;
+        margin-left: 20px;
         /deep/ .el-upload-list{
             display: none;
         }
     }
+	.download-icon{
+		display: inline-flex;
+		.link{
+			display: flex;
+			align-items: center;
+			margin-left: 15px;
+			font-size: 14px;
+		}
+		img{
+			width: 25px;
+			margin-right: 2px;
+		}
+	}
 	.container {
 		&.yan-container{
 			padding-bottom: 60px;

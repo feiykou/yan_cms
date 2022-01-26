@@ -1,7 +1,23 @@
 <template>
 	<div>
 		<!-- 列表页面 -->
-		<div class="container" v-if="redirectType === 'list'">
+		<div class="container page-container" v-if="redirectType === 'list'">
+			<sticky-top>
+				<div class="order-header">
+					<div class="header-left"><p class="title"></p></div>
+					<div class="header-right" v-auth="'搜索日志'">
+						<!-- <lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入责任人/客户名" /> -->
+						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
+						<el-select v-model="curFollowStatus" @change="followStatusChange" size="medium" filterable default-first-option placeholder="请选择跟进状态" prop="curFollowStatus" class="">
+							<el-option label="全部跟进状态" :value="-1"></el-option>
+							<el-option :label="value" v-for="(value, key) in followStatusData" :key="key" :value="value"></el-option>
+						</el-select>
+						<el-button type="primary" plain @click="backInit" size="mini" class="back-btn">返回浏览</el-button>
+					</div>
+				</div>
+
+				<el-divider></el-divider>
+			</sticky-top>
 			<div class="header"><div class="title"><span>客户项目列表</span>  
 				<el-button v-if="linkCode" class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button>
 			</div></div>
@@ -12,17 +28,20 @@
 				:operate="operate"
 				:loading="loading"
 				:curPage="currentPage"
+				:pagination="pagination"
 				@currentChange="currentChange"
 				@handleEdit="handleEdit"
 				@handleDelete="handleDelete"></lin-table>
 		</div>
 		<!-- 编辑页面 -->
 		<project-add v-else-if="redirectType === 'add'" :linkCode="linkCode" @close="closePage"></project-add>
-		<project-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></project-edit>
+		<project-edit v-else-if="redirectType === 'edit'" :onlyRead="true" :editID="editID" @close="closePage"></project-edit>
 	</div>
 </template>
 
 <script>
+import LinSearch from '@/components/base/search/lin-search'
+import LinDatePicker from '@/components/base/date-picker/lin-date-picker'
 import project from '@/models/customer_project'
 import ProjectEdit from './ProjectEdit'
 import ProjectAdd from './ProjectAdd'
@@ -31,7 +50,9 @@ export default {
 	name: 'CustomerProjectLists',
 	components: {
 		ProjectEdit,
-		ProjectAdd
+		ProjectAdd,
+		LinSearch,
+		LinDatePicker
 	},
 	props: {
 		linkCode: Number
@@ -46,8 +67,20 @@ export default {
 				{ prop: 'author', label: '录入人员' },
 				{ prop: 'create_time', label: '生成时间'},
 			],
+			curFollowStatus: -1, // 跟进状态 -1是全部状态
+			searchKeyword: '', // 搜索内容
+			searchDate: '', // 日期
+			searchParams: {}, // 搜索筛选参数
+			isSearch: false, // 是否处于搜索状态
+			curSearchIndex: 0,
+			selData: [
+				'责任人'
+			],
+			pagination: {
+				pageTotal: 0
+			},
 			tableData: [],
-			operate: [],
+			operate: [{ name: '查看', func: 'handleEdit', type: 'primary' }],
 			showEdit: false,
 			loading: false,
 			editID: 1,
@@ -63,10 +96,15 @@ export default {
 			let projectLists = {}
 			if(store.state.auths.includes('全部项目信息')) {
 				// 获取全部项目
-				projectLists = await project.getAllCustomerProjects(page)
+				projectLists = await project.getAllCustomerProjects(page, this.searchParams)
 			} else {
 				// 获取当前管理员录入的所有项目
-				projectLists = await project.getCustomerProjects(page)
+				projectLists = await project.getCustomerProjects(page, this.searchParams)
+			}
+			if (!this.pagination.pageTotal || this.pagination.pageTotal != projectLists.total_nums){
+				this.pagination = {
+					pageTotal: projectLists.total_nums
+				}
 			}
 			if (projectLists.total_nums <=0 ){
 				this.tableData = []
@@ -75,6 +113,26 @@ export default {
 			}	
 			this.loading = false
 			this.tableData = projectLists.collection
+		},
+		searchParam() {
+			let searchParams = {}
+			if (this.curFollowStatus != -1) {
+				searchParams['follow_status'] = this.curFollowStatus
+			}
+			if( this.searchDate && this.searchDate.length > 0) {
+				searchParams['start'] = this.searchDate[0]
+				searchParams['end'] = this.searchDate[1]
+			}
+			if( this.searchKeyword ) {
+				if(this.curSearchIndex == 0) {
+					searchParams['name'] = this.searchKeyword
+				}
+				if(this.curSearchIndex == 1) {
+					searchParams['author'] = this.searchKeyword
+				} 
+			}
+			this.searchParams = searchParams
+			this.isSearch = true
 		},
 		currentChange(page) {
 			if(page <= 0) return;
@@ -108,19 +166,50 @@ export default {
 				}
 			})
 		},
+		followStatusChange(val) {
+			this.curFollowStatus = val
+			this.searchParam()
+			this.getProjects()
+		},
+		onQueryChange(query) {
+			// 处理带空格的情况
+			this.searchKeyword = query.trim()
+			this.searchParam()
+			this.getProjects()
+		},
+		onSelectChange(query) {
+			this.curSearchIndex = query
+		},
+		handleDateChange(date) {
+			this.searchDate = date
+			this.searchParam()
+			this.getProjects()
+		},
 		rowClick() {},
 		closePage(val) {
 			this.redirectType = 'list'
 			if(val) this.getProjects(this.currentPage - 1)
+		},
+		// 清空检索
+		async backInit() {
+			this.searchKeyword = ''
+			this.searchDate = []
+			this.searchParams = {}
+			this.$refs.searchDate.clear()
+			this.$refs.searchKeyword.clear()
+			this.isSearch = false
+			await this.getProjects()
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+	.page-container{
+		padding-bottom: 80px!important;
+	}
 	.container {
 		padding: 0 30px;
-
 		.header {
 			display: flex;
 			justify-content: space-between;
@@ -144,6 +233,96 @@ export default {
 			display: flex;
 			justify-content: flex-end;
 			margin: 20px;
+		}
+	}
+	.order-header {
+		display: flex;
+		align-items: center;
+		padding: 0 20px;
+		margin-bottom: -24px;
+
+	.header-left {
+
+		.title {
+				height: 59px;
+				line-height: 59px;
+				color: #4c76af;
+				font-size: 16px;
+				font-weight: 500;
+			}
+		}
+
+	.header-right {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			// margin-left: 30px;
+		.date {
+				margin-right: 20px;
+				padding: 0;
+			}
+		}
+	}
+	.search {
+		height: 52px;
+		width: 100%;
+		background: rgba(57, 99, 188, 0.1);
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		margin-top: 24px;
+
+	.search-tip {
+			margin-left: 40px;
+			height: 52px;
+			line-height: 52px;
+			color: #354058;
+			font-size: 14px;
+
+		.search-keyword {
+				color: $theme;
+			}
+
+		.search-num {
+				color: #f4516c;
+			}
+		}
+
+	.search-back {
+			margin: 8px 20px;
+			height: 32px;
+			background: #f4516c;
+			border: none;
+			border-radius: 2px;
+			color: #fff;
+			padding: 0 13px;
+			font-size: 14px;
+			cursor: pointer;
+		}
+	}
+	.back-btn{
+		margin-left: 15px;
+	}
+
+	@media screen and (max-width: 750px) {
+		.order-header{
+			flex-direction: column;
+			// .header-right{
+			// 	display: none!important;
+			// }
+			.header-right{
+				flex-direction: column;
+			}
+			.container.date{
+				margin: 20px 0;
+				/deep/.el-date-editor{
+					max-width: 300px;
+				}
+			}
+		}
+		
+		.back-btn.is-plain{
+			margin: 15px 0;
 		}
 	}
 </style>

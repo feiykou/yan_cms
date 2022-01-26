@@ -7,10 +7,11 @@ class customerProject {
      * 获取全部客户项目
      * @returns {Promise<*>}
      */
-    async getAllCustomerProjects(page = 0, count = appConfig.pageSize) {
+    async getAllCustomerProjects(page = 0, searchParams = {}, count = appConfig.pageSize) {
         let param = {
             page,
             count,
+            ...searchParams,
             handleError: true
         }
         const res = await get(`v1/customer_project/all`, param)
@@ -23,10 +24,11 @@ class customerProject {
                       1 获取当前管理员的所有项目 为1时，不设置customer_id
      * @returns {Promise<*>}
      */
-    async getCustomerProjects(page = 0, customer_id = 0, isAdmin = 1, count = appConfig.pageSize) {
+    async getCustomerProjects(page = 0, searchParams = {}, customer_id = 0, isAdmin = 1, count = appConfig.pageSize) {
         let param = {
             page,
             count,
+            ...searchParams,
             customer_id,
             isAdmin,
             handleError: true

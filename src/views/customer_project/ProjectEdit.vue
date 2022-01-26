@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<div class="title">新建项目 <span class="back" @click="back(false)"> <i class="iconfont icon-fanhui"></i> 返回 </span></div>
+		<div class="title">编辑项目 <span class="back" @click="back(false)"> <i class="iconfont icon-fanhui"></i> 返回 </span></div>
 		<div class="wrap">
 			<el-row>
 				<el-col :lg="16" :md="20" :sm="24" :xs="24">
@@ -77,7 +77,7 @@
 							<el-input type="textarea" size="medium" v-model="form.reason" placeholder="请填写丢单原因"></el-input>
 						</el-form-item>
 						
-						<el-form-item class="submit">
+						<el-form-item class="submit" v-if="!onlyRead">
 							<el-button type="primary" @click="submitform('form')">保 存</el-button>
 							<el-button @click="resetForm('form')">重 置</el-button>
 						</el-form-item>
@@ -94,7 +94,11 @@ import project from '@/models/customer_project'
 export default {
 	name: 'CulturalAdd',
 	props: {
-		editID: Number
+		editID: Number,
+		onlyRead: {
+			type: Boolean,
+			default: false
+		}
 	},
 	data() {
 		return {

@@ -86,7 +86,7 @@ export default {
 				})
 				return
 			}
-			let projectLists = await project.getCustomerProjects(page, this.linkCode, 0)
+			let projectLists = await project.getCustomerProjects(page, {}, this.linkCode, 0)
 			if (projectLists.total_nums <=0 ){
 				this.tableData = []
 				this.loading = false

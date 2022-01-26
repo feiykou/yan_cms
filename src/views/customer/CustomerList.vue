@@ -359,10 +359,10 @@
 					return;
 				}
 				console.log(selIds)
-				console.log(`http://api.szfxws.com/v1/excel/customer?ids=${selIds}`)
+				console.log(`http://yan.cn/v1/excel/customer?ids=${selIds}`)
 				// this.exportCustomer(selIds)
 				// const baseURL = Config.baseURL || process.env.apiUrl || ''
-				window.location = `http://api.szfxws.com/v1/excel/customer?ids=${selIds}`
+				window.location = `http://yan.cn/v1/excel/customer?ids=${selIds}`
 			},
 			// 导入excel
 			async handleChange(file, fileList) {
@@ -461,7 +461,7 @@
 			},
 			handleDelete(val) {
 				
-				this.$confirm('此操作将永久删除该专栏, 是否继续?', '提示', {
+				this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning',

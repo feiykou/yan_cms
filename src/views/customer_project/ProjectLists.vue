@@ -31,10 +31,12 @@
 				:pagination="pagination"
 				@currentChange="currentChange"
 				@handleEdit="handleEdit"
+				@handleLog="handleLog"
 				@handleDelete="handleDelete"></lin-table>
 		</div>
 		<!-- 编辑页面 -->
 		<project-add v-else-if="redirectType === 'add'" :linkCode="linkCode" @close="closePage"></project-add>
+		<customer-log-list v-else-if="redirectType === 'log'" :projectID="editID" :customerID="customerID" :linkCode="linkCode" @close="closePage"></customer-log-list>
 		<project-edit v-else-if="redirectType === 'edit'" :onlyRead="true" :editID="editID" @close="closePage"></project-edit>
 	</div>
 </template>
@@ -45,6 +47,7 @@ import LinDatePicker from '@/components/base/date-picker/lin-date-picker'
 import project from '@/models/customer_project'
 import ProjectEdit from './ProjectEdit'
 import ProjectAdd from './ProjectAdd'
+import CustomerLogList from "../customer_log/CustomerLogList"
 import store from '@/store'
 export default {
 	name: 'CustomerProjectLists',
@@ -52,7 +55,8 @@ export default {
 		ProjectEdit,
 		ProjectAdd,
 		LinSearch,
-		LinDatePicker
+		LinDatePicker,
+		CustomerLogList
 	},
 	props: {
 		linkCode: Number
@@ -80,10 +84,18 @@ export default {
 				pageTotal: 0
 			},
 			tableData: [],
-			operate: [{ name: '查看', func: 'handleEdit', type: 'primary' }],
+			operate: [
+				{ name: '查看', func: 'handleEdit', type: 'primary' },
+				{
+					name: '日志',
+					func: 'handleLog',
+					type: 'danger',
+					icon: ''
+				}],
 			showEdit: false,
 			loading: false,
 			editID: 1,
+			customerID: 0,
 			redirectType: 'list',
 		}
 	},
@@ -146,6 +158,12 @@ export default {
 		handleEdit({ row }) {
 			this.editID = row.id
 			this.redirectType = 'edit'
+		},
+		handleLog({ row }) {
+			this.linkCode = row.link_code
+			if(row.customer_id) this.customerID = row.customer_id
+			this.editID = row.id
+			this.redirectType = 'log'
 		},
 		handleDelete(val) {
 			this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {

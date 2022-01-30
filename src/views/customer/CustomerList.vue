@@ -71,7 +71,7 @@
 		<!-- 编辑页面 -->
 		<customer-add v-else-if="redirectType === 'add'" @close="closePage"></customer-add>
 		<customer-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></customer-edit>
-		<customer-log-list v-else-if="redirectType === 'log'" :customerID="editID" @close="closePage"></customer-log-list>
+		<customer-log-list v-else-if="redirectType === 'log'" :customerID="editID" :linkCode="linkCode" @close="closePage"></customer-log-list>
 		<customer-project-list v-else-if="redirectType === 'project'" :linkCode="linkCode" @close="closePage"></customer-project-list>
 	</div>
 </template>
@@ -452,6 +452,7 @@
 				this.redirectType = 'edit'
 			},
 			handleLog({ row }) {
+				this.linkCode = row.link_code
 				this.editID = row.id
 				this.redirectType = 'log'
 			},

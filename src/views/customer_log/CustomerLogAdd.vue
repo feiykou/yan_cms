@@ -14,7 +14,7 @@
 						<el-form-item label="日志状态" prop="status">
 							<el-select size="medium" filterable v-model="form.status" placeholder="请选择日志状态">
 								<template v-for="(val, index) in statusData">
-									<el-option :value="index" :key="val" :label="val">
+									<el-option :value="val" :key="val" :label="val">
 										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 										<span>{{ val }}</span>
 									</el-option>
@@ -24,9 +24,23 @@
 						<el-form-item label="交流方式" prop="commun_type">
 							<el-select size="medium" filterable v-model="form.commun_type" placeholder="请选择交流方式">
 								<template v-for="(val, index) in communtypeData">
-									<el-option :value="index" :key="val" :label="val">
+									<el-option :value="val" :key="val" :label="val">
 										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 										<span>{{ val }}</span>
+									</el-option>
+								</template>
+							</el-select>
+						</el-form-item>
+						<el-form-item label="项目列表" prop="project_id">
+							<el-select size="medium" filterable v-model="form.project_id" placeholder="日常维护">
+								<el-option :value="0" key="" label="日常维护">
+									<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">00</span>
+									<span>日常维护</span>
+								</el-option>
+								<template v-for="(val) in projectData">
+									<el-option :value="val.id" :key="val.id" :label="val.name">
+										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ val.id }}</span>
+										<span>{{ val.name }}</span>
 									</el-option>
 								</template>
 							</el-select>
@@ -55,10 +69,14 @@
 	import UploadImgs from '@/components/base/upload-imgs'
 	import customer_log from "@/models/customer_log"
 	import Utils from "@/lin/utils/util"
+
+	import type from "@/models/type"
+	import project from '@/models/customer_project'
 	export default {
 		name: 'CustomerLogAdd',
 		props: {
-			customerID: Number
+			customerID: Number,
+			linkCode: Number
 		},
 		components: {
 			UploadImgs,
@@ -67,8 +85,13 @@
 		data() {
 			return {
 				content: '',
+				fieldObj: {
+					"status": "statusData",
+					"commun_type": "communtypeData"
+				},
 				statusData: ['初步联系','见面拜访','停滞客户','成交客户','正式报价'],
 				communtypeData: ['见面拜访','微信','钉钉'],
+				projectData: [],
 				editInit: {
 					selector: "#tinymce", //tinymce的id
 					mobile: {
@@ -99,6 +122,8 @@
 			}
 		},
 		created() {
+			this.getTypes()
+			this.getProjects()
 		},
 		methods: {
 			submitForm(formName) {
@@ -132,7 +157,43 @@
 					}
 				})
 			},
-
+			// 获取类型
+			async getTypes() {
+				let fields = []
+				const fieldObj = this.fieldObj
+				for(let obj in fieldObj) {
+					fields.push(obj)
+				}
+				fields = fields.join()
+				let result = await type.getTypeByField(fields)
+				if(!result || result.length == 0) return;
+				
+				for(let obj in fieldObj) {
+					const key = fieldObj[obj]
+					const curData = result.find(val => {
+						return val['field'] == obj
+					})
+					if(curData) {
+						this[key] = curData['value']
+					}
+				}
+				
+			},
+			async getProjects(page = 0) {
+				if(this.linkCode <= 0) {
+					this.$message({
+						type: 'success',
+						message: `客户错误`,
+					})
+					return
+				}
+				let projectLists = await project.getCustomerProjects(page, {}, this.linkCode, 0, 20)
+				if (projectLists.total_nums <=0 ){
+					this.projectData = []
+					return;
+				}
+				this.projectData = projectLists.collection
+			},
 			// 重置表单
 			resetForm(formName) {
 				this.$refs[formName].resetFields()
@@ -170,12 +231,12 @@
 		}
 	}
 	.upload-imgs-container{
-		display: grid;
-		grid-template-columns: repeat(2,1fr);
-		grid-column-gap: 20px;
-		/deep/.thumb-item,/deep/.upload-item{
-			width: 100%!important;
-			height: 100px!important;
-		}
+		// display: grid;
+		// grid-template-columns: repeat(2,1fr);
+		// grid-column-gap: 20px;
+		// /deep/.thumb-item{
+		// 	width: 100%!important;
+		// 	height: 100px!important;
+		// }
 	}
 </style>

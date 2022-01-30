@@ -16,13 +16,14 @@
 				:operate="operate"
 				:loading="loading"
 				:curPage="currentPage"
+				@handleLog="handleLog"
 				@currentChange="currentChange"
 				@handleEdit="handleEdit"
 				@handleDelete="handleDelete"></lin-table>
 		</div>
 
 		<!-- 编辑页面 -->
-	
+		<customer-log-list v-else-if="redirectType === 'log'" :projectID="editID" :customerID="customerID" :linkCode="linkCode" @close="closePage"></customer-log-list>
 		<project-add v-else-if="redirectType === 'add'" :linkCode="linkCode" @close="closePage"></project-add>
 		<project-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></project-edit>
 	</div>
@@ -32,18 +33,21 @@
 import project from '@/models/customer_project'
 import ProjectEdit from './ProjectEdit'
 import ProjectAdd from './ProjectAdd'
+import CustomerLogList from "../customer_log/CustomerLogList"
 
 export default {
 	name: 'ProjectList',
 	components: {
 		ProjectEdit,
-		ProjectAdd
+		ProjectAdd,
+		CustomerLogList
 	},
 	props: {
 		linkCode: {
 			type: Number,
 			default: 0
-		}
+		},
+		customerID: Number
 	},
 	data() {
 		return {
@@ -73,6 +77,12 @@ export default {
 				func: 'handleDelete',
 				type: 'danger',
 				auth: '删除客户项目',
+			})
+			this.operate.push({
+				name: '日志',
+				func: 'handleLog',
+				type: 'danger',
+				icon: ''
 			})
 			this.getProjects()
 	},
@@ -107,6 +117,11 @@ export default {
 		handleEdit({ row }) {
 			this.editID = row.id
 			this.redirectType = 'edit'
+		},
+		handleLog({ row }) {
+			this.linkCode = row.link_code
+			this.editID = row.id
+			this.redirectType = 'log'
 		},
 		// async handleCellSave({ row, prop }) {
 		// 	const info = this.singleUpdate({

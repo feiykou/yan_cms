@@ -7,7 +7,7 @@
                     <span>客户日志列表</span>  
                     <div class="log-action-btn" v-if="!hideLogBtn">
                         <el-button class="add-banner-item" type="primary" plain @click="handleAdd">添加客户日志</el-button>
-                        <el-upload
+                        <!-- <el-upload
                             class="upload-demo"
                             action=""
                             :on-change="handleChange"
@@ -20,7 +20,7 @@
                             :on-change="handleChange"
                             :file-list="fileList">
                             <el-button size="small" type="primary">导入excel数据</el-button>
-                        </el-upload>
+                        </el-upload> -->
                     </div>
                 </div>
                 <span class="back" @click="back(false)"> <i class="iconfont icon-fanhui"></i> 返回 </span>
@@ -69,20 +69,26 @@
             </div>
 		</div>
         <!-- 编辑页面 -->
-		<customer-log-add v-else-if="redirectType === 'add'" :customerID="customerID" @close="closePage"></customer-log-add>
-		<customer-log-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></customer-log-edit>
+		<customer-log-add v-else-if="redirectType === 'add'" :linkCode="linkCode" :customerID="customerID" @close="closePage"></customer-log-add>
+		<customer-log-edit v-else-if="redirectType === 'edit'" :linkCode="linkCode" :editID="editID" @close="closePage"></customer-log-edit>
     </div>
 </template>
 
 <script>
-import CustomerLogAdd from "./CustomerLogAdd";
-import CustomerLogEdit from "./CustomerLogEdit";
+import CustomerLogAdd from "./CustomerLogAdd"
+import CustomerLogEdit from "./CustomerLogEdit"
 import customer_log from "@/models/customer_log"
 import excel from "@/models/excel"
+import customer from '@/models/customer'
 export default {
     props: {
         customerID: Number,
-        hideLogBtn: Boolean
+        projectID: Number,
+        hideLogBtn: Boolean,
+        linkCode: {
+			type: Number,
+			default: 0
+		}
     },
     filters: {
         dataFormal: function(value){
@@ -98,6 +104,7 @@ export default {
             tableData: [],
             fileList: [],
             editID: 1,
+            entryType: 'customer',
             pagination: {
                 pageTotal: 0
             },
@@ -111,6 +118,7 @@ export default {
     },
     created() {
         this.getCustomerLogs()
+        this.getCustomerID()
     },
     methods: {
         async importCustomerLog(file) {
@@ -126,7 +134,6 @@ export default {
             }
         },
         async handleChange(file, fileList) {
-            console.log(file)
             await this.importCustomerLog(file)
         },
         solveImgPreview() {
@@ -148,7 +155,14 @@ export default {
         },
         async getCustomerLogs(page = 0) {
             this.loading = true
-            let customerLists = await customer_log.getCustomerLogs(this.customerID, page)
+            const params = {};
+            if(this.customerID > 0){
+                params['customer_id'] = this.customerID
+            }
+            if(this.projectID > 0){
+                params['project_id'] = this.projectID
+            }
+            let customerLists = await customer_log.getCustomerLogs(params, page)
             if (customerLists && customerLists.total_nums <=0 ){
                 this.tableData = []
                 this.loading = false
@@ -162,6 +176,19 @@ export default {
             this.tableData = customerLists.collection
             this.solveImgPreview()
             this.loading = false
+        },
+        async getCustomerID() {
+            if(!this.customerID) {
+                this.customerID = await this.getCustomer(this.linkCode)
+            }
+        },
+        async getCustomer(link_code) {
+            try {
+                const res = await customer.getCustomerByLinkCode(link_code)
+                return res.id
+            } catch(error) {
+                return 0
+            }
         },
         currentChange(page) {
             if(page <= 0) return;
@@ -177,6 +204,13 @@ export default {
             })
         },
         handleAdd() {
+            if(this.customerID == 0) {
+                this.$message({
+                    type: 'error',
+                    message: `未选中客户，无法添加日志`,
+                })
+                return
+            }
             this.redirectType = 'add'
         },
         handleEdit(id) {

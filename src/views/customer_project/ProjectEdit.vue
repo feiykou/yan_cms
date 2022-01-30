@@ -5,6 +5,9 @@
 			<el-row>
 				<el-col :lg="16" :md="20" :sm="24" :xs="24">
 					<el-form :model="form" status-icon ref="form" v-loading="loading" :rules="rules" label-width="120px" @submit.native.prevent>
+						<el-form-item label="项目名" prop="name">
+							<el-input size="medium" v-model="form.name" placeholder="请填写项目名"></el-input>
+						</el-form-item>
 						<el-form-item label="使用场景" prop="scene">
 							<el-input size="medium" v-model="form.scene" placeholder="请填写使用场景"></el-input>
 						</el-form-item>
@@ -90,7 +93,7 @@
 
 <script>
 import project from '@/models/customer_project'
-
+import type from "@/models/type"
 export default {
 	name: 'CulturalAdd',
 	props: {
@@ -106,11 +109,17 @@ export default {
 			demandBgData: ['已受灾','应付检查','系统统一安装','领导要求','其他'],
 			productTypeData: ['不锈钢开启式','不锈钢密闭式','铝合金组合式','水动力','ABS'],
 			industryData: ['商场','工厂','其他'],
+			fieldObj: {
+				"industry": "industryData",
+				"product_type": "productTypeData",
+				"demand_bg": "demandBgData"
+			},
 			industry_other: '', // 客户行业其他内容填写
 			demand_bg_other: '',
 			demandBgDisplay: false,  // 客户需求背景是否禁用
 			industryDisplay: false,  // 客户行业其他是否禁用
-			form: {					
+			form: {			
+				name: '',		
 				scene: '',
 				industry: '',
 				product_type: '',
@@ -130,16 +139,14 @@ export default {
 			},
 			rules: {
 				name: [
-				{ required: true, message: '请输入名称', trigger: 'blur' }
-				],
-				title: [
-				{ required: true, message: '请输入标题', trigger: 'blur' }
+					{ required: true, message: '请输入名称', trigger: 'blur' }
 				]
 			},
 		}
 	},
 	created() {
 		this.getProject()
+		this.getTypes()
 	},
 	watch: {
 		form: {
@@ -228,6 +235,28 @@ export default {
 					return false
 				}
 			})
+		},
+		// 获取类型
+		async getTypes() {
+			let fields = []
+			const fieldObj = this.fieldObj
+			for(let obj in fieldObj) {
+				fields.push(obj)
+			}
+			fields = fields.join()
+			let result = await type.getTypeByField(fields)
+			if(!result || result.length == 0) return;
+			
+			for(let obj in fieldObj) {
+				const key = fieldObj[obj]
+				const curData = result.find(val => {
+					return val['field'] == obj
+				})
+				if(curData) {
+					this[key] = curData['value']
+				}
+			}
+			
 		},
 		// 重置表单
 		resetForm(formName) {

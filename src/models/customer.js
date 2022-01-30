@@ -74,9 +74,19 @@ class Customer {
      * @returns {Promise<*>}
      */
     async getCustomer(id) {
-        const res = await get(`v1/customer/${id}`, { handleError: true })
+            const res = await get(`v1/customer/${id}`, { handleError: true })
+            return res
+        }
+        /**
+         * 获取单个客户
+         * @param link_code
+         * @returns {Promise<*>}
+         */
+    async getCustomerByLinkCode(link_code = 0) {
+        const res = await get(`v1/customer/link_code/${link_code}`, { handleError: true })
         return res
     }
+
 
     //   /**
     //  * 获取单个客户

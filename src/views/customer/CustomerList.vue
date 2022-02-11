@@ -41,7 +41,7 @@
 								<el-button size="small" type="primary">导入excel数据</el-button>
 							</el-upload>
 							<div class="download-icon">
-								<a href="http://yan.cn/static/file/客户信息模板.xlsx" class="link"><img src="@/assets/img/icon/download@icon.png"> 下载模板</a>
+								<a href="/static/file/客户信息模板.xlsx" class="link"><img src="@/assets/img/icon/download@icon.png"> 下载模板</a>
 							</div>
 						</div>
 						

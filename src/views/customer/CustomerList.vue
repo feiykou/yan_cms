@@ -358,11 +358,10 @@
 					})
 					return;
 				}
-				console.log(selIds)
-				console.log(`http://yan.cn/v1/excel/customer?ids=${selIds}`)
+				
 				// this.exportCustomer(selIds)
 				// const baseURL = Config.baseURL || process.env.apiUrl || ''
-				window.location = `http://yan.cn/v1/excel/customer?ids=${selIds}`
+				window.location = `http://api.szfxws.com/v1/excel/customer?ids=${selIds}`
 			},
 			// 导入excel
 			async handleChange(file, fileList) {

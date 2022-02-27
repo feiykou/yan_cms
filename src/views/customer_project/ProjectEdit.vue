@@ -73,6 +73,16 @@
 						<el-form-item label="客户反馈" prop="custom_feedback">
 							<el-input type="textarea" size="medium" v-model="form.custom_feedback" placeholder="请填写客户反馈"></el-input>
 						</el-form-item>
+						<el-form-item label="跟进状态" prop="follow_status">
+							<el-select size="medium" filterable v-model="form.follow_status" placeholder="请选择跟进状态">
+								<template v-for="(val, index) in followStatuslData">
+									<el-option :value="val" :key="index" :label="val">
+										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
+										<span>{{ val }}</span>
+									</el-option>
+								</template>
+							</el-select>
+						</el-form-item>
 						<el-form-item label="跟进次数" prop="follow_count">
 							<el-input size="small" v-model="form.follow_count" placeholder="请填写跟进次数"></el-input>
 						</el-form-item>
@@ -112,6 +122,7 @@ export default {
 			fieldObj: {
 				"industry": "industryData",
 				"product_type": "productTypeData",
+				"follow_status": "followStatuslData",
 				"demand_bg": "demandBgData"
 			},
 			industry_other: '', // 客户行业其他内容填写
@@ -135,7 +146,8 @@ export default {
 				follow_difficulty: '',
 				custom_feedback: '',
 				follow_count: 0,
-				reason: ''
+				reason: '',
+				follow_status: ''
 			},
 			rules: {
 				name: [

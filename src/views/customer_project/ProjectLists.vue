@@ -6,7 +6,7 @@
 				<div class="order-header">
 					<div class="header-left"><p class="title"></p></div>
 					<div class="header-right" v-auth="'搜索日志'">
-						<!-- <lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入责任人/客户名" /> -->
+						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户名/项目名" />
 						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
 						<el-select v-model="curFollowStatus" @change="followStatusChange" size="medium" filterable default-first-option placeholder="请选择跟进状态" prop="curFollowStatus" class="">
 							<el-option label="全部跟进状态" :value="-1"></el-option>
@@ -68,7 +68,7 @@ export default {
 				{ prop: 'id', label: 'id', width: 150 },
 				{ prop: 'customer_name', label: '客户名'},
 				{ prop: 'scene', label: '使用场景'},
-				{ prop: 'author', label: '录入人员' },
+				{ prop: 'industry', label: '行业' },
 				{ prop: 'create_time', label: '生成时间'},
 			],
 			curFollowStatus: -1, // 跟进状态 -1是全部状态
@@ -78,7 +78,8 @@ export default {
 			isSearch: false, // 是否处于搜索状态
 			curSearchIndex: 0,
 			selData: [
-				'责任人'
+				'客户名',
+				'项目名'
 			],
 			pagination: {
 				pageTotal: 0
@@ -137,10 +138,10 @@ export default {
 			}
 			if( this.searchKeyword ) {
 				if(this.curSearchIndex == 0) {
-					searchParams['name'] = this.searchKeyword
+					searchParams['customer_name'] = this.searchKeyword
 				}
 				if(this.curSearchIndex == 1) {
-					searchParams['author'] = this.searchKeyword
+					searchParams['name'] = this.searchKeyword
 				} 
 			}
 			this.searchParams = searchParams
@@ -256,7 +257,7 @@ export default {
 	.order-header {
 		display: flex;
 		align-items: center;
-		padding: 0 20px;
+		padding-right: 20px;
 		margin-bottom: -24px;
 
 	.header-left {
@@ -271,10 +272,12 @@ export default {
 		}
 
 	.header-right {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			// margin-left: 30px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		.lin-search{
+			margin-right: 30px;
+		}
 		.date {
 				margin-right: 20px;
 				padding: 0;

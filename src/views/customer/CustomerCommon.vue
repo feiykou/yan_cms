@@ -126,6 +126,7 @@
 					this.loading = true
 					const res = await customer.getPublicSetCustomers(id)
 					this.loading = false
+					console.log(res)
 					if (res.error_code === 0) {
 						this.getCustomers(this.currentPage - 1)
 						this.$message({

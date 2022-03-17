@@ -49,6 +49,7 @@ import ProjectEdit from './ProjectEdit'
 import ProjectAdd from './ProjectAdd'
 import CustomerLogList from "../customer_log/CustomerLogList"
 import store from '@/store'
+import type from "@/models/type"
 export default {
 	name: 'CustomerProjectLists',
 	components: {
@@ -84,6 +85,10 @@ export default {
 			pagination: {
 				pageTotal: 0
 			},
+			followStatusData: [],
+			fieldObj: {
+				"follow_status": "followStatusData",
+			},
 			tableData: [],
 			operate: [
 				{ name: '查看', func: 'handleEdit', type: 'primary' },
@@ -101,6 +106,7 @@ export default {
 		}
 	},
 	created() {
+		this.getTypes()
 		this.getProjects()
 	},
 	methods: {
@@ -208,6 +214,27 @@ export default {
 		closePage(val) {
 			this.redirectType = 'list'
 			if(val) this.getProjects(this.currentPage - 1)
+		},
+		// 获取类型
+		async getTypes() {
+			let fields = []
+			const fieldObj = this.fieldObj
+			for(let obj in fieldObj) {
+				fields.push(obj)
+			}
+			fields = fields.join()
+			let result = await type.getTypeByField(fields)
+			if(!result || result.length == 0) return;
+			for(let obj in fieldObj) {
+				const key = fieldObj[obj]
+				const curData = result.find(val => {
+					return val['field'] == obj
+				})
+				if(curData) {
+					this[key] = curData['value']
+				}
+			}
+			
 		},
 		// 清空检索
 		async backInit() {
@@ -336,7 +363,7 @@ export default {
 			}
 			.container.date{
 				margin: 20px 0;
-				/deep/.el-date-editor{
+				::v-deep.el-date-editor{
 					max-width: 300px;
 				}
 			}

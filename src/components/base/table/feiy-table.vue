@@ -362,7 +362,7 @@
 </script>
 
 <style lang="scss" scoped>
-	/deep/ .el-table th > .cell{
+	::v-deep .el-table th > .cell{
 		padding-left: 20px;
 	}
 

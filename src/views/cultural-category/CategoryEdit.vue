@@ -305,10 +305,10 @@ export default {
 		display: flex;
 		align-items: center;
 		margin-top: 20px;
-		/deep/ .el-form-item{
+		::v-deep .el-form-item{
 			margin: 0 10px 0 0!important;
 		}
-		/deep/ .el-form-item__content {
+		::v-deep .el-form-item__content {
 			margin: 0!important;
 		}
 	}

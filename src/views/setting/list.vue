@@ -292,7 +292,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	.wrap /deep/{
+	.wrap ::v-deep{
 		.el-tabs__content{
 			padding-top: 30px;
 		}

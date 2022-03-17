@@ -45,6 +45,9 @@
 							<template v-else-if="item.type === 'input'">
 								<el-input style="width: 60px; text-align: center;" v-model="scope.row[item.prop]"></el-input>
 							</template>
+              <template v-else-if="item.type === 'html'">
+                <span v-html="scope.row[item.prop]"></span>
+							</template>
 							<template v-else-if="item.type === 'tag'">
 								<slot :tag="scope.row[item.prop]"></slot>
 <!--								<el-tag type="info">{{ scope.row[item.prop] }}</el-tag>-->
@@ -56,7 +59,7 @@
 				</el-table-column>
 			</template>
 
-      <el-table-column v-if="operate.length > 0" label="操作" fixed="right" width="205">
+      <el-table-column v-if="operate.length > 0" label="操作" fixed="right" :width="owidth">
         <template slot-scope="scope">
           <template v-for="(item, index) in operate">
             <el-button
@@ -98,6 +101,10 @@ import appConfig from '@/config/index'
 export default {
   name: 'lin-table',
   props: {
+    owidth: {
+      type: Number,
+      default: 205
+    },
     tableColumn: {
       // 表头名称
       type: Array,
@@ -247,15 +254,15 @@ export default {
       if (!this.oldKey.includes(row.key)) {
         this.oldKey.push(row.key)
         const data = this.oldVal.concat(row)
-        this.handleSelectionChange(data)
+        // this.handleSelectionChange(data)
         // 选中checkbox
-        this.toggleSelection(this.currentData.filter(item => item.key === row.key))
+        // this.toggleSelection(this.currentData.filter(item => item.key === row.key))
         // 取消选中
       } else {
         this.oldKey = this.oldKey.filter(item => item !== row.key)
         const data = this.oldVal.filter(item => item.key !== row.key)
-        this.handleSelectionChange(data)
-        this.toggleSelection(this.currentData.filter(item => item.key === row.key), false)
+        // this.handleSelectionChange(data)
+        // this.toggleSelection(this.currentData.filter(item => item.key === row.key), false)
       }
       // 选中-单选
       if (this.currentOldRow && this.currentOldRow.key === row.key) {
@@ -452,7 +459,7 @@ export default {
   width: 135px;
 }
 
-/deep/ .el-table th > .cell{
+::v-deep .el-table th > .cell{
 	padding-left: 20px;
 }
 

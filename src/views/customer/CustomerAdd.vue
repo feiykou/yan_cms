@@ -258,12 +258,12 @@
 			display: flex;
     		flex-direction: column;
 			margin-bottom: 0!important;
-			/deep/.el-form-item__label{
+			::v-deep.el-form-item__label{
 				float: none;
 				width: 100%!important;
 				text-align: left!important;
 			}
-			/deep/.el-form-item__content{
+			::v-deep.el-form-item__content{
 				float: none;
 				margin-left: 0!important;
 			}

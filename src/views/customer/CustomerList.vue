@@ -128,7 +128,7 @@
 					{ prop: 'channel', label: '客户来源', width: 150 },
 					{ prop: 'address', label: '地址', width: 150 },
 					{ prop: 'author', label: '责任人', width: 150 },
-					{ prop: 'create_time', label: '录入时间' }
+					{ prop: 'create_time', label: '录入时间', width: 200 }
 				],
 				followStatusData: [],
 				tableData: [],
@@ -358,10 +358,20 @@
 					})
 					return;
 				}
+
+				this.loading = true
+				this.$message({
+					type: 'warning',
+					message: `正在导出中，请稍后`,
+				})
 				
 				// this.exportCustomer(selIds)
 				// const baseURL = Config.baseURL || process.env.apiUrl || ''
 				window.location = `http://api.szfxws.com/v1/excel/customer?ids=${selIds}`
+
+				setTimeout(() => {
+					this.loading = false
+				},2000)
 			},
 			// 导入excel
 			async handleChange(file, fileList) {
@@ -370,11 +380,10 @@
 			async getCustomers(page = 0) {
 				this.loading = true
 				let customerLists = {}
-				if(store.state.auths.includes('获取全部客户信息')) {
-					customerLists = await customer.getCustomers(page,this.searchParams)
-				}
-				if(store.state.user.username == 'super') {
+				if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
 					customerLists = await customer.getAllCustomers(page,this.searchParams)
+				} else {
+					customerLists = await customer.getCustomers(page,this.searchParams)
 				}
 				if (customerLists.total_nums <=0 ){
 					this.tableData = []
@@ -497,7 +506,7 @@
 	}
 	// 上传
 	.excel-btn{
-		/deep/ .el-button{
+		::v-deep .el-button{
             padding: 8px 16px;
             font-size: 15px;
         }
@@ -505,7 +514,7 @@
     .upload-demo{
         display: inline-block;
         margin-left: 20px;
-        /deep/ .el-upload-list{
+        ::v-deep .el-upload-list{
             display: none;
         }
     }
@@ -636,7 +645,7 @@
 			}
 			.container.date{
 				margin: 20px 0;
-				/deep/.el-date-editor{
+				::v-deep.el-date-editor{
 					max-width: 300px;
 				}
 			}

@@ -115,7 +115,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	.multiple-select /deep/{
+	.multiple-select ::v-deep{
 		.el-select .el-tag{
 			background-color: #f4f4f5!important;
 		}

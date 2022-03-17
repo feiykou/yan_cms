@@ -76,7 +76,8 @@
 		name: 'CustomerLogAdd',
 		props: {
 			customerID: Number,
-			linkCode: Number
+			linkCode: Number,
+			userCode: Number
 		},
 		components: {
 			UploadImgs,
@@ -135,6 +136,7 @@
 							const mainUrl = await this.$refs.uploadImgs.getValue()
 							this.form['img_urls'] = Utils.solveUploadMultipleImg(mainUrl)
 							this.form['customer_id'] = this.customerID
+							if(this.userCode) this.form['user_code'] = this.userCode
 							const res = await customer_log.addCustomerLog(this.form)
 							if (res.error_code === 0) {
 								this.$message.success(`${res.msg}`)
@@ -234,7 +236,7 @@
 		// display: grid;
 		// grid-template-columns: repeat(2,1fr);
 		// grid-column-gap: 20px;
-		// /deep/.thumb-item{
+		// ::v-deep.thumb-item{
 		// 	width: 100%!important;
 		// 	height: 100px!important;
 		// }

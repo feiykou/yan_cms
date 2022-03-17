@@ -1,5 +1,5 @@
 import adminConfig from './admin'
-import customReportConfig from './customReport'
+// import customReportConfig from './customReport'
 import categorySubRouter from './categorySub'
 import categoryLastRouter from './categoryLast'
 import gridCategoryRouter from './gridCategory'
@@ -48,7 +48,7 @@ let homeRouter = [{
         icon: 'iconfont icon-rizhiguanli',
     },
     StaticsConfig,
-    customReportConfig,
+    // customReportConfig,
     // culturalCateSubRouter,
     CustomerConfig,
     CustomerProjectConfig,

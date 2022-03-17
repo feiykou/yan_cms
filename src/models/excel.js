@@ -39,6 +39,15 @@ class Excel {
         return res
     }
 
+    /**
+     * 导出客户日志
+     * @returns {Promise<*>}
+     */
+    async exportCustomerLog(ids = []) {
+        const res = await get('v1/excel/customer_log', { ids, handleError: true })
+        console.log(res)
+        return res
+    }
 
     //   return this.$axios({
     //     method: 'post',

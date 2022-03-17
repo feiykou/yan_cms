@@ -69,7 +69,7 @@
             </div>
 		</div>
         <!-- 编辑页面 -->
-		<customer-log-add v-else-if="redirectType === 'add'" :linkCode="linkCode" :customerID="customerID" @close="closePage"></customer-log-add>
+		<customer-log-add v-else-if="redirectType === 'add'" :userCode="userCode" :linkCode="linkCode" :customerID="customerID" @close="closePage"></customer-log-add>
 		<customer-log-edit v-else-if="redirectType === 'edit'" :linkCode="linkCode" :editID="editID" @close="closePage"></customer-log-edit>
     </div>
 </template>
@@ -88,7 +88,7 @@ export default {
         linkCode: {
 			type: Number,
 			default: 0
-		}
+        }
     },
     filters: {
         dataFormal: function(value){
@@ -178,14 +178,19 @@ export default {
             this.loading = false
         },
         async getCustomerID() {
-            if(!this.customerID) {
-                this.customerID = await this.getCustomer(this.linkCode)
+            const result = await this.getCustomer(this.linkCode)
+            if(result) {
+                this.customerID = result['id']
+                this.userCode = result['user_code']
             }
         },
         async getCustomer(link_code) {
             try {
                 const res = await customer.getCustomerByLinkCode(link_code)
-                return res.id
+                return {
+                    id: res.id,
+                    user_code: res.user_code
+                }
             } catch(error) {
                 return 0
             }
@@ -252,11 +257,11 @@ export default {
     .upload-demo{
         display: inline-block;
         margin-left: 20px;
-        /deep/ .el-button{
+        ::v-deep .el-button{
             padding: 8px 16px;
             font-size: 15px;
         }
-        /deep/ .el-upload-list{
+        ::v-deep .el-upload-list{
             display: none;
         }
     }

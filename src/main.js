@@ -42,9 +42,9 @@ Vue.component(LinTable.name, LinTable)
 
 /* eslint no-unused-vars: 0 */
 const AppInstance = new Vue({
-  router,
-  store,
-  render: h => h(App),
+    router,
+    store,
+    render: h => h(App),
 }).$mount('#app')
 
 // 设置 App 实例

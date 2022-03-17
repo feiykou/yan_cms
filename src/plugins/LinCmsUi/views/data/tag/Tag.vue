@@ -178,7 +178,7 @@ export default {
               margin-left: 10px;
               vertical-align: bottom;
             }
-            .input-new-tag /deep/ .el-input__inner {
+            .input-new-tag ::v-deep .el-input__inner {
               height: 24px;
             }
           </style>
@@ -276,7 +276,7 @@ export default {
   margin-left: 10px;
   vertical-align: bottom;
 }
-.input-new-tag /deep/ .el-input__inner {
+.input-new-tag ::v-deep .el-input__inner {
   height: 24px;
 }
 </style>

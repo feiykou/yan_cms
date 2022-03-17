@@ -197,7 +197,7 @@ export default {
 	}
 
 	.el-form {
-		/deep/ {
+		::v-deep {
 			.el-form-item__label{
 				width: 100px!important;
 			}

@@ -159,17 +159,24 @@
 					func: 'handleProject',
 					type: 'danger',
 					icon: 'service',
-				}
-			]
-			if(store.state.auths.includes('删除客户') || store.state.user.username == 'super') {
-				this.operate.push({
+				},
+				{
 					name: '删除',
 					func: 'handleDelete',
 					type: 'danger',
 					icon: 'delete',
 					auth: '删除客户'
-				})
-			}
+				}
+			]
+			// if(store.state.auths.includes('删除客户') || store.state.user.username == 'super') {
+			// 	this.operate.push({
+			// 		name: '删除',
+			// 		func: 'handleDelete',
+			// 		type: 'danger',
+			// 		icon: 'delete',
+			// 		auth: '删除客户'
+			// 	})
+			// }
 			this.getCustomers()
 			this.getTypes()
 		},
@@ -366,8 +373,8 @@
 				})
 				
 				// this.exportCustomer(selIds)
-				// const baseURL = Config.baseURL || process.env.apiUrl || ''
-				window.location = `http://api.szfxws.com/v1/excel/customer?ids=${selIds}`
+				const baseURL = Config.baseURL || process.env.apiUrl || ''
+				window.location = `${baseURL}/v1/excel/customer?ids=${selIds}`
 
 				setTimeout(() => {
 					this.loading = false

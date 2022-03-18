@@ -397,8 +397,8 @@
 					message: `正在导出中，请稍后`,
 				})
 				// this.exportCustomer(selIds)
-				// const baseURL = Config.baseURL || process.env.apiUrl || ''
-				window.location = `http://api.szfxws.com/v1/excel/customer_log?ids=${selIds}`
+				const baseURL = Config.baseURL || process.env.apiUrl || ''
+				window.location = `${baseURL}/v1/excel/customer_log?ids=${selIds}`
 				setTimeout(() => {
 					this.loading = false
 				},2000)

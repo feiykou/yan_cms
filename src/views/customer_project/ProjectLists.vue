@@ -113,7 +113,7 @@ export default {
 		async getProjects(page = 0) {
 			this.loading = true
 			let projectLists = {}
-			if(store.state.auths.includes('全部项目信息')) {
+			if(store.state.user.username == 'super' || store.state.auths.includes('全部项目信息')) {
 				// 获取全部项目
 				projectLists = await project.getAllCustomerProjects(page, this.searchParams)
 			} else {

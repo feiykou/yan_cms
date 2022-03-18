@@ -136,7 +136,7 @@
 </template>
 
 <script>
-	import { provinceAndCityData, regionDataPlus, TextToCode } from 'element-china-area-data'
+	import { provinceAndCityData, regionDataPlus, TextToCode, CodeToText } from 'element-china-area-data'
 	import customer from "@/models/customer"
 	import store from '@/store'
 	import type from "@/models/type"
@@ -382,8 +382,11 @@
 						cityCode = TextToCode[provice][city].code,
 						proviceCode = TextToCode[provice].code,
 						addressArr = [proviceCode, cityCode]
+
+						console.log(city)
+						console.log(provice)
 						form['address'] = addressArr
-					} 
+					}
 				}
 				this.form = form
 			},

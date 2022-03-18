@@ -71,7 +71,7 @@
 		<!-- 编辑页面 -->
 		<customer-add v-else-if="redirectType === 'add'" @close="closePage"></customer-add>
 		<customer-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></customer-edit>
-		<customer-log-list v-else-if="redirectType === 'log'" :customerID="editID" :linkCode="linkCode" @close="closePage"></customer-log-list>
+		<customer-log-list v-else-if="redirectType === 'log'" :userCode="userCode" :linkCode="linkCode" @close="closePage"></customer-log-list>
 		<customer-project-list v-else-if="redirectType === 'project'" :linkCode="linkCode" @close="closePage"></customer-project-list>
 	</div>
 </template>
@@ -139,6 +139,7 @@
 				showEdit: false,
 				editID: 1,
 				linkCode: 0,
+				userCode: 0,
 				redirectType: 'list',
 				currentPage: 1,
 				excelLock: true,
@@ -387,34 +388,44 @@
 			async getCustomers(page = 0) {
 				this.loading = true
 				let customerLists = {}
-				if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
-					customerLists = await customer.getAllCustomers(page,this.searchParams)
-				} else {
-					customerLists = await customer.getCustomers(page,this.searchParams)
-				}
-				if (customerLists.total_nums <=0 ){
-					this.tableData = []
-					this.loading = false
-					return;
-				}
-				if (!this.pagination.pageTotal || this.pagination.pageTotal != customerLists.total_nums){
-					this.pagination = {
-						pageTotal: customerLists.total_nums
+				try {
+					if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
+						customerLists = await customer.getAllCustomers(page,this.searchParams)
+					} else {
+						customerLists = await customer.getCustomers(page,this.searchParams)
 					}
-				}
-				customerLists.collection.forEach(val => {
-					val['is_release_user'] = val['is_release_user'] === 0 ? '正常' : '已释放'
-					val['status'] = val['status'] === 0 ? '未通过' : '通过'
-					val["key"] = val.id
-					if(val['address']) {
-						if(!this.isChinese(val['address'][0])) {
-							val['address'] = CodeToText[val['address'][0]] + '-' + CodeToText[val['address'][1]]
-						} else {
-							val['address'] = val['address'][0] + '-' + val['address'][1]
+					if (customerLists.total_nums <=0 ){
+						this.tableData = []
+						this.loading = false
+						return;
+					}
+					if (!this.pagination.pageTotal || this.pagination.pageTotal != customerLists.total_nums){
+						this.pagination = {
+							pageTotal: customerLists.total_nums
 						}
 					}
-				})
-				this.tableData = customerLists.collection
+					customerLists.collection.forEach(val => {
+						val['is_release_user'] = val['is_release_user'] === 0 ? '正常' : '已释放'
+						val['status'] = val['status'] === 0 ? '未通过' : '通过'
+						val["key"] = val.id
+						if(val['address']) {
+							if(!this.isChinese(val['address'][0])) {
+								val['address'] = CodeToText[val['address'][0]] + '-' + CodeToText[val['address'][1]]
+							} else {
+								val['address'] = val['address'][0] + '-' + val['address'][1]
+							}
+						}
+					})
+					this.tableData = customerLists.collection
+				} catch(error) {
+					let message = error.data.msg
+					if(message && typeof message === 'object'){
+						for (const key in message){
+							this.$message.error(message[key])
+							await setTimeout(function () {}, 1000)
+						}
+					}
+				}
 				this.loading = false
 			},
 			// 3天未跟进
@@ -469,6 +480,7 @@
 			handleLog({ row }) {
 				this.linkCode = row.link_code
 				this.editID = row.id
+				this.userCode = row.user_code
 				this.redirectType = 'log'
 			},
 			handleProject({ row }) {

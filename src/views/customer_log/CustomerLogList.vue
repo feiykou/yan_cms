@@ -69,8 +69,8 @@
             </div>
 		</div>
         <!-- 编辑页面 -->
-		<customer-log-add v-else-if="redirectType === 'add'" :userCode="userCode" :linkCode="linkCode" :customerID="customerID" @close="closePage"></customer-log-add>
-		<customer-log-edit v-else-if="redirectType === 'edit'" :linkCode="linkCode" :editID="editID" @close="closePage"></customer-log-edit>
+		<customer-log-add v-else-if="redirectType === 'add'" :userCode="userCode" :projectID="projectID" :linkCode="linkCode" :customerID="customerID" @close="closePage"></customer-log-add>
+		<customer-log-edit v-else-if="redirectType === 'edit'" :linkCode="linkCode" :projectID="projectID" :editID="editID" @close="closePage"></customer-log-edit>
     </div>
 </template>
 
@@ -80,9 +80,13 @@ import CustomerLogEdit from "./CustomerLogEdit"
 import customer_log from "@/models/customer_log"
 import excel from "@/models/excel"
 import customer from '@/models/customer'
+import store from '@/store'
 export default {
     props: {
-        customerID: Number,
+        userCode: {
+			type: String,
+			default: ''
+        },
         projectID: Number,
         hideLogBtn: Boolean,
         linkCode: {
@@ -105,6 +109,7 @@ export default {
             fileList: [],
             editID: 1,
             entryType: 'customer',
+            customerID: 0,
             pagination: {
                 pageTotal: 0
             },
@@ -156,13 +161,18 @@ export default {
         async getCustomerLogs(page = 0) {
             this.loading = true
             const params = {};
-            if(this.customerID > 0){
-                params['customer_id'] = this.customerID
+            if(this.userCode && this.userCode != 0){
+                params['user_code'] = this.userCode
             }
             if(this.projectID > 0){
                 params['project_id'] = this.projectID
             }
-            let customerLists = await customer_log.getCustomerLogs(params, page)
+            let customerLists = {}
+            if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
+                customerLists = await customer_log.getAllCustomerLogs(params, page)
+            } else {
+                customerLists = await customer_log.getCustomerLogs(params, page)
+            }
             if (customerLists && customerLists.total_nums <=0 ){
                 this.tableData = []
                 this.loading = false

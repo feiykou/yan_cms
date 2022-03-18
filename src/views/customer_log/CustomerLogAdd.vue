@@ -32,7 +32,7 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item label="项目列表" prop="project_id">
-							<el-select size="medium" filterable v-model="form.project_id" placeholder="日常维护">
+							<el-select size="medium" filterable disabled="{!!projectID}" v-model="form.project_id" placeholder="日常维护">
 								<el-option :value="0" key="" label="日常维护">
 									<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">00</span>
 									<span>日常维护</span>
@@ -76,6 +76,7 @@
 		name: 'CustomerLogAdd',
 		props: {
 			customerID: Number,
+			projectID: Number,
 			linkCode: Number,
 			userCode: Number
 		},
@@ -114,17 +115,22 @@
 				cateData: [],
 				form: {
 					name: '',
-					content: ''
+					content: '',
+					project_id: '',
 				},
 				rules: {
 					name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
-					content: [{ required: true, message: '请输入日志内容', trigger: 'blur' }]
+					content: [{ required: true, message: '请输入日志内容', trigger: 'blur' }],
+					status: [{ required: true, message: '请输入日志状态', trigger: 'blur' }]
 				}
 			}
 		},
 		created() {
 			this.getTypes()
 			this.getProjects()
+			if(this.projectID) {
+				this.form.project_id = this.projectID
+			}
 		},
 		methods: {
 			submitForm(formName) {

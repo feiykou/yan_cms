@@ -382,7 +382,6 @@
 						cityCode = TextToCode[provice][city].code,
 						proviceCode = TextToCode[provice].code,
 						addressArr = [proviceCode, cityCode]
-
 						console.log(city)
 						console.log(provice)
 						form['address'] = addressArr

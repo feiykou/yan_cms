@@ -96,7 +96,7 @@
 </template>
 
 <script>
-  import { provinceAndCityData } from 'element-china-area-data'
+  import { provinceAndCityData, CodeToText } from 'element-china-area-data'
   import customer from "@/models/customer"
   import type from "@/models/type"
   import Admin from '@/lin/models/admin'
@@ -163,6 +163,14 @@
 				if(valid) {
 					this.loading = true
 					try {
+						let addressArr = this.form.address
+						addressArr = addressArr.map(ele => {
+							if(ele) {
+								ele = CodeToText[ele]
+							}
+							return ele
+						})
+						this.form.address = addressArr
 						const res = await customer.addCustomer(this.form)
 						if (res.error_code === 0) {
 							this.$message.success(`${res.msg}`)
@@ -170,12 +178,16 @@
 							this.back()
 						}
 					} catch (error) {
-						let message = error.data.msg
-						if(message && typeof message === 'object'){
-							for (const key in message){
-								this.$message.error(message[key])
-								await setTimeout(function () {}, 1000)
+						if(error.data) {
+							let message = error.data.msg
+							if(message && typeof message === 'object'){
+								for (const key in message){
+									this.$message.error(message[key])
+									await setTimeout(function () {}, 1000)
+								}
 							}
+						} else {
+							this.$message.error(error.toString())
 						}
 					}
 					this.loading = false

@@ -65,7 +65,7 @@
                         </el-card>
                     </el-timeline-item>
                 </el-timeline>
-                <div class="result-wrap">暂无数据</div>
+                <div class="result-wrap" v-if="tableData.length == 0 && !loading">暂无数据</div>
             </div>
 		</div>
         <!-- 编辑页面 -->
@@ -105,6 +105,7 @@ export default {
     data() {
         return {
             redirectType: 'list',
+            loading: true,
             tableData: [],
             fileList: [],
             editID: 1,
@@ -168,24 +169,41 @@ export default {
                 params['project_id'] = this.projectID
             }
             let customerLists = {}
-            if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
-                customerLists = await customer_log.getAllCustomerLogs(params, page)
-            } else {
-                customerLists = await customer_log.getCustomerLogs(params, page)
-            }
-            if (customerLists && customerLists.total_nums <=0 ){
+            try {
+                if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
+                    customerLists = await customer_log.getAllCustomerLogs(params, page)
+                } else {
+                    customerLists = await customer_log.getCustomerLogs(params, page)
+                }
+                if (customerLists && customerLists.total_nums <=0 ){
+                    this.tableData = []
+                    this.loading = false
+                    return;
+                }
+                if (!this.pagination.pageTotal){
+                    this.pagination = {
+                        pageTotal: customerLists.total_nums
+                    }
+                }
+                this.tableData = customerLists.collection
+                this.solveImgPreview()
+                this.loading = false
+            } catch (error) {
                 this.tableData = []
                 this.loading = false
-                return;
-            }
-            if (!this.pagination.pageTotal){
-                this.pagination = {
-                    pageTotal: customerLists.total_nums
+                if(error.data) {
+                    let message = error.data.msg
+                    if(message && typeof message === 'object'){
+                        for (const key in message){
+                            this.$message.error(message[key])
+                            await setTimeout(function () {}, 1000)
+                        }
+                    }
+                } else {
+                    this.$message.error(error.toString())
                 }
             }
-            this.tableData = customerLists.collection
-            this.solveImgPreview()
-            this.loading = false
+            
         },
         async getCustomerID() {
             const result = await this.getCustomer(this.linkCode)
@@ -342,7 +360,7 @@ export default {
                 overflow : hidden;
                 text-overflow: ellipsis;
                 display: -webkit-box;
-                -webkit-line-clamp: 3;
+                -webkit-line-clamp: 5;
                 -webkit-box-orient: vertical;
             }
         }

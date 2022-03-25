@@ -2,25 +2,7 @@
 	<div>
 		<!-- 列表页面 -->
 		<div class="container page-container" v-if="redirectType === 'list'">
-			<sticky-top>
-				<div class="order-header">
-					<div class="header-left"><p class="title"></p></div>
-					<div class="header-right" v-auth="'搜索日志'">
-						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户名/项目名" />
-						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
-						<el-select v-model="curFollowStatus" @change="followStatusChange" size="medium" filterable default-first-option placeholder="请选择跟进状态" prop="curFollowStatus" class="">
-							<el-option label="全部跟进状态" :value="-1"></el-option>
-							<el-option :label="value" v-for="(value, key) in statusData" :key="key" :value="value"></el-option>
-						</el-select>
-						<el-button type="primary" plain @click="backInit" size="mini" class="back-btn">返回浏览</el-button>
-					</div>
-				</div>
-
-				<el-divider></el-divider>
-			</sticky-top>
-			<div class="header"><div class="title"><span>客户项目列表</span>  
-				<el-button v-if="linkCode" class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button>
-			</div></div>
+			<div class="header"><div class="title"><span>客户项目审核列表</span></div></div>
 			<!-- 表格 -->
 			<lin-table
 				:tableColumn="tableColumn"
@@ -35,91 +17,83 @@
 				@handleDelete="handleDelete"></lin-table>
 		</div>
 		<!-- 编辑页面 -->
-		<project-add v-else-if="redirectType === 'add'" :linkCode="linkCode" @close="closePage"></project-add>
-		<customer-log-list v-else-if="redirectType === 'log'" :projectID="editID" :customerID="customerID" :linkCode="linkCode" @close="closePage"></customer-log-list>
-		<project-edit v-else-if="redirectType === 'edit'" :onlyRead="true" :editID="editID" @close="closePage"></project-edit>
+		<customer-log-list v-else-if="redirectType === 'log'" :projectID="projectID" :customerID="customerID" :linkCode="linkCode" @close="closePage"></customer-log-list>
+		
+		<el-dialog title="审核" :visible.sync="dialogFormVisible">
+			<project-examine-edit :projectID="projectID" :editID="editID" @close="dialogClose"></project-examine-edit>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
-import LinSearch from '@/components/base/search/lin-search'
-import LinDatePicker from '@/components/base/date-picker/lin-date-picker'
-import project from '@/models/customer_project'
-import ProjectEdit from './ProjectEdit'
-import ProjectAdd from './ProjectAdd'
+import projectExamine from '@/models/project-examine'
+import ProjectExamineEdit from './ProjectExamineEdit'
 import CustomerLogList from "../customer_log/CustomerLogList"
 import store from '@/store'
 import type from "@/models/type"
 export default {
 	name: 'CustomerProjectLists',
 	components: {
-		ProjectEdit,
-		ProjectAdd,
-		LinSearch,
-		LinDatePicker,
+		ProjectExamineEdit,
 		CustomerLogList
-	},
-	props: {
-		linkCode: Number
 	},
 	data() {
 		return {
 			currentPage: 1,
+			dialogFormVisible: false,
 			tableColumn: [
-				{ prop: 'id', label: 'id', width: 150 },
-				{ prop: 'customer_name', label: '客户名'},
-				{ prop: 'scene', label: '使用场景', width: 300},
-				{ prop: 'industry', label: '行业' },
-				{ prop: 'follow_status', label: '跟进状态' },
+				{ prop: 'id', label: 'id', width: 100 },
+				{ prop: 'author', label: '申请人', width: 100},
+                { prop: 'customer_name', label: '客户名', width: 200},
+				{ prop: 'project_name', label: '项目名', width: 200},
+				{ prop: 'reason', label: '原因', width: 200},
+				{ prop: 'status', label: '审核状态', type: 'html', width: 150},
+				{ prop: 'result_reason', label: '驳回原因'},
 				{ prop: 'create_time', label: '生成时间', width: 200},
-			],
-			curFollowStatus: -1, // 跟进状态 -1是全部状态
-			searchKeyword: '', // 搜索内容
-			searchDate: '', // 日期
-			searchParams: {}, // 搜索筛选参数
-			isSearch: false, // 是否处于搜索状态
-			curSearchIndex: 0,
-			selData: [
-				'客户名',
-				'项目名'
 			],
 			pagination: {
 				pageTotal: 0
 			},
-			statusData: [],
-			fieldObj: {
-				"status": "statusData",
-			},
 			tableData: [],
 			operate: [
-				{ name: '查看', func: 'handleEdit', type: 'primary' },
-				{
-					name: '日志',
-					func: 'handleLog',
-					type: 'danger',
-					icon: ''
-				}],
+                { name: '审核', func: 'handleEdit', type: 'primary', auth: '审核项目' },
+                {
+                    name: '日志',
+                    func: 'handleLog',
+                    type: 'danger',
+                    icon: '',
+                    auth: '审核项目'
+                }
+			],
+			statusObj: {
+				0: '<span style="color: #c75d6e;">审核不通过</span>',
+				1: '<span style="color: #3963bc;">审核通过</span>',
+				2: '<span style="color: orange;">正在审核中</span>'
+			},
 			showEdit: false,
 			loading: false,
 			editID: 1,
+			projectID: 0,
 			customerID: 0,
+			linkCode: 0,
 			redirectType: 'list',
 		}
 	},
 	created() {
 		this.getTypes()
-		this.getProjects()
+		this.getProjectExamines()
 	},
 	methods: {
-		async getProjects(page = 0) {
+		
+		async getProjectExamines(page = 0) {
 			this.loading = true
 			let projectLists = {}
 			if(store.state.user.username == 'super' || store.state.auths.includes('全部项目信息')) {
 				// 获取全部项目
-				projectLists = await project.getAllCustomerProjects(page, this.searchParams)
+				projectLists = await projectExamine.getAllProjectExamine(page)
 			} else {
 				// 获取当前管理员录入的所有项目
-				projectLists = await project.getCustomerProjects(page, this.searchParams)
+				projectLists = await projectExamine.getProjectExamines(page)
 			}
 			if (!this.pagination.pageTotal || this.pagination.pageTotal != projectLists.total_nums){
 				this.pagination = {
@@ -131,45 +105,29 @@ export default {
 				this.loading = false
 				return;
 			}	
+			projectLists.collection.forEach(ele => {
+				ele.status = this.statusObj[ele.status] || '错误'
+			})
 			this.loading = false
 			this.tableData = projectLists.collection
-		},
-		searchParam() {
-			let searchParams = {}
-			if (this.curFollowStatus != -1) {
-				searchParams['follow_status'] = this.curFollowStatus
-			}
-			if( this.searchDate && this.searchDate.length > 0) {
-				searchParams['start'] = this.searchDate[0]
-				searchParams['end'] = this.searchDate[1]
-			}
-			if( this.searchKeyword ) {
-				if(this.curSearchIndex == 0) {
-					searchParams['customer_name'] = this.searchKeyword
-				}
-				if(this.curSearchIndex == 1) {
-					searchParams['name'] = this.searchKeyword
-				} 
-			}
-			this.searchParams = searchParams
-			this.isSearch = true
 		},
 		currentChange(page) {
 			if(page <= 0) return;
 			page -= 1
 			this.currentPage = page + 1
-			this.getProjects(page)
-		},
-		handleAdd() {
-			this.redirectType = 'add'
+			this.getProjectExamines(page)
 		},
 		handleEdit({ row }) {
 			this.editID = row.id
-			this.redirectType = 'edit'
+			this.projectID = row.project_id
+			// this.redirectType = 'edit'
+			this.dialogFormVisible = true
 		},
 		handleLog({ row }) {
-			this.linkCode = row.link_code
+			// this.linkCode = row.link_code
 			if(row.customer_id) this.customerID = row.customer_id
+			this.projectID = row.project_id
+			this.linkCode = row.link_code
 			this.editID = row.id
 			this.redirectType = 'log'
 		},
@@ -192,29 +150,10 @@ export default {
 				}
 			})
 		},
-		followStatusChange(val) {
-			this.curFollowStatus = val
-			this.searchParam()
-			this.getProjects()
-		},
-		onQueryChange(query) {
-			// 处理带空格的情况
-			this.searchKeyword = query.trim()
-			this.searchParam()
-			this.getProjects()
-		},
-		onSelectChange(query) {
-			this.curSearchIndex = query
-		},
-		handleDateChange(date) {
-			this.searchDate = date
-			this.searchParam()
-			this.getProjects()
-		},
 		rowClick() {},
 		closePage(val) {
 			this.redirectType = 'list'
-			if(val) this.getProjects(this.currentPage - 1)
+			if(val) this.getProjectExamines(this.currentPage - 1)
 		},
 		// 获取类型
 		async getTypes() {
@@ -237,16 +176,10 @@ export default {
 			}
 			
 		},
-		// 清空检索
-		async backInit() {
-			this.searchKeyword = ''
-			this.searchDate = []
-			this.searchParams = {}
-			this.$refs.searchDate.clear()
-			this.$refs.searchKeyword.clear()
-			this.isSearch = false
-			await this.getProjects()
-		},
+		dialogClose() {
+			this.dialogFormVisible=false
+			this.getProjectExamines(this.currentPage-1)
+		}
 	},
 }
 </script>

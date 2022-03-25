@@ -65,23 +65,40 @@ export default {
   },
   methods: {
     async getTypes(page = 0) {
-			this.loading = true
-			const typeLists = await type.getTypes(page)
-      this.loading = false
-			if (typeLists.total_nums <=0 ){
+
+      this.loading = true
+      try {
+        const typeLists = await type.getTypes(page)
+        this.loading = false
+        if (typeLists.total_nums <=0 ){
+          this.tableData = []
+          this.loading = false
+          return;
+        }
+        if (!this.pagination.pageTotal){
+          this.pagination = {
+            pageTotal: typeLists.total_nums
+          }
+        }
+        typeLists.collection.forEach(ele => {
+          ele.value = ele.value.join()
+        })
+        this.tableData = typeLists.collection
+      }catch(error){
         this.tableData = []
         this.loading = false
-        return;
-			}
-      if (!this.pagination.pageTotal){
-        this.pagination = {
-          pageTotal: typeLists.total_nums
-        }
+        if(error.data) {
+					let message = error.data.msg
+					if(message && typeof message === 'object'){
+						for (const key in message){
+							this.$message.error(message[key])
+							await setTimeout(function () {}, 1000)
+						}
+					}
+				} else {
+					this.$message.error(error.toString())
+				}
       }
-      typeLists.collection.forEach(ele => {
-        ele.value = ele.value.join()
-      })
-			this.tableData = typeLists.collection
     },
     currentChange(page) {
       if(page <= 0) return;

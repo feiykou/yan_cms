@@ -14,7 +14,7 @@
 						<el-form-item label="日志状态" prop="status">
 							<el-select size="medium" filterable v-model="form.status" placeholder="请选择日志状态">
 								<template v-for="(val, index) in statusData">
-									<el-option :value="val" :key="val" :label="val">
+									<el-option :value="val" :key="val" :label="val" :disabled='!(displayStatus == val)?undefined:""'>
 										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 										<span>{{ val }}</span>
 									</el-option>
@@ -31,8 +31,9 @@
 								</template>
 							</el-select>
 						</el-form-item>
+
 						<el-form-item label="项目列表" prop="project_id">
-							<el-select size="medium" filterable disabled="{!!projectID}" v-model="form.project_id" placeholder="日常维护">
+							<el-select size="medium" filterable :disabled="true" v-model="form.project_id" placeholder="日常维护">
 								<el-option :value="0" key="" label="日常维护">
 									<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">00</span>
 									<span>日常维护</span>
@@ -71,6 +72,7 @@
 	import Utils from "@/lin/utils/util"
 
 	import type from "@/models/type"
+	import config from '@/config/index.js'
 	import project from '@/models/customer_project'
 	export default {
 		name: 'CustomerLogAdd',
@@ -78,7 +80,7 @@
 			customerID: Number,
 			projectID: Number,
 			linkCode: Number,
-			userCode: Number
+			userCode: String
 		},
 		components: {
 			UploadImgs,
@@ -88,12 +90,12 @@
 			return {
 				content: '',
 				fieldObj: {
-					"status": "statusData",
 					"commun_type": "communtypeData"
 				},
-				statusData: ['初步联系','见面拜访','停滞客户','成交客户','正式报价'],
+				statusData: [],
 				communtypeData: ['见面拜访','微信','钉钉'],
 				projectData: [],
+				displayStatus: config.followStatusExamine,
 				editInit: {
 					selector: "#tinymce", //tinymce的id
 					mobile: {
@@ -150,12 +152,16 @@
 								this.back()
 							}
 						} catch (error) {
-							let message = error.data.msg
-							if(message && typeof message === 'object'){
-								for (const key in message){
-									this.$message.error(message[key])
-									await setTimeout(function () {}, 1000)
+							if(error.data) {
+								let message = error.data.msg
+								if(message && typeof message === 'object'){
+									for (const key in message){
+										this.$message.error(message[key])
+										await setTimeout(function () {}, 1000)
+									}
 								}
+							} else {
+								this.$message.error(error.toString())
 							}
 						}
 						this.loading = false
@@ -165,8 +171,16 @@
 					}
 				})
 			},
+			setStatusTypeField() {
+				if(this.projectID) {
+					this.fieldObj['status'] = 'statusData'
+				} else {
+					this.fieldObj['follow_status'] = 'statusData'
+				}
+			},
 			// 获取类型
 			async getTypes() {
+				this.setStatusTypeField()
 				let fields = []
 				const fieldObj = this.fieldObj
 				for(let obj in fieldObj) {

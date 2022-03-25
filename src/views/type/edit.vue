@@ -76,7 +76,6 @@ export default {
       this.loading = true
       try {
         let form = await type.getType(this.editID)
-        console.log(form.value)
         if(form.value.length > 0) {
           let valueList = []
           form.value.forEach(ele => {
@@ -86,18 +85,21 @@ export default {
             })
           })
           this.valueList = valueList
-          console.log(valueList)
         }
         
         this.form = form
       } catch(error) {
-        let message = error.data.msg
-        if(message && typeof message === 'object'){
-          for (const key in message){
-            this.$message.error(message[key])
-            await setTimeout(function () {}, 1000)
-          }
-        }
+        if(error.data) {
+					let message = error.data.msg
+					if(message && typeof message === 'object'){
+						for (const key in message){
+							this.$message.error(message[key])
+							await setTimeout(function () {}, 1000)
+						}
+					}
+				} else {
+					this.$message.error(error.toString())
+				}
       }
       this.loading = false
     },

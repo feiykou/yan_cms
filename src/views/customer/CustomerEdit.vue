@@ -269,6 +269,8 @@
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate(async valid => {
+					const addressCode = this.form.address[1]
+					console.log(CodeToText[addressCode])
 					if(valid) {
 						this.loading = true
 						try {
@@ -281,6 +283,14 @@
 									}
 								}
 							}
+							let addressArr = this.form.address
+							addressArr = addressArr.map(ele => {
+								if(ele) {
+									ele = CodeToText[ele]
+								}
+								return ele
+							})
+							this.form.address = addressArr
 							const res = await customer.editCustomer(this.editID, this.form)
 							if (res.error_code === 0) {
 								this.$message.success(`${res.msg}`)
@@ -288,12 +298,16 @@
 								this.back()
 							}
 						} catch (error) {
-							let message = error.data.msg
-							if(message && typeof message === 'object'){
-								for (const key in message){
-									this.$message.error(message[key])
-									await setTimeout(function () {}, 1000)
+							if(error.data) {
+								let message = error.data.msg
+								if(message && typeof message === 'object'){
+									for (const key in message){
+										this.$message.error(message[key])
+										await setTimeout(function () {}, 1000)
+									}
 								}
+							} else {
+								this.$message.error(error.toString())
 							}
 						}
 						this.loading = false
@@ -375,15 +389,12 @@
 				if(form['address']) {
 					// 判断是否是excel导入的mainData['user_id']
 					// 判断地址是否存在，判断地址是否是中文
-					console.log(form['address'])
 					if(form['address'][0] && this.isChinese(form['address'][0])) {
 						const city = form['address'][1],
 						provice = form['address'][0],
 						cityCode = TextToCode[provice][city].code,
 						proviceCode = TextToCode[provice].code,
 						addressArr = [proviceCode, cityCode]
-						console.log(city)
-						console.log(provice)
 						form['address'] = addressArr
 					}
 				}

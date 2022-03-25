@@ -6,7 +6,7 @@
 				<div class="order-header">
 					<div class="header-left"><p class="title">客户列表</p></div>
 					<div class="header-right" v-auth="'搜索日志'">
-						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户编号/客户名" />
+						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户编号/客户名/..." />
 						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
 						<el-select v-model="curFollowStatus" @change="followStatusChange" size="medium" filterable default-first-option placeholder="请选择跟进状态" prop="curFollowStatus" class="">
 							<el-option label="全部跟进状态" :value="-1"></el-option>
@@ -114,7 +114,7 @@
 				isSearch: false, // 是否处于搜索状态
 				isActiveNoFollow: false, // 是否触发3天未跟进
 				selData: [
-					'客户名','责任人','客户编码'
+					'客户名','责任人','客户编码','联系人','联系电话'
 				],
 				curSearchIndex: 0,
 				tableColumn: [
@@ -267,6 +267,15 @@
 					} 
 					if(this.curSearchIndex == 2) {
 						searchParams['user_code'] = this.searchKeyword
+					}
+					if(this.curSearchIndex == 3) {
+						searchParams['contacts_name'] = this.searchKeyword
+					} 
+					if(this.curSearchIndex == 4) {
+						searchParams['telephone'] = this.searchKeyword
+					} 
+					if(this.curSearchIndex == 5) {
+						searchParams['provice'] = this.searchKeyword
 					} 
 				}
 				this.searchParams = searchParams
@@ -418,12 +427,16 @@
 					})
 					this.tableData = customerLists.collection
 				} catch(error) {
-					let message = error.data.msg
-					if(message && typeof message === 'object'){
-						for (const key in message){
-							this.$message.error(message[key])
-							await setTimeout(function () {}, 1000)
+					if(error.data) {
+						let message = error.data.msg
+						if(message && typeof message === 'object'){
+							for (const key in message){
+								this.$message.error(message[key])
+								await setTimeout(function () {}, 1000)
+							}
 						}
+					} else {
+						this.$message.error('服务器错误')
 					}
 				}
 				this.loading = false

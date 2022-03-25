@@ -156,23 +156,39 @@
 				// if(this.projectID > 0){
 				// 	params['project_id'] = this.projectID
 				// }
-				if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
-					customerLists = await customer_log.getAllCustomerLogs(this.searchParams, page)
-				} else {
-					customerLists = await customer_log.getCustomerLogs(this.searchParams, page)
-				}
-				if (customerLists && customerLists.total_nums <=0 ){
+				try {
+					if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
+						customerLists = await customer_log.getAllCustomerLogs(this.searchParams, page)
+					} else {
+						customerLists = await customer_log.getCustomerLogs(this.searchParams, page)
+					}
+					if (customerLists && customerLists.total_nums <=0 ){
+						this.tableData = []
+						this.loading = false
+						return;
+					}
+					if (!this.pagination.pageTotal || this.pagination.pageTotal != customerLists.total_nums){
+						this.pagination = {
+							pageTotal: customerLists.total_nums
+						}
+					}
+					this.tableData = customerLists.collection
+					this.loading = false
+				}catch(error) {
 					this.tableData = []
 					this.loading = false
-					return;
-				}
-				if (!this.pagination.pageTotal || this.pagination.pageTotal != customerLists.total_nums){
-					this.pagination = {
-						pageTotal: customerLists.total_nums
+					if(error.data) {
+						let message = error.data.msg
+						if(message && typeof message === 'object'){
+							for (const key in message){
+								this.$message.error(message[key])
+								await setTimeout(function () {}, 1000)
+							}
+						}
+					} else {
+						this.$message.error(error.toString())
 					}
 				}
-				this.tableData = customerLists.collection
-				this.loading = false
 			},
 
 

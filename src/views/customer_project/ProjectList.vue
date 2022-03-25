@@ -56,9 +56,9 @@ export default {
 			tableColumn: [
 				{ prop: 'id', label: 'id', width: 150 },
 				{ prop: 'customer_name', label: '客户名'},
-				{ prop: 'scene', label: '使用场景'},
+				{ prop: 'scene', label: '使用场景', width: 200},
 				{ prop: 'author', label: '录入人员' },
-				{ prop: 'create_time', label: '生成时间'},
+				{ prop: 'create_time', label: '生成时间', width: 200},
 			],
 			tableData: [],
 			operate: [],
@@ -96,14 +96,30 @@ export default {
 				})
 				return
 			}
-			let projectLists = await project.getCustomerProjects(page, {}, this.linkCode, 0)
-			if (projectLists.total_nums <=0 ){
-				this.tableData = []
+			try {
+				let projectLists = await project.getCustomerProjects(page, {}, this.linkCode, 0)
+				if (projectLists.total_nums <=0 ){
+					this.tableData = []
+					this.loading = false
+					return;
+				}	
 				this.loading = false
-				return;
-			}	
-			this.loading = false
-			this.tableData = projectLists.collection
+				this.tableData = projectLists.collection
+			} catch(e) {
+				this.loading = false
+				this.tableData = []
+				if(error.data) {
+					let message = error.data.msg
+					if(message && typeof message === 'object'){
+						for (const key in message){
+							this.$message.error(message[key])
+							await setTimeout(function () {}, 1000)
+						}
+					}
+				} else {
+					this.$message.error(error.toString())
+				}
+			}
 		},
 		currentChange(page) {
 			if(page <= 0) return;

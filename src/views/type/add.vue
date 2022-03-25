@@ -83,13 +83,17 @@ export default {
                 this.back(true)
             }
           } catch (error) {
-            let message = error.data.msg
-            if(message && typeof message === 'object'){
-							for (const key in message){
-                this.$message.error(message[key])
-								await setTimeout(function () {}, 1000)
-							}
-            }
+              if(error.data) {
+                let message = error.data.msg
+                if(message && typeof message === 'object'){
+                  for (const key in message){
+                    this.$message.error(message[key])
+                    await setTimeout(function () {}, 1000)
+                  }
+                }
+              } else {
+                this.$message.error(error.toString())
+              }
           }
 				} else {
           this.$message.error('请填写正确的信息')

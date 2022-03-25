@@ -8,6 +8,16 @@
 						<el-form-item label="项目名" prop="name">
 							<el-input size="medium" v-model="form.name" placeholder="请填写项目名"></el-input>
 						</el-form-item>
+						<el-form-item label="客户来源" prop="project_channel">
+							<el-select size="medium" filterable v-model="form.project_channel" placeholder="请选择客户来源">
+								<template v-for="(val, index) in channelData">
+									<el-option :value="val" :key="index" :label="val">
+										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
+										<span>{{ val }}</span>
+									</el-option>
+								</template>
+							</el-select>
+						</el-form-item>
 						<el-form-item label="使用场景" prop="scene">
 							<el-input size="medium" v-model="form.scene" placeholder="请填写使用场景"></el-input>
 						</el-form-item>
@@ -75,7 +85,7 @@
 						</el-form-item>
 						<el-form-item label="跟进状态" prop="follow_status">
 							<el-select size="medium" filterable v-model="form.follow_status" placeholder="请选择跟进状态">
-								<template v-for="(val, index) in followStatuslData">
+								<template v-for="(val, index) in statusData">
 									<el-option :value="val" :key="index" :label="val">
 										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 										<span>{{ val }}</span>
@@ -105,6 +115,7 @@
 import project from '@/models/customer_project'
 import type from "@/models/type"
 
+
 export default {
 	name: 'CulturalAdd',
 	props: {
@@ -116,11 +127,14 @@ export default {
 			demandBgData: ['已受灾','应付检查','系统统一安装','领导要求','其他'],
 			productTypeData: ['不锈钢开启式','不锈钢密闭式','铝合金组合式','水动力','ABS'],
 			industryData: ['商场','工厂','其他'],
+			statusData: [], // 跟进状态
+			channelData: [], // 客户来源
 			fieldObj: {
 				"industry": "industryData",
-				"follow_status": "followStatuslData",
+				"status": "statusData",
 				"product_type": "productTypeData",
-				"demand_bg": "demandBgData"
+				"demand_bg": "demandBgData",
+				"project_channel": "channelData"
 			},
 			industry_other: '', // 客户行业其他内容填写
 			demand_bg_other: '',
@@ -180,6 +194,7 @@ export default {
 	methods: {
 		settingFollow() {
 			const formData = this.form
+			
 			formData.link_code = this.linkCode
 			if(formData.industry == '其他') {
 				formData.industry = '其他-'+ this.industry_other
@@ -195,17 +210,22 @@ export default {
 					this.loading = true
 					try {
 						const res = await project.addCustomerProject(this.settingFollow())
+						
 						if (res.error_code === 0) {
 							this.$message.success(`${res.msg}`)
 						}
 						this.back()
 					} catch (error) {
-						let message = error.data.msg
-						if(message && typeof message === 'object'){
-							for (const key in message){
-								this.$message.error(message[key])
-								await setTimeout(function () {}, 1000)
+						if(error.data) {
+							let message = error.data.msg
+							if(message && typeof message === 'object'){
+								for (const key in message){
+									this.$message.error(message[key])
+									await setTimeout(function () {}, 1000)
+								}
 							}
+						} else {
+							this.$message.error(error.toString())
 						}
 					}
 					this.loading = false

@@ -184,7 +184,7 @@
 			},
 			// 获取类型
 			async getTypes() {
-				setStatusTypeField()
+				this.setStatusTypeField()
 				let fields = []
 				const fieldObj = this.fieldObj
 				for(let obj in fieldObj) {

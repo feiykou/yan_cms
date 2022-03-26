@@ -6,7 +6,7 @@
 				<div class="order-header">
 					<div class="header-left"><p class="title"></p></div>
 					<div class="header-right" v-auth="'搜索日志'">
-						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户名/项目名" />
+						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户编码/客户名/项目名" />
 						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
 						<el-select v-model="curFollowStatus" @change="followStatusChange" size="medium" filterable default-first-option placeholder="请选择跟进状态" prop="curFollowStatus" class="">
 							<el-option label="全部跟进状态" :value="-1"></el-option>
@@ -66,8 +66,10 @@ export default {
 		return {
 			currentPage: 1,
 			tableColumn: [
-				{ prop: 'id', label: 'id', width: 150 },
+				{ prop: 'id', label: 'id', width: 100 },
+				{ prop: 'user_code', label: '客户编码', width: 150 },
 				{ prop: 'customer_name', label: '客户名'},
+				{ prop: 'name', label: '项目名'},
 				{ prop: 'scene', label: '使用场景', width: 300},
 				{ prop: 'industry', label: '行业' },
 				{ prop: 'follow_status', label: '跟进状态' },
@@ -80,6 +82,7 @@ export default {
 			isSearch: false, // 是否处于搜索状态
 			curSearchIndex: 0,
 			selData: [
+				'客户编码',
 				'客户名',
 				'项目名'
 			],
@@ -145,9 +148,12 @@ export default {
 			}
 			if( this.searchKeyword ) {
 				if(this.curSearchIndex == 0) {
-					searchParams['customer_name'] = this.searchKeyword
+					searchParams['user_code'] = this.searchKeyword
 				}
 				if(this.curSearchIndex == 1) {
+					searchParams['customer_name'] = this.searchKeyword
+				}
+				if(this.curSearchIndex == 2) {
 					searchParams['name'] = this.searchKeyword
 				} 
 			}

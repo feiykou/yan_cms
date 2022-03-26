@@ -114,7 +114,7 @@
 				isSearch: false, // 是否处于搜索状态
 				isActiveNoFollow: false, // 是否触发3天未跟进
 				selData: [
-					'客户名','责任人','客户编码','联系人','联系电话'
+					'客户名','责任人','客户编码','联系人','联系电话','省份'
 				],
 				curSearchIndex: 0,
 				tableColumn: [

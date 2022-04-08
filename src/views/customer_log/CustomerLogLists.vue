@@ -117,6 +117,7 @@
 					{ prop: 'author', label: '责任人', width: 100 },
 					{ prop: 'customer_name', label: '客户名', width: 200 },
 					{ prop: 'status', label: '跟进状态', width: 150 },
+					{ prop: 'name', label: '日志名', width: 200 },
 					{ prop: 'content', label: '日志内容', width: 250, type: 'html' },
 					{ prop: 'commun_type', label: '交流方式', width: 150 },
 					{ prop: 'project_name', label: '日志类型', width: 150 },
@@ -226,10 +227,6 @@
 			// 	this.tableData = customerLists.collection
 			// 	this.loading = false
 			// },
-
-
-
-
 
 			// 触发多选checkbox
 			handleSelectionChange(data) {

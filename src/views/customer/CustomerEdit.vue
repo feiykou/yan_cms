@@ -254,6 +254,11 @@
 					let form = await customer.getCustomer(this.editID)
 					this._handleCustomerResData(form)
 				} catch(error) {
+					// console.log(error)
+					if(!error.data) {
+						this.$message.error('客户端错误')
+						return
+					}
 					let message = error.data.msg
 					if(message && typeof message === 'object'){
 						for (const key in message){
@@ -269,8 +274,6 @@
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate(async valid => {
-					const addressCode = this.form.address[1]
-					console.log(CodeToText[addressCode])
 					if(valid) {
 						this.loading = true
 						try {
@@ -283,14 +286,7 @@
 									}
 								}
 							}
-							let addressArr = this.form.address
-							addressArr = addressArr.map(ele => {
-								if(ele) {
-									ele = CodeToText[ele]
-								}
-								return ele
-							})
-							this.form.address = addressArr
+							this.form.address = this.handleReqAddress()
 							const res = await customer.editCustomer(this.editID, this.form)
 							if (res.error_code === 0) {
 								this.$message.success(`${res.msg}`)
@@ -334,6 +330,7 @@
 								this.$message.success(`${res.msg}`)
 							}
 						} catch (error) {
+							
 							let message = error.data.msg
 							if(message && typeof message === 'object'){
 								for (const key in message){
@@ -348,6 +345,18 @@
 						return false
 					}
 				})
+			},
+			handleReqAddress() {
+				let addressArr = this.form.address
+				const keyArr = ['province', 'city']
+				const obj = {}
+				addressArr = addressArr.map((ele, index) => {
+					if(ele) {
+						const key = keyArr[index]
+						obj[key] = CodeToText[ele]
+					}
+				})
+				return obj
 			},
 			isChinese(temp){
 				var re=/[^\u4E00-\u9FA5]/;
@@ -389,13 +398,15 @@
 				if(form['address']) {
 					// 判断是否是excel导入的mainData['user_id']
 					// 判断地址是否存在，判断地址是否是中文
-					if(form['address'][0] && this.isChinese(form['address'][0])) {
-						const city = form['address'][1],
-						provice = form['address'][0],
-						cityCode = TextToCode[provice][city].code,
-						proviceCode = TextToCode[provice].code,
-						addressArr = [proviceCode, cityCode]
-						form['address'] = addressArr
+					let addressArr = Object.values(form['address'])
+					if(addressArr.length > 0) {
+						if(addressArr[0] && this.isChinese(addressArr[0])) {
+							const city = addressArr[0],
+							provice = addressArr[1],
+							cityCode = TextToCode[provice][city].code,
+							proviceCode = TextToCode[provice].code
+							form['address'] = [proviceCode, cityCode]
+						}
 					}
 				}
 				this.form = form

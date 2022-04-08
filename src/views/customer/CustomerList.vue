@@ -296,7 +296,11 @@
 							})
 						}
 					} catch (error) {
-						console.log(error)
+						if(!error.data) {
+							this.$message.error('客户端错误')
+							this.loading = false
+							return
+						}
 						let message = error.data.msg
 						if(message) {
 							if( typeof message === 'object') {
@@ -418,10 +422,10 @@
 						val['status'] = val['status'] === 0 ? '未通过' : '通过'
 						val["key"] = val.id
 						if(val['address']) {
-							if(!this.isChinese(val['address'][0])) {
-								val['address'] = CodeToText[val['address'][0]] + '-' + CodeToText[val['address'][1]]
+							if(!this.isChinese(val['address']['province'])) {
+								val['address'] = CodeToText[val['address']['province']] + '-' + CodeToText[val['address']['city']]
 							} else {
-								val['address'] = val['address'][0] + '-' + val['address'][1]
+								val['address'] = val['address']['province'] + '-' + val['address']['city']
 							}
 						}
 					})

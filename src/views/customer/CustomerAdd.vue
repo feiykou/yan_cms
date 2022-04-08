@@ -163,14 +163,7 @@
 				if(valid) {
 					this.loading = true
 					try {
-						let addressArr = this.form.address
-						addressArr = addressArr.map(ele => {
-							if(ele) {
-								ele = CodeToText[ele]
-							}
-							return ele
-						})
-						this.form.address = addressArr
+						this.form.address = this.handleReqAddress()
 						const res = await customer.addCustomer(this.form)
 						if (res.error_code === 0) {
 							this.$message.success(`${res.msg}`)
@@ -196,6 +189,18 @@
 					return false
 				}
 			})
+		},
+		handleReqAddress() {
+			let addressArr = this.form.address
+			const keyArr = ['province', 'city']
+			const obj = {}
+			addressArr = addressArr.map((ele, index) => {
+				if(ele) {
+					const key = keyArr[index]
+					obj[key] = CodeToText[ele]
+				}
+			})
+			return obj
 		},
 		// 获取类型
 		async getTypes() {

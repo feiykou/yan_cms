@@ -18,9 +18,19 @@
 
 				<el-divider></el-divider>
 			</sticky-top>
-			<div class="header"><div class="title"><span>客户项目列表</span>  
-				<el-button v-if="linkCode" class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button>
-			</div></div>
+			<div class="header">
+				<div class="left-wrap">
+					<div class="title"><span>客户项目列表</span>  
+						<el-button v-if="linkCode" class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button>
+					</div>
+				</div>
+				<div class="right-wrap">
+					<div class="excel-btn">
+						<el-button size="small" type="primary" plain @click="handleExport">导出excel数据</el-button>
+					</div>
+				</div>
+			</div>
+			
 			<!-- 表格 -->
 			<lin-table
 				:tableColumn="tableColumn"
@@ -29,9 +39,11 @@
 				:loading="loading"
 				:curPage="currentPage"
 				:pagination="pagination"
+				type="selection"
 				@currentChange="currentChange"
 				@handleEdit="handleEdit"
 				@handleLog="handleLog"
+				@selection-change="handleSelectionChange"
 				@handleDelete="handleDelete"></lin-table>
 		</div>
 		<!-- 编辑页面 -->
@@ -50,6 +62,7 @@ import ProjectAdd from './ProjectAdd'
 import CustomerLogList from "../customer_log/CustomerLogList"
 import store from '@/store'
 import type from "@/models/type"
+import Config from '@/config'
 export default {
 	name: 'CustomerProjectLists',
 	components: {
@@ -64,6 +77,7 @@ export default {
 	},
 	data() {
 		return {
+			checkselId: [],  // check选中的id值
 			currentPage: 1,
 			tableColumn: [
 				{ prop: 'id', label: 'id', width: 100 },
@@ -74,6 +88,7 @@ export default {
 				{ prop: 'industry', label: '行业' },
 				{ prop: 'follow_status', label: '跟进状态' },
 				{ prop: 'create_time', label: '生成时间', width: 200},
+				{ prop: 'status_success_time', label: '成交时间', width: 200}
 			],
 			curFollowStatus: -1, // 跟进状态 -1是全部状态
 			searchKeyword: '', // 搜索内容
@@ -159,6 +174,39 @@ export default {
 			}
 			this.searchParams = searchParams
 			this.isSearch = true
+		},
+		// 触发多选checkbox
+		handleSelectionChange(data) {
+			const checkselId = []
+			data.forEach(ele => {
+				checkselId.push(ele.id)
+			})
+			this.checkselId = checkselId
+		},
+		// 导出excel
+		handleExport() {
+			const selIds = this.checkselId
+			if(selIds.length <= 0) {
+				this.$message({
+					type: 'warning',
+					message: `请先选中客户项目，再导出`,
+				})
+				return;
+			}
+
+			this.loading = true
+			this.$message({
+				type: 'warning',
+				message: `正在导出中，请稍后`,
+			})
+			
+			// this.exportCustomer(selIds)
+			const baseURL = Config.baseURL || process.env.apiUrl || ''
+			window.location = `${baseURL}/v1/excel/customer_project?ids=${selIds}`
+
+			setTimeout(() => {
+				this.loading = false
+			},2000)
 		},
 		currentChange(page) {
 			if(page <= 0) return;
@@ -269,6 +317,9 @@ export default {
 			align-items: center;
 
 			.title {
+				flex: 1;
+				display:flex;
+				justify-content: space-between;
 				height: 59px;
 				line-height: 59px;
 				color: $parent-title-color;

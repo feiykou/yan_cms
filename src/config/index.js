@@ -9,7 +9,8 @@ const Config = {
     showSidebarSearch: false, // 默认打开侧边栏搜索
     defaultRoute: '/about', // 默认打开的路由
     pageSize: 15, // 分页显示数据数量
-    followStatusExamine: '无意向客户'
+    followStatusExamine: '无意向客户',
+    successStatus: '已成交'
 }
 
 export default Config

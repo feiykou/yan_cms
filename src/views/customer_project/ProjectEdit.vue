@@ -93,6 +93,14 @@
 								</template>
 							</el-select>
 						</el-form-item>
+						<el-form-item label="成交时间" prop="status_success_time" v-if="form.follow_status == successStatus">
+							<el-date-picker
+								v-model="form.status_success_time"
+								type="date"
+								value-format="yyyy-MM-dd HH:mm:ss"
+								placeholder="选择成交时间">
+							</el-date-picker>
+						</el-form-item>
 						<el-form-item label="丢单原因" prop="reason" v-if="isStatusExamine">
 							<el-input type="textarea" size="medium" v-model="form.reason" placeholder="请填写丢单原因"></el-input>
 						</el-form-item>
@@ -150,6 +158,7 @@ export default {
 			demandBgDisplay: false,  // 客户需求背景是否禁用
 			industryDisplay: false,  // 客户行业其他是否禁用
 			isStatusExamine: false,
+			successStatus: config.successStatus, // 成交状态：已成交
 			form: {			
 				name: '',		
 				scene: '',

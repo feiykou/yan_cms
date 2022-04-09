@@ -21,7 +21,7 @@
 			<div class="header">
 				<div class="left-wrap">
 					<div class="title"><span>客户项目列表</span>  
-						<el-button v-if="linkCode" class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button>
+						<!-- <el-button v-if="linkCode" class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button> -->
 					</div>
 				</div>
 				<div class="right-wrap">

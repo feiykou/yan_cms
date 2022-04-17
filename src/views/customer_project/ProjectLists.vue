@@ -150,6 +150,9 @@ export default {
 				this.loading = false
 				return;
 			}	
+			projectLists.collection.forEach(val => {
+				val["key"] = val.id
+			})
 			this.loading = false
 			this.tableData = projectLists.collection
 		},
@@ -182,6 +185,7 @@ export default {
 			data.forEach(ele => {
 				checkselId.push(ele.id)
 			})
+			console.log(data)
 			this.checkselId = checkselId
 		},
 		// 导出excel

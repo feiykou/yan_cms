@@ -104,6 +104,9 @@
 						<el-form-item label="丢单原因" prop="reason" v-if="isStatusExamine">
 							<el-input type="textarea" size="medium" v-model="form.reason" placeholder="请填写丢单原因"></el-input>
 						</el-form-item>
+						<el-form-item label="订单编码" prop="order_no">
+							<el-input size="medium" v-model="form.order_no" placeholder="请填写订单编码"></el-input>
+						</el-form-item>
 						<el-form-item label="跟进次数" prop="follow_count">
 							<el-input size="small" v-model="form.follow_count" placeholder="请填写跟进次数"></el-input>
 						</el-form-item>

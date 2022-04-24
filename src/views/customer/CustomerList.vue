@@ -296,6 +296,7 @@
 							})
 						}
 					} catch (error) {
+						console.log(error)
 						if(!error.data) {
 							this.$message.error('客户端错误')
 							this.loading = false

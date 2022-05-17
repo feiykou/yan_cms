@@ -7,10 +7,11 @@ class ProjecExamine {
      * 获取全部客户项目审核
      * @returns {Promise<*>}
      */
-    async getAllProjectExamine(page = 0, count = appConfig.pageSize) {
+    async getAllProjectExamine(page = 0, searchParams = {}, count = appConfig.pageSize) {
         let param = {
             page,
             count,
+            ...searchParams,
             handleError: true
         }
         const res = await get(`v1/project_examine/all`, param)
@@ -21,10 +22,11 @@ class ProjecExamine {
      * 获取当前管理员全部客户项目审核
      * @returns {Promise<*>}
      */
-    async getProjectExamines(page = 0, count = appConfig.pageSize) {
+    async getProjectExamines(page = 0, searchParams = {}, count = appConfig.pageSize) {
         let param = {
             page,
             count,
+            ...searchParams,
             handleError: true
         }
         const res = await get(`v1/project_examine`, param)

@@ -2,6 +2,19 @@
 	<div>
 		<!-- 列表页面 -->
 		<div class="container page-container" v-if="redirectType === 'list'">
+			<sticky-top>
+				<div class="order-header">
+					<div class="header-left"><p class="title"></p></div>
+					<div class="header-right">
+						<el-select v-model="curStatus" @change="statusChange" size="medium" filterable default-first-option placeholder="请选择跟进状态" prop="curFollowStatus" class="">
+							<el-option label="全部审核状态" :value="-1"></el-option>
+							<el-option :label="value" v-for="(value, key) in statusData" :key="key" :value="key"></el-option>
+						</el-select>
+						<el-button type="primary" plain @click="backInit" size="mini" class="back-btn">返回浏览</el-button>
+					</div>
+				</div>
+				<el-divider></el-divider>
+			</sticky-top>
 			<div class="header"><div class="title"><span>客户项目审核列表</span></div></div>
 			<!-- 表格 -->
 			<lin-table
@@ -39,6 +52,7 @@ export default {
 	},
 	data() {
 		return {
+			curStatus: -1,
 			currentPage: 1,
 			dialogFormVisible: false,
 			tableColumn: [
@@ -51,6 +65,7 @@ export default {
 				{ prop: 'result_reason', label: '驳回原因'},
 				{ prop: 'create_time', label: '生成时间', width: 200},
 			],
+			statusData: ['审核不通过', '审核通过', '正在审核中'],
 			pagination: {
 				pageTotal: 0
 			},
@@ -84,16 +99,29 @@ export default {
 		this.getProjectExamines()
 	},
 	methods: {
-		
+		statusChange(val) {
+			this.curStatus = val
+			this.getProjectExamines()
+		},
+
+		backInit() {
+			this.curStatus = -1
+			this.getProjectExamines()
+		},
+
 		async getProjectExamines(page = 0) {
 			this.loading = true
-			let projectLists = {}
+			let projectLists = {},
+				searchParams = {}
+			if (this.curStatus != -1) {
+				searchParams['status'] = this.curStatus
+			}
 			if(store.state.user.username == 'super' || store.state.auths.includes('全部项目信息')) {
 				// 获取全部项目
-				projectLists = await projectExamine.getAllProjectExamine(page)
+				projectLists = await projectExamine.getAllProjectExamine(page, searchParams)
 			} else {
 				// 获取当前管理员录入的所有项目
-				projectLists = await projectExamine.getProjectExamines(page)
+				projectLists = await projectExamine.getProjectExamines(page,searchParams)
 			}
 			if (!this.pagination.pageTotal || this.pagination.pageTotal != projectLists.total_nums){
 				this.pagination = {

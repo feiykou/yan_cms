@@ -167,8 +167,8 @@
 </template>
 
 <script>
-import TagEnum from '../../config/tag/TagEnum'
-import tag from "../../models/tag"
+// import TagEnum from '../../config/tag/TagEnum'
+// import tag from "../../models/tag"
 import setting from "../../models/setting";
 export default {
 	name: 'TagAdd',

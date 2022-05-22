@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-img-about-qrcode-jpg"],{"05da":function(o,p,d){o.exports=d.p+"img/qrcode.d73ed15f.jpg"}}]);

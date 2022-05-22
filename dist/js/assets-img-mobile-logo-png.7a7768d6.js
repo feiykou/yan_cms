@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-img-mobile-logo-png"],{"9c49":function(o,p,n){o.exports=n.p+"img/mobile-logo.002e4f69.png"}}]);

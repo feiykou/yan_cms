@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-img-error-page-logo-png"],{"27d2":function(o,p,n){o.exports=n.p+"img/logo.85c54114.png"}}]);

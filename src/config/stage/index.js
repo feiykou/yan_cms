@@ -1,14 +1,6 @@
 import adminConfig from './admin'
 // import customReportConfig from './customReport'
-import categorySubRouter from './categorySub'
-import categoryLastRouter from './categoryLast'
-import gridCategoryRouter from './gridCategory'
-import themeRouter from './theme'
-import culturalRouter from './cultural'
-import marketRouter from './market'
-import culturalCateSubRouter from './culturalCateSub'
-import SpuConfig from './spu'
-import specConfig from './spec'
+// import culturalCateSubRouter from './culturalCateSub'
 import CustomerConfig from './customer'
 import CustomerProjectConfig from './customerProject'
 import StaticsConfig from './statics'
@@ -47,15 +39,12 @@ let homeRouter = [{
         icon: 'iconfont icon-rizhiguanli',
     },
     StaticsConfig,
-    // customReportConfig,
-    // culturalCateSubRouter,
     CustomerConfig,
     CustomerProjectConfig,
     adminConfig,
     Config
 ]
 
-// const plugins = [...pluginsConfig]
 
 // 筛除已经被添加的插件
 function filterPlugin(data) {
@@ -78,7 +67,6 @@ function filterPlugin(data) {
     }
 }
 
-// filterPlugin(homeRouter)
 
 // homeRouter = homeRouter.concat(plugins)
 

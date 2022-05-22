@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["plugins-custom-assets-img-logo-png"],{bddd:function(o,p,n){o.exports=n.p+"img/logo.8c2798a7.png"}}]);

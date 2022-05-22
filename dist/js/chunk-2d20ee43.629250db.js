@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d20ee43"],{b0fe:function(e,n,o){"use strict";o.r(n);var t={text:"文本",video:"直播"};n["default"]=t}}]);

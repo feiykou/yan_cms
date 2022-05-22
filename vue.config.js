@@ -1,4 +1,6 @@
 const path = require('path')
+const CompressionPlugin = require("compression-webpack-plugin");
+const isProduction = process.env.NODE_ENV !== 'development';
 
 function resolve(dir) {
     return path.join(__dirname, dir)
@@ -24,10 +26,27 @@ module.exports = {
         config.plugin('webpack-bundle-analyzer')
             .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
     },
-    configureWebpack: {
-        resolve: {
-            extensions: ['.js', '.json', '.vue', '.scss', '.html'],
-        },
+    configureWebpack: (config) => {
+        Object.assign(config.resolve, {
+                extensions: ['.js', '.json', '.vue', '.scss', '.html']
+            })
+            // 生产环境相关配置
+        if (isProduction) {
+            //gzip压缩
+            const productionGzipExtensions = ['html', 'js', 'css']
+            config.plugins.push(
+                new CompressionPlugin({
+                    filename: '[path].gz[query]',
+                    algorithm: 'gzip',
+                    test: new RegExp(
+                        '\\.(' + productionGzipExtensions.join('|') + ')$'
+                    ),
+                    threshold: 10240, // 只有大小大于该值的资源会被处理 10240
+                    minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
+                    deleteOriginalAssets: false // 删除原文件
+                })
+            )
+        }
     },
     css: {
         loaderOptions: {
@@ -40,8 +59,8 @@ module.exports = {
         // proxy: "http://api.szfxws.com",
         proxy: {
             '^/v1|^/cms|^/cloud': {
-                target: 'http://yan.cn',
-                // target: 'http://api.szfxws.com/',
+                // target: 'http://yan.cn',
+                target: 'http://api.szfxws.com/',
                 ws: true,
                 changeOrigin: true
             },

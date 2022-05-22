@@ -21,6 +21,8 @@ module.exports = {
             .end()
             .use("vue-markdown-loader")
             .loader('vue-markdown-loader/lib/markdown-compiler')
+        config.plugin('webpack-bundle-analyzer')
+            .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
     },
     configureWebpack: {
         resolve: {
@@ -38,8 +40,8 @@ module.exports = {
         // proxy: "http://api.szfxws.com",
         proxy: {
             '^/v1|^/cms|^/cloud': {
-                // target: 'http://yan.cn',
-                target: 'http://api.szfxws.com/',
+                target: 'http://yan.cn',
+                // target: 'http://api.szfxws.com/',
                 ws: true,
                 changeOrigin: true
             },

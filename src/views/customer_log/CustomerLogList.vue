@@ -69,7 +69,7 @@
             </div>
 		</div>
         <!-- 编辑页面 -->
-		<customer-log-add v-else-if="redirectType === 'add'" :userCode="userCode" :projectID="projectID" :linkCode="linkCode" :customerID="customerID" @close="closePage"></customer-log-add>
+		<customer-log-add v-else-if="redirectType === 'add'" :userCode="curUserCode" :projectID="projectID" :linkCode="linkCode" :customerID="customerID" @close="closePage"></customer-log-add>
 		<customer-log-edit v-else-if="redirectType === 'edit'" :linkCode="linkCode" :projectID="projectID" :editID="editID" @close="closePage"></customer-log-edit>
     </div>
 </template>
@@ -109,6 +109,7 @@ export default {
             tableData: [],
             fileList: [],
             editID: 1,
+            curUserCode: '',
             entryType: 'customer',
             customerID: 0,
             pagination: {
@@ -123,6 +124,7 @@ export default {
         CustomerLogEdit
     },
     created() {
+        this.curUserCode = this.userCode
         this.getCustomerLogs()
         this.getCustomerID()
     },
@@ -162,8 +164,8 @@ export default {
         async getCustomerLogs(page = 0) {
             this.loading = true
             const params = {};
-            if(this.userCode && this.userCode != 0){
-                params['user_code'] = this.userCode
+            if(this.curUserCode && this.curUserCode != 0){
+                params['user_code'] = this.curUserCode
             }
             if(this.projectID > 0){
                 params['project_id'] = this.projectID
@@ -209,7 +211,7 @@ export default {
             const result = await this.getCustomer(this.linkCode)
             if(result) {
                 this.customerID = result['id']
-                this.userCode = result['user_code']
+                this.curUserCode = result['user_code']
             }
         },
         async getCustomer(link_code) {
@@ -331,6 +333,7 @@ export default {
                     color: $parent-title-color;
                     font-size: 16px;
                     font-weight: 500;
+                    white-space: nowrap;
                 }
                 .back{
                     cursor: pointer;

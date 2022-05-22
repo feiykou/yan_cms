@@ -24,7 +24,9 @@ export default {
     },
     selData: {
       type: Array,
-      default: ['客户名','责任人']
+      default: function() {
+        return ['客户名','责任人']
+      }
     },
   },
   data() {

@@ -330,6 +330,7 @@ export default {
 				color: $parent-title-color;
 				font-size: 16px;
 				font-weight: 500;
+				white-space: nowrap;
 			}
 		}
 

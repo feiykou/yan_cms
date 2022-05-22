@@ -14,6 +14,10 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import echarts from '@/lin/plugins/echarts'
+Vue.prototype.$echarts = echarts
+
 import angle from '@/components/base/echart/angle'
 import lineArea from '@/components/base/echart/lineArea'
 import fpolyline from '@/components/base/echart/fpolyline'
@@ -38,7 +42,7 @@ export default {
                     { value: 335, name: '公众号' },
                     { value: 400, name: '转介绍' }],
             noFollowData: {},
-            followData: [],
+            followData: {},
             fieldObj: {
 				"channel": "channelData",
 			},
@@ -82,6 +86,7 @@ export default {
             });
             odata.x = x
             odata.value = value
+            console.log(odata)
             this.followData = odata
         },
         // 未跟进客户统计   

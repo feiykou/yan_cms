@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "serve": "node script/plugin-get-config.js && vue-cli-service serve",
-        "build": "node script/plugin-get-config.js && vue-cli-service build",
+        "build": "node script/plugin-get-config.js && vue-cli-service build --report",
         "lint": "vue-cli-service lint",
         "commit": "git-cz",
         "plugin-init": "node script/plugin-init.js",
@@ -68,6 +68,7 @@
         "validate-npm-package-name": "^3.0.0",
         "vue-markdown-loader": "^2.4.1",
         "vue-template-compiler": "^2.6.10",
+        "webpack-bundle-analyzer": "^4.5.0",
         "yaml-front-matter": "^4.0.0"
     },
     "postcss": {

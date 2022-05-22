@@ -32,7 +32,7 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item label="项目列表" prop="project_id">
-							<el-select size="medium" filterable disabled="{!!projectID}" v-model="form.project_id" placeholder="请选择项目">
+							<el-select size="medium" filterable :disabled="!!projectID" v-model="form.project_id" placeholder="请选择项目">
 								<el-option :value="0" key="" label="日常维护">
 									<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">00</span>
 									<span>日常维护</span>

@@ -1,11 +1,13 @@
 import '@babel/polyfill'
 import Vue from 'vue'
-import ElementUI from 'element-ui'
+// import ElementUI from 'element-ui'
 import Viser from 'viser-vue'
+import '@/lin/plugins/elementui'
+
 // import echarts from 'echarts'
-const echarts = require('echarts')
+// const echarts = require('echarts')
 Vue.use(Viser)
-Vue.prototype.$echarts = echarts
+    // Vue.prototype.$echarts = echarts
 
 import '@/lin/mixin'
 import '@/lin/filter'
@@ -29,7 +31,7 @@ import 'element-ui/lib/theme-chalk/display.css'
 
 Vue.config.productionTip = false
 
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
 
 
 Vue.component(CollapseTransition.name, CollapseTransition)

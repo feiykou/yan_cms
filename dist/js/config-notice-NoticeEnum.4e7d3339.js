@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["config-notice-NoticeEnum"],{b0fe:function(e,n,o){"use strict";o.r(n);var i={text:"文本",video:"直播"};n["default"]=i}}]);

@@ -18,20 +18,20 @@ function deepTravel(config, fuc) {
 const homeRouter = []
 
 deepTravel(stageConfig, viewConfig => {
-    // 构造舞台view路由
-    const viewRouter = {}
-    viewRouter.path = viewConfig.route
-    viewRouter.name = viewConfig.name
-    viewRouter.component = () =>
-        import ( /* webpackChunkName: "[request]" */ `@/${viewConfig.filePath}`)
-    viewRouter.meta = {
-        title: viewConfig.title,
-        icon: viewConfig.icon,
-        right: viewConfig.right,
-        type: viewConfig.type,
-        blueBaseColor: viewConfig.blueBaseColor ? 'viewConfig.blueBaseColor' : '',
-    }
-    homeRouter.push(viewRouter)
-})
-
+        // 构造舞台view路由
+        const viewRouter = {}
+        viewRouter.path = viewConfig.route
+        viewRouter.name = viewConfig.name
+        viewRouter.component = () =>
+            import (`@/${viewConfig.filePath}`)
+        viewRouter.meta = {
+            title: viewConfig.title,
+            icon: viewConfig.icon,
+            right: viewConfig.right,
+            type: viewConfig.type,
+            blueBaseColor: viewConfig.blueBaseColor ? 'viewConfig.blueBaseColor' : '',
+        }
+        homeRouter.push(viewRouter)
+    })
+    /* webpackChunkName: "[request]" */
 export default homeRouter

@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-img-login-nickname-png"],{"6b03":function(n,p,i){n.exports=i.p+"img/nickname.93a6d6f0.png"}}]);

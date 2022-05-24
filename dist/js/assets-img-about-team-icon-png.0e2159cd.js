@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-img-about-team-icon-png"],{"249f":function(n,o,p){n.exports=p.p+"img/team-icon.322fd466.png"}}]);

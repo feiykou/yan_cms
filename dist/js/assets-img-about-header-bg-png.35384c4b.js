@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-img-about-header-bg-png"],{e279:function(e,p,b){e.exports=b.p+"img/header-bg.89b936bb.png"}}]);

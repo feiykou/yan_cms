@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-img-about-avatar-png"],{8509:function(a,p,n){a.exports=n.p+"img/avatar.fe758668.png"}}]);

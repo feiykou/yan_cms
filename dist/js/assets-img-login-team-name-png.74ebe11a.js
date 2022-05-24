@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-img-login-team-name-png"],{df8e:function(n,e,p){n.exports=p.p+"img/team-name.9a9009f3.png"}}]);

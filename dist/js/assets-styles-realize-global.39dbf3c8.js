@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["assets-styles-realize-global"],{c180:function(s,e,n){}}]);

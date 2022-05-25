@@ -35,6 +35,10 @@ import {
     TimelineItem,
     Card,
     InputNumber,
+    Message,
+    MessageBox,
+    Notification,
+    Image
     // option,
     // option,
 
@@ -74,4 +78,12 @@ Vue.component(Timeline.name, Timeline);
 Vue.component(TimelineItem.name, TimelineItem);
 Vue.component(Card.name, Card);
 Vue.component(InputNumber.name, InputNumber);
+Vue.component(Image.name, Image)
 Vue.use(Loading.directive)
+
+Vue.prototype.$message = Message
+Vue.prototype.$alert = MessageBox.alert;
+Vue.prototype.$confirm = MessageBox.confirm;
+Vue.prototype.$prompt = MessageBox.prompt;
+Vue.prototype.$notify = Notification;
+Vue.prototype.$loading = Loading.service;

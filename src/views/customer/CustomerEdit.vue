@@ -254,18 +254,22 @@
 					let form = await customer.getCustomer(this.editID)
 					this._handleCustomerResData(form)
 				} catch(error) {
-					// console.log(error)
-					if(!error.data) {
-						this.$message.error('客户端错误')
+					console.log(error)	
+					if(!error.data && !error.data.msg) {
+						
 						return
 					}
-					let message = error.data.msg
-					if(message && typeof message === 'object'){
-						for (const key in message){
-							this.$message.error(message[key])
-							await setTimeout(function () {}, 1000)
+					if(error && error.data) {
+						let message = error.data.msg
+						if(message && typeof message === 'object'){
+							for (const key in message){
+								this.$message.error(message[key])
+								await setTimeout(function () {}, 1000)
+							}
+							return
 						}
 					}
+					this.$message.error('客户端错误')
 				}
 				if(this.form.author=='super') {
 					this.getAdminUsers()
@@ -273,6 +277,7 @@
 				this.loading = false
 			},
 			submitForm(formName) {
+				const that = this
 				this.$refs[formName].validate(async valid => {
 					if(valid) {
 						this.loading = true
@@ -294,7 +299,7 @@
 								this.back()
 							}
 						} catch (error) {
-							if(error.data) {
+							if(error && error.data) {
 								let message = error.data.msg
 								if(message && typeof message === 'object'){
 									for (const key in message){
@@ -307,9 +312,6 @@
 							}
 						}
 						this.loading = false
-					} else {
-						this.$message.error('请填写正确的信息')
-						return false
 					}
 				})
 			},

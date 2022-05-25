@@ -171,6 +171,7 @@
 							this.back()
 						}
 					} catch (error) {
+						console.log(error)
 						if(error.data) {
 							let message = error.data.msg
 							if(message && typeof message === 'object'){
@@ -184,9 +185,6 @@
 						}
 					}
 					this.loading = false
-				} else {
-					this.$message.error('请填写正确的信息')
-					return false
 				}
 			})
 		},

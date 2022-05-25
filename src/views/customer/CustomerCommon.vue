@@ -94,10 +94,10 @@
 					val['is_release_user'] = val['is_release_user'] === 0 ? '正常' : '已释放'
 					val['status'] = val['status'] === 0 ? '未通过' : '通过'
 					if(val['address']) {
-						if(!this.isChinese(val['address'][0])) {
-							val['address'] = CodeToText[val['address'][0]] + '-' + CodeToText[val['address'][1]]
+						if(!this.isChinese(val['address']['province'])) {
+							val['address'] = CodeToText[val['address']['province']] + '-' + CodeToText[val['address']['city']]
 						} else {
-							val['address'] = val['address'][0] + '-' + val['address'][1]
+							val['address'] = val['address']['province'] + '-' + val['address']['city']
 						}
 					}
 				})

@@ -1,0 +1,221 @@
+<template>
+    <div>
+        <div class="echart-wrap">
+            <div class="wrap">
+                <div class="item"><angle ref="angle" className="angle-wrap" :odata="channelResData" id="angleId" width="100%" height="400px"></angle></div>
+                <div class="item"><line-area  ref="linearea" :odata="followData" className="area-wrap" id="areaId" width="100%" height="400px"></line-area></div>
+            </div>
+            <div class="wrap line-wrap">
+                <div class="item"><fpolyline ref="fpolyline" :odata="customerData" className="line-wrap" id="lineId" width="100%" height="400px"></fpolyline></div>
+                <div class="item"><bar ref="fbar" :odata="noFollowData" className="bar-wrap" id="barId" width="100%" height="400px"></bar></div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import Vue from 'vue'
+import echarts from '@/lin/plugins/echarts'
+Vue.prototype.$echarts = echarts
+
+import angle from '@/components/base/echart/angle'
+import lineArea from '@/components/base/echart/lineArea'
+import fpolyline from '@/components/base/echart/fpolyline'
+import bar from '@/components/base/echart/bar'
+
+import type from "@/models/type"
+import statistics from "@/models/statistics"
+import Utils from '../../../lin/utils/util'
+export default {
+    components: {
+        angle,
+        lineArea,
+        bar,
+        fpolyline
+    },
+    data() {
+        return {
+            customerData: {},
+            channelResData: [{ value: 235, name: '抖音' },
+                    { value: 274, name: '百度' },
+                    { value: 310, name: '淘宝' },
+                    { value: 335, name: '公众号' },
+                    { value: 400, name: '转介绍' }],
+            noFollowData: {},
+            followData: {},
+            fieldObj: {
+				"channel": "channelData",
+			},
+            channelData: [
+                "抖音","百度","淘宝","公众号","转介绍","业务员推销","代理","扩容"
+            ],
+        }
+    },
+    created() {
+        
+    },
+    async mounted() {
+        await this.getTypes()
+        await this.getCustomerNoFollow()
+        await this.getStatistics()
+        await this.getCustomerChannelStatistics()
+        await this.getCustomerFollow()
+        this.$refs.fpolyline.initChart()
+        this.$refs.angle.initChart()
+        this.$refs.fbar.initChart()
+        this.$refs.linearea.initChart()
+    },
+    methods: {
+
+        async getCustomerFollow() {
+            let followData = []
+            const that = this
+            try {
+                followData = await statistics.getCustomerFollow()
+            } catch (e) {
+                followData = []
+            }
+            console.log(followData)
+            let x = [],
+                value = [],
+                odata = {x: [], value: []}
+            
+            followData.forEach(data => {
+                x.push(data.date)
+                value.push(data.count)
+            });
+            odata.x = x
+            odata.value = value
+            console.log(odata)
+            this.followData = odata
+        },
+        // 未跟进客户统计   
+        async getCustomerNoFollow() {
+            let followData = []
+            const that = this
+            try {
+                followData = await statistics.getCustomerNoFollow()
+            } catch (e) {
+                followData = []
+            }
+            console.log(followData)
+            let x = [],
+                value = [],
+                odata = {x: [], value: []}
+            
+            followData.forEach(data => {
+                x.push(data.name)
+                value.push(data.count)
+            });
+            odata.x = x
+            odata.value = value
+            this.noFollowData = odata
+            console.log(odata)
+        },
+        // 渠道统计
+        async getCustomerChannelStatistics() {
+            let channelData = []
+            const that = this
+            try {
+                channelData = await statistics.getCustomerChannelData()
+            } catch (e) {
+                channelData = []
+            }
+            let odata = []
+            this.channelData.forEach(data => {
+                odata.push({
+                    name: data,
+                    value: 0
+                })
+            })
+            channelData.forEach(data => {
+                const result = that.channelData.findIndex(item => {
+                    return data.channel == item
+                })
+                if(result >= 0) {
+                    odata[result].value = data.count
+                } 
+                
+            });
+            odata = odata.sort(function (a, b) {
+                return a.value - b.value;
+            })
+            this.channelResData = odata
+        },
+        // 新增用户统计
+        async getStatistics() {
+            let orderLists = []
+            let date = Utils.getDateRange(new Date(), 30, true)
+            
+            try {
+                this.loading = true
+                orderLists = await statistics.getCustomerBaseStatistics(date[0], date[1], 'day')
+                this.loading = false
+            } catch (e) {
+                orderLists = []
+                this.loading = false
+            }
+            console.log(orderLists)
+            let x = [],
+                value = [],
+                odata = {x: [], value: []}
+            
+            orderLists.forEach(data => {
+                x.push(data.date)
+                value.push(data.count)
+            });
+            odata.x = x
+            odata.value = value
+            this.customerData = odata
+        },
+        // 获取类型
+		async getTypes() {
+			let fields = []
+			const fieldObj = this.fieldObj
+			for(let obj in fieldObj) {
+				fields.push(obj)
+			}
+			fields = fields.join()
+			let result = await type.getTypeByField(fields)
+			if(!result || result.length == 0) return;
+			
+			for(let obj in fieldObj) {
+				const key = fieldObj[obj]
+				const curData = result.find(val => {
+					return val['field'] == obj
+				})
+				if(curData) {
+					this[key] = curData['value']
+				}
+			}
+			
+		},
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+    .echart-wrap{
+        // background-color: #dcdcdc;
+        .wrap{
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            grid-column-gap: 20px;
+            grid-row-gap: 20px;
+            margin: 30px 20px;
+            &.line-wrap{
+                grid-template-columns: 1fr 1fr;
+            }
+            .item{
+                background-color: #fff;
+                border-radius: 5px;
+                &:first-child{
+                    
+                }
+                &:last-child{
+
+                }
+            }
+        }
+    }
+</style>

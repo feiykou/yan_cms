@@ -135,7 +135,7 @@
 				channel: '',
 				is_release_user: false,
 				customer_type: '',
-				dicider_user: ''	
+				dicider_user: ''
 			},
 			rules: {
 				// name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
@@ -163,6 +163,15 @@
 				if(valid) {
 					this.loading = true
 					try {
+						if(this.form.dicider_user) {
+							const userData = this.cuserLists.filter(ele => ele.id == this.form.dicider_user)
+							if(userData) {
+								this.form['dicider_user'] = {
+									id: userData[0].id,
+									name: userData[0].username
+								}
+							}
+						}
 						this.form.address = this.handleReqAddress()
 						const res = await customer.addCustomer(this.form)
 						if (res.error_code === 0) {
@@ -228,6 +237,7 @@
 			try {
 				res = await Admin.getAdminUsers({ count: 30, page: 0 }) // eslint-disable-line
 				this.cuserLists = [...res.items]
+				console.log(this.cuserLists)
 			} catch (e) {
 			}
 		},

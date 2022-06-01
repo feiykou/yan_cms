@@ -3,9 +3,10 @@ import Vue from 'vue'
 // import ElementUI from 'element-ui'
 import Viser from 'viser-vue'
 import '@/lin/plugins/elementui'
-
-// import echarts from 'echarts'
-// const echarts = require('echarts')
+import Utils from '@/lin/utils/util'
+Vue.prototype.$Utils = Utils
+    // import echarts from 'echarts'
+    // const echarts = require('echarts')
 Vue.use(Viser)
     // Vue.prototype.$echarts = echarts
 

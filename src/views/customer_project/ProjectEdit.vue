@@ -19,23 +19,22 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item label="使用场景" prop="scene">
-							<el-input size="medium" v-model="form.scene" placeholder="请填写使用场景"></el-input>
-						</el-form-item>
-						<el-form-item label="客户行业" prop="industry">
-							<el-select size="medium" filterable v-model="form.industry" placeholder="请选择客户行业">
-								<template v-for="(val, index) in industryData">
+							<el-select size="medium" filterable v-model="form.scene" placeholder="请选择使用场景">
+								<template v-for="(val, index) in sceneData">
 									<el-option :value="val" :key="index" :label="val">
 										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 										<span>{{ val }}</span>
 									</el-option>
 								</template>
 							</el-select>
-							<el-input class="mt10" :disabled="!industryDisplay?'disabled':false" size="medium" v-model="industry_other" placeholder="请填写客户行业"></el-input>
+						</el-form-item>
+						<el-form-item label="客户行业" prop="industry">
+							<el-input class="mt10" size="medium" v-model="industry" placeholder="请填写客户行业"></el-input>
 						</el-form-item>
 						<el-form-item label="产品类型" prop="product_type">
 							<el-select size="medium" filterable v-model="form.product_type" placeholder="请选择产品类型">
 								<template v-for="(val, index) in productTypeData">
-									<el-option :value="index" :key="val" :label="val">
+									<el-option :value="val" :key="val" :label="val">
 										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 										<span>{{ val }}</span>
 									</el-option>
@@ -102,7 +101,14 @@
 							</el-date-picker>
 						</el-form-item>
 						<el-form-item label="丢单原因" prop="reason" v-if="isStatusExamine">
-							<el-input type="textarea" size="medium" v-model="form.reason" placeholder="请填写丢单原因"></el-input>
+							<el-select size="medium" filterable v-model="form.reason" placeholder="请选择丢单原因">
+								<template v-for="(val, index) in reasonData">
+									<el-option :value="val" :key="index" :label="val">
+										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
+										<span>{{ val }}</span>
+									</el-option>
+								</template>
+							</el-select>
 						</el-form-item>
 						<el-form-item label="订单编码" prop="order_no">
 							<el-input size="medium" v-model="form.order_no" placeholder="请填写订单编码"></el-input>
@@ -146,20 +152,20 @@ export default {
 			loading: false,
 			demandBgData: ['已受灾','应付检查','系统统一安装','领导要求','其他'],
 			productTypeData: ['不锈钢开启式','不锈钢密闭式','铝合金组合式','水动力','ABS'],
-			industryData: ['商场','工厂','其他'],
 			statusData: [],
 			channelData: [], // 客户来源
+			sceneData: [],
+			reasonData: [],
 			fieldObj: {
-				"industry": "industryData",
 				"status": "statusData",
-				"product_type": "productTypeData",
-				"demand_bg": "demandBgData",
-				"project_channel": "channelData"
+				"project_product_type": "productTypeData",
+				"project_demand_bg": "demandBgData",
+				"project_channel": "channelData",
+				"project_usage": "sceneData",
+				"project_cause": "reasonData"
 			},
-			industry_other: '', // 客户行业其他内容填写
 			demand_bg_other: '',
 			demandBgDisplay: false,  // 客户需求背景是否禁用
-			industryDisplay: false,  // 客户行业其他是否禁用
 			isStatusExamine: false,
 			successStatus: config.successStatus, // 成交状态：已成交
 			form: {			
@@ -207,13 +213,6 @@ export default {
 				} else {
 					this.isStatusExamine = false
 				}
-				// 客户行业
-				if(val.industry == '其他') {
-					this.industryDisplay = true
-				} else {
-					this.industryDisplay = false
-					this.industry_other = ''
-				}
 				// 客户需求背景
 				if(val.demand_bg == '其他') {
 					this.demandBgDisplay = true
@@ -248,11 +247,6 @@ export default {
 		},
 		_handleCustomerResData(form) {
 			const customerAdd = form
-			if(customerAdd['industry'].indexOf('其他') != -1) {
-				const arr = customerAdd['industry'].split('-')
-				customerAdd['industry'] = arr[0]
-				this.industry_other = arr[1]
-			}
 			if(customerAdd['demand_bg'].indexOf('其他') != -1) {
 				const arr = customerAdd['demand_bg'].split('-')
 				customerAdd['demand_bg'] = arr[0]
@@ -262,10 +256,6 @@ export default {
 		},
 		settingFollow() {
 			const formData = this.form
-			
-			if(formData.industry == '其他') {
-				formData.industry = '其他-'+ this.industry_other
-			}
 			if(formData.demand_bg == '其他') {
 				formData.demand_bg = '其他-'+ this.demand_bg_other
 			}

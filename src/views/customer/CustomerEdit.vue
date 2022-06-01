@@ -308,7 +308,7 @@
 									}
 								}
 							} else {
-								this.$message.error(error.toString())
+								this.$message.error('请重新尝试！')
 							}
 						}
 						this.loading = false

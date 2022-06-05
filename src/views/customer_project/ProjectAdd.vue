@@ -124,7 +124,7 @@
 import project from '@/models/customer_project'
 import type from "@/models/type"
 import config from '@/config/index.js'
-
+import Utils from '@/lin/utils/util'
 export default {
 	name: 'CulturalAdd',
 	props: {
@@ -205,7 +205,7 @@ export default {
 			}
 			return formData
 		},
-		submitform(formName) {
+		submitform: Utils.debounce(function(formName){
 			this.$refs[formName].validate(async valid => {
 				if(valid) {
 					this.loading = true
@@ -235,7 +235,7 @@ export default {
 					return false
 				}
 			})
-		},
+		}, 300),
 		// 获取类型
 		async getTypes() {
 			let fields = []

@@ -140,6 +140,7 @@
 	import customer from "@/models/customer"
 	import store from '@/store'
 	import type from "@/models/type"
+	import Utils from '@/lin/utils/util'
   	import Admin from '@/lin/models/admin'
 	export default {
 		name: 'ColumnEdit',
@@ -276,7 +277,7 @@
 				}
 				this.loading = false
 			},
-			submitForm(formName) {
+			submitForm: Utils.debounce(function(formName){
 				const that = this
 				this.$refs[formName].validate(async valid => {
 					if(valid) {
@@ -314,9 +315,9 @@
 						this.loading = false
 					}
 				})
-			},
+			}, 300),
 			
-			submitMainForm(formName) {
+			submitMainForm: Utils.debounce(function(formName){
 				this.$refs[formName].validate(async valid => {
 					if(valid) {
 						this.mainLoading = true
@@ -347,7 +348,7 @@
 						return false
 					}
 				})
-			},
+			}, 300),
 			handleReqAddress() {
 				let addressArr = this.form.address
 				const keyArr = ['province', 'city']

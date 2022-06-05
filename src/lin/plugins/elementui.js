@@ -38,7 +38,8 @@ import {
     Message,
     MessageBox,
     Notification,
-    Image
+    Image,
+    Checkbox
     // option,
     // option,
 
@@ -79,6 +80,7 @@ Vue.component(TimelineItem.name, TimelineItem);
 Vue.component(Card.name, Card);
 Vue.component(InputNumber.name, InputNumber);
 Vue.component(Image.name, Image)
+Vue.component(Checkbox.name, Checkbox)
 Vue.use(Loading.directive)
 
 Vue.prototype.$message = Message

@@ -101,7 +101,7 @@
   import type from "@/models/type"
   import Admin from '@/lin/models/admin'
   import store from '@/store'
-
+  import Utils from '@/lin/utils/util'
 
   
   export default {
@@ -158,7 +158,7 @@
 		  this.getTypes()
 	  },
 	  methods: {
-		submitForm(formName) {
+		submitForm: Utils.debounce(function(formName){
 			this.$refs[formName].validate(async valid => {
 				if(valid) {
 					this.loading = true
@@ -196,7 +196,7 @@
 					this.loading = false
 				}
 			})
-		},
+		}, 300),
 		handleReqAddress() {
 			let addressArr = this.form.address
 			const keyArr = ['province', 'city']

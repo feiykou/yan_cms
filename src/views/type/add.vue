@@ -63,7 +63,7 @@ export default {
     }
   },
   methods: {
-    submitForm(formName) {
+    submitForm: Utils.debounce(function(formName){
       if(this.valueList.length <= 0) {
         this.$message.error(`请输入类型值`)
         return
@@ -100,7 +100,7 @@ export default {
           return false
 				}
 			})
-    },
+    }, 300),
     addContent() {
       this.valueList.push({
         text: '',

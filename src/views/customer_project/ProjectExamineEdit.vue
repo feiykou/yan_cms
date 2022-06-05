@@ -33,6 +33,7 @@
 <script>
 import projectExamine from '@/models/project-examine'
 import type from "@/models/type"
+import Utils from '@/lin/utils/util'
 export default {
 	name: 'ProjectExamineAdd',
 	props: {
@@ -95,7 +96,7 @@ export default {
 			this.loading = false
 		},
 		
-		submitform(formName) {
+		submitform: Utils.debounce(function(formName){
 			this.$refs[formName].validate(async valid => {
 				if(valid) {
 					this.loading = true
@@ -120,7 +121,7 @@ export default {
 					return false
 				}
 			})
-		},
+		}, 300),
 		// 获取类型
 		async getTypes() {
 			let fields = []

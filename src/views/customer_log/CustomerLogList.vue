@@ -96,6 +96,7 @@ export default {
     },
     filters: {
         dataFormal: function(value){
+            console.log(value)
             if(!value) return ''
             const arr = value.split(' ')
             if(arr.length >= 1) return arr[0]

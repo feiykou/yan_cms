@@ -29,7 +29,7 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item label="客户行业" prop="industry">
-							<el-input class="mt10" size="medium" v-model="industry" placeholder="请填写客户行业"></el-input>
+							<el-input class="mt10" size="medium" v-model="form.industry" placeholder="请填写客户行业"></el-input>
 						</el-form-item>
 						<el-form-item label="产品类型" prop="product_type">
 							<el-select size="medium" filterable v-model="form.product_type" placeholder="请选择产品类型">
@@ -117,8 +117,12 @@
 							<el-input size="small" v-model="form.follow_count" placeholder="请填写跟进次数"></el-input>
 						</el-form-item>
 						<el-form-item class="submit" v-if="!onlyRead">
-							<el-button type="primary" @click="submitform('form')">{{!isStatusExamine?'保 存':'申 请'}}</el-button>
-							<el-button @click="resetForm('form')">重 置</el-button>
+							<template v-if="!isStatusIng">
+								<el-button type="primary" @click="submitform('form')">{{!isStatusExamine?'保 存':'申 请'}}</el-button>
+								<el-button @click="resetForm('form')">重 置</el-button>
+							</template>
+							<el-button v-else type="primary" disabled>正在申请中</el-button>
+							
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -132,6 +136,7 @@ import project from '@/models/customer_project'
 import type from "@/models/type"
 import config from '@/config/index.js'
 import projectExamine from '@/models/project-examine'
+import Utils from '@/lin/utils/util'
 export default {
 	name: 'CulturalAdd',
 	props: {
@@ -188,6 +193,7 @@ export default {
 				reason: '',
 				follow_status: ''
 			},
+			isStatusIng: false,
 			rules: {
 				name: [
 					{ required: true, message: '请输入名称', trigger: 'blur' }
@@ -252,6 +258,11 @@ export default {
 				customerAdd['demand_bg'] = arr[0]
 				this.demand_bg_other = arr[1]
 			}
+			if(customerAdd['examine'] && customerAdd['examine']['status'] == 2) {
+				this.isStatusIng = true
+			} else {
+				this.isStatusIng = false
+			}
 			this.form = form
 		},
 		settingFollow() {
@@ -261,7 +272,8 @@ export default {
 			}
 			return formData
 		},
-		submitform(formName) {
+		submitform: Utils.debounce(function(formName){
+			console.log(this)
 			const that = this
 			this.$refs[formName].validate(async valid => {
 				if(valid) {
@@ -297,7 +309,7 @@ export default {
 					return false
 				}
 			})
-		},
+		}, 300),
 		// 获取类型
 		async getTypes() {
 			let fields = []

@@ -141,7 +141,7 @@
 				}
 				this.loading = false
 			},
-			submitForm(formName) {
+			submitForm: Utils.debounce(function(formName){
 				this.$refs[formName].validate(async valid => {
 					if(valid) {
 						this.loading = true
@@ -174,7 +174,7 @@
 						return false
 					}
 				})
-			},
+			}, 300),
 			setStatusTypeField() {
 				if(this.projectID) {
 					this.fieldObj['status'] = 'statusData'

@@ -49,7 +49,7 @@ module.exports = {
             )
             config.plugins.push(
                 new webpack.optimize.LimitChunkCountPlugin({
-                    maxChunks: 7
+                    maxChunks: 10
                 })
             )
         }
@@ -65,8 +65,8 @@ module.exports = {
         // proxy: "http://api.szfxws.com",
         proxy: {
             '^/v1|^/cms|^/cloud': {
-                target: 'http://yan.cn',
-                // target: 'http://api.szfxws.com/',
+                // target: 'http://yan.cn',
+                target: 'http://api.szfxws.com/',
                 ws: true,
                 changeOrigin: true
             },

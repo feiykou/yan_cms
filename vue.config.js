@@ -1,5 +1,6 @@
 const path = require('path')
 const CompressionPlugin = require("compression-webpack-plugin");
+const webpack = require('webpack')
 const isProduction = process.env.NODE_ENV !== 'development';
 
 function resolve(dir) {
@@ -46,6 +47,11 @@ module.exports = {
                     deleteOriginalAssets: false // 删除原文件
                 })
             )
+            config.plugins.push(
+                new webpack.optimize.LimitChunkCountPlugin({
+                    maxChunks: 7
+                })
+            )
         }
     },
     css: {
@@ -59,8 +65,8 @@ module.exports = {
         // proxy: "http://api.szfxws.com",
         proxy: {
             '^/v1|^/cms|^/cloud': {
-                // target: 'http://yan.cn',
-                target: 'http://api.szfxws.com/',
+                target: 'http://yan.cn',
+                // target: 'http://api.szfxws.com/',
                 ws: true,
                 changeOrigin: true
             },

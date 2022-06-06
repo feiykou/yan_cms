@@ -41,7 +41,7 @@
 
 <script>
 import type from '@/models/type'
-
+import Utils from '@/lin/utils/util'
 export default {
   data() {
     return {

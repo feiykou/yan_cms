@@ -7,6 +7,8 @@
       row-key="id"
       :border="border"
       :data="currentData"
+      filters=""
+
       :highlight-current-row="highlightCurrentRow ? true : false"
       :element-loading-text="loadingText"
       :element-loading-spinner="loadingIcon"
@@ -25,8 +27,7 @@
 					:prop="item.prop"
 					:label="item.label"
 					:show-overflow-tooltip="true"
-					:filters="item.filters ? item.filters : null"
-					:filter-method="item.filterMethod ? item.filterMethod : null"
+				
 					:column-key="item.filterMethod ? item.prop : null"
 					:formatter="item.formatter ? item.formatter : null"
 					:sortable="item.sortable ? item.sortable : false"
@@ -303,9 +304,13 @@ export default {
     },
     // checkbox触发函数
     handleSelectionChange(val) {
+      console.log(val);
+      
       const valKeys = val.map(item => item.key)
       const oldValKeys = this.oldVal.map(item => item.key)
       this.selectedTableData = JSON.parse(sessionStorage.getItem('selectedTableData'))
+      console.log(oldValKeys);
+      console.log(this.selectedTableData);
       // 一条数据都没选中
       if (this.selectedTableData.length === 0) {
         this.selectedTableData = this.selectedTableData.concat(val)
@@ -325,6 +330,10 @@ export default {
         this.selectedTableData = this.selectedTableData.concat(addVal)
         this.$emit('selection-change', this.selectedTableData)
       }
+      console.log('================');
+      
+      console.log(this.selectedTableData);
+      
       sessionStorage.setItem('selectedTableData', JSON.stringify(this.selectedTableData))
       this.oldVal = [...val]
     },

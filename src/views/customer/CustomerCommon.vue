@@ -22,7 +22,12 @@
 				v-loading="loading"
 			></lin-table>
 		</div>
-		<customer-log-list v-else-if="redirectType === 'log'" :hideLogBtn="hideLogBtn" :customerID="editID" @close="closePage"></customer-log-list>
+		<customer-log-list v-else-if="redirectType === 'log'" 
+			:isCommonCustomer="true" 
+			:hideLogBtn="hideLogBtn" 
+			:userCode="userCode" 
+			:linkCode="linkCode"
+			@close="closePage"></customer-log-list>
 	</div>
 </template>
 
@@ -44,8 +49,7 @@
 				hideLogBtn: true,
 				fileList: [],
 				tableColumn: [
-					{ prop: 'id', label: 'id', width: 100 },
-					{ prop: 'user_code', label: '客户编码', width: 150 },
+					{ prop: 'id', label: '客户编码', width: 100 },
 					{ prop: 'name', label: '客户名', width: 150 },
 					{ prop: 'contacts_name', label: '联系人', width: 150 },
 					{ prop: 'email', label: '邮箱', width: 150 },
@@ -60,6 +64,8 @@
 				},
 				showEdit: false,
 				editID: 1,
+				userCode: '',
+				linkCode: '',
 				redirectType: 'list',
 				currentPage: 1,
 				excelLock: true
@@ -138,6 +144,8 @@
 			},
 			handleLog({ row }) {
 				this.editID = row.id
+				this.userCode = row.user_code
+				this.linkCode = row.link_code
 				this.redirectType = 'log'
 			},
 			handleDelete(val) {

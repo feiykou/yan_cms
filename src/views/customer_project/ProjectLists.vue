@@ -82,12 +82,12 @@ export default {
 			tableColumn: [
 				{ prop: 'id', label: 'id', width: 100 },
 				{ prop: 'order_no', label: '订单编号', width: 150 },
-				{ prop: 'user_code', label: '客户编码', width: 150 },
+				{ prop: 'customer_id', label: '客户编码', width: 150 },
 				{ prop: 'customer_name', label: '客户名', width: 220},
-				{ prop: 'name', label: '项目名', width: 200},
-				{ prop: 'scene', label: '使用场景', width: 300},
-				{ prop: 'industry', label: '行业' },
-				{ prop: 'follow_status', label: '跟进状态', width: 100 },
+				{ prop: 'name', label: '项目名', width: 250},
+				{ prop: 'scene', label: '使用场景', width: 150},
+				{ prop: 'industry', label: '行业', width: 150 },
+				{ prop: 'follow_status', label: '跟进状态', width: 150 },
 				{ prop: 'create_time', label: '生成时间', width: 200},
 				{ prop: 'status_success_time', label: '成交时间', width: 200}
 			],

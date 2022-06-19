@@ -88,11 +88,7 @@
 				</el-table-column>
 
 				<!-- 推荐 -->
-				<el-table-column
-						v-if="item.type === 'rate'"
-						:label="item.label"
-						:prop="item.prop"
-						:width="item.width">
+				<el-table-column v-if="item.type === 'rate'" v-bind:key="item.prop" :label="item.label" :prop="item.prop" :width="item.width">
 					<template slot-scope="scope">
 						<el-rate
 							v-model="scope.row[item.prop]"

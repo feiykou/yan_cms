@@ -87,6 +87,10 @@ export default {
 			type: String,
 			default: ''
         },
+        isCommonCustomer: {
+            type: Boolean,
+            default: false
+        },
         projectID: Number,
         hideLogBtn: Boolean,
         linkCode: {
@@ -96,7 +100,6 @@ export default {
     },
     filters: {
         dataFormal: function(value){
-            console.log(value)
             if(!value) return ''
             const arr = value.split(' ')
             if(arr.length >= 1) return arr[0]
@@ -111,6 +114,7 @@ export default {
             fileList: [],
             editID: 1,
             curUserCode: '',
+            isFromCommonCustomer: false,
             entryType: 'customer',
             customerID: 0,
             pagination: {
@@ -124,10 +128,10 @@ export default {
         CustomerLogAdd,
         CustomerLogEdit
     },
-    created() {
+    async created() {
         this.curUserCode = this.userCode
+        await this.getCustomerID()
         this.getCustomerLogs()
-        this.getCustomerID()
     },
     methods: {
         async importCustomerLog(file) {
@@ -172,12 +176,19 @@ export default {
                 params['project_id'] = this.projectID
             }
             let customerLists = {}
+            console.log(params)
             try {
-                if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
-                    customerLists = await customer_log.getAllCustomerLogs(params, page)
-                } else {
-                    customerLists = await customer_log.getCustomerLogs(params, page)
-                }
+                // if(store.state.user.username == 'super' 
+                //     || store.state.auths.includes('获取全部客户信息')) {
+                //     // || this.isFromCommonCustomer
+                //     // || this.isCommonCustomer
+                //     customerLists = await customer_log.getAllCustomerLogs(params, page)
+                // } else {
+                //     customerLists = await customer_log.getCustomerLogs(params, page)
+                // }
+                // 通过条件判断，从客户列表和公域池进入，则通过user_code查看所有日志；
+                // 通过项目id，判断根据项目id获取所有日志信息
+                customerLists = await customer_log.getAllCustomerLogs(params, page)
                 if (customerLists && customerLists.total_nums <=0 ){
                     this.tableData = []
                     this.loading = false
@@ -213,6 +224,7 @@ export default {
             if(result) {
                 this.customerID = result['id']
                 this.curUserCode = result['user_code']
+                this.isFromCommonCustomer = !!result.old_user_id
             }
         },
         async getCustomer(link_code) {

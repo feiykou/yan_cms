@@ -175,9 +175,9 @@
 						this.form.address = this.handleReqAddress()
 						const res = await customer.addCustomer(this.form)
 						if (res.error_code === 0) {
-							this.$message.success(`${res.msg}`)
+							// this.$message.success(`${res.msg}`)
 							this.resetForm(formName)
-							this.back()
+							this.back(true, res['result'])
 						}
 					} catch (error) {
 						console.log(error)
@@ -245,8 +245,8 @@
 		  resetForm(formName) {
 			  this.$refs[formName].resetFields()
 		  },
-		  back(status = true) {
-			  this.$emit('close', status)
+		  back(status = true, id=0) {
+			  this.$emit('close', status, id)
 		  },
 	  }
   }

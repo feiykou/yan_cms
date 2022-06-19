@@ -118,8 +118,8 @@
 				],
 				curSearchIndex: 0,
 				tableColumn: [
-					{ prop: 'id', label: 'id', width: 100 },
-					{ prop: 'user_code', label: '客户编码', width: 150 },
+					{ prop: 'id', label: '客户编码', width: 100 },
+					// { prop: 'user_code', label: '客户编码', width: 150 },
 					{ prop: 'name', label: '客户名', width: 150 },
 					{ prop: 'contacts_name', label: '联系人', width: 100 },
 					{ prop: 'telephone', label: '联系人电话', width: 150 },
@@ -184,6 +184,8 @@
 		methods: {
 			// 触发多选checkbox
 			handleSelectionChange(data) {
+				console.log(data);
+				
 				const checkselId = []
 				data.forEach(ele => {
 					checkselId.push(ele.id)
@@ -265,8 +267,9 @@
 					if(this.curSearchIndex == 1) {
 						searchParams['author'] = this.searchKeyword
 					} 
+					// 客户编码使用id
 					if(this.curSearchIndex == 2) {
-						searchParams['user_code'] = this.searchKeyword
+						searchParams['id'] = this.searchKeyword
 					}
 					if(this.curSearchIndex == 3) {
 						searchParams['contacts_name'] = this.searchKeyword
@@ -506,7 +509,6 @@
 				this.redirectType = 'project'
 			},
 			handleDelete(val) {
-				
 				this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
@@ -526,8 +528,16 @@
 				})
 			},
 			rowClick() {},
-			closePage(val) {
+			closePage(val, id) {
 				this.redirectType = 'list'
+				if(id) {
+					this.$message({
+						type: 'success',
+						message: `客户信息已创建成功，客户编码：${id}`,
+						showClose: true,
+						duration: 0
+					})
+				}
 				if(val) this.getCustomers(this.currentPage - 1)
 			},
 		},

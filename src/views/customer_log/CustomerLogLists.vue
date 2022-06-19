@@ -113,7 +113,7 @@
 				],
 				curSearchIndex: 0,
 				tableColumn: [
-					{ prop: 'user_code', label: '客户编码', width: 100 },
+					{ prop: 'customer_id', label: '客户编码', width: 100 },
 					{ prop: 'author', label: '责任人', width: 100 },
 					{ prop: 'customer_name', label: '客户名', width: 200 },
 					{ prop: 'status', label: '跟进状态', width: 150 },
@@ -173,6 +173,9 @@
 							pageTotal: customerLists.total_nums
 						}
 					}
+					customerLists.collection.forEach(val => {
+						val["key"] = val.id
+					})
 					this.tableData = customerLists.collection
 					this.loading = false
 				}catch(error) {

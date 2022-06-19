@@ -17,6 +17,7 @@
 									</el-option>
 								</template>
 							</el-select>
+							<el-input class="mt10" size="medium" :disabled="!customerSourceDisplay?'disabled':false" v-model="customer_source_other" placeholder="请填写项目客户来源"></el-input>
 						</el-form-item>
 						<el-form-item label="使用场景" prop="scene">
 							<el-select size="medium" filterable v-model="form.scene" placeholder="请选择使用场景">
@@ -27,6 +28,7 @@
 									</el-option>
 								</template>
 							</el-select>
+							<el-input class="mt10" size="medium" :disabled="!sceneDisplay?'disabled':false" v-model="scene_other" placeholder="请填写客户使用场景"></el-input>
 						</el-form-item>
 						<el-form-item label="客户行业" prop="industry">
 							<el-input class="mt10" size="medium" v-model="form.industry" placeholder="请填写客户行业"></el-input>
@@ -133,7 +135,7 @@ export default {
 	data() {
 		return {
 			loading: false,
-			demandBgData: ['已受灾','应付检查','系统统一安装','领导要求','其他'],
+			demandBgData: ['已受灾','应付检查','系统统一安装','领导要求','其它'],
 			productTypeData: [],
 			statusData: [], // 跟进状态
 			channelData: [], // 客户来源
@@ -150,6 +152,10 @@ export default {
 			},
 			demand_bg_other: '',
 			demandBgDisplay: false,  // 客户需求背景是否禁用
+			scene_other: '', 
+			sceneDisplay: false,  // 使用场景
+			customer_source_other: '',
+			customerSourceDisplay: false,  // 项目客户来源
 			form: {			
 				name: '',		
 				scene: '',
@@ -184,12 +190,27 @@ export default {
 		form: {
 			handler(val, oldVal) {
 				// 客户需求背景
-				if(val.demand_bg == '其他') {
+				if(val.demand_bg == '其它') {
 					this.demandBgDisplay = true
 				} else {
 					this.demandBgDisplay = false
 					this.demand_bg_other = ''
 				}
+				// 使用场景
+				if(val.scene == '其它') {
+					this.sceneDisplay = true
+				} else {
+					this.sceneDisplay = false
+					this.scene_other = ''
+				}
+				// 项目客户来源
+				if(val.project_channel == '其它') {
+					this.customerSourceDisplay = true
+				} else {
+					this.customerSourceDisplay = false
+					this.customer_source_other = ''
+				}
+				
 			},
 			deep: true
 		}
@@ -200,8 +221,14 @@ export default {
 			
 			formData.link_code = this.linkCode
 			
-			if(formData.demand_bg == '其他') {
-				formData.demand_bg = '其他-'+ this.demand_bg_other
+			if(formData.demand_bg == '其它') {
+				formData.demand_bg = '其它-'+ this.demand_bg_other
+			}
+			if(formData.scene == '其它') {
+				formData.scene = '其它-'+ this.scene_other
+			}
+			if(formData.project_channel == '其它') {
+				formData.project_channel = '其它-'+ this.customer_source_other
 			}
 			return formData
 		},

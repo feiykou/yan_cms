@@ -17,6 +17,7 @@
 									</el-option>
 								</template>
 							</el-select>
+							<el-input class="mt10" size="medium" :disabled="!customerSourceDisplay?'disabled':false" v-model="customer_source_other" placeholder="请填写项目客户来源"></el-input>
 						</el-form-item>
 						<el-form-item label="使用场景" prop="scene">
 							<el-select size="medium" filterable v-model="form.scene" placeholder="请选择使用场景">
@@ -27,6 +28,7 @@
 									</el-option>
 								</template>
 							</el-select>
+							<el-input class="mt10" size="medium" :disabled="!sceneDisplay?'disabled':false" v-model="scene_other" placeholder="请填写客户使用场景"></el-input>
 						</el-form-item>
 						<el-form-item label="客户行业" prop="industry">
 							<el-input class="mt10" size="medium" v-model="form.industry" placeholder="请填写客户行业"></el-input>
@@ -109,6 +111,7 @@
 									</el-option>
 								</template>
 							</el-select>
+							<el-input class="mt10" size="medium" :disabled="!lostOrderDisplay?'disabled':false" v-model="lost_order_other" placeholder="请填写客户丢单原因"></el-input>
 						</el-form-item>
 						<el-form-item label="订单编码" prop="order_no">
 							<el-input size="medium" v-model="form.order_no" placeholder="请填写订单编码"></el-input>
@@ -155,7 +158,7 @@ export default {
 		}
 		return {
 			loading: false,
-			demandBgData: ['已受灾','应付检查','系统统一安装','领导要求','其他'],
+			demandBgData: ['已受灾','应付检查','系统统一安装','领导要求','其它'],
 			productTypeData: ['不锈钢开启式','不锈钢密闭式','铝合金组合式','水动力','ABS'],
 			statusData: [],
 			channelData: [], // 客户来源
@@ -171,6 +174,12 @@ export default {
 			},
 			demand_bg_other: '',
 			demandBgDisplay: false,  // 客户需求背景是否禁用
+			scene_other: '', 
+			sceneDisplay: false,  // 使用场景
+			lost_order_other: '',
+			lostOrderDisplay: false,  // 丢单原因
+			customer_source_other: '',
+			customerSourceDisplay: false,  // 项目客户来源
 			isStatusExamine: false,
 			successStatus: config.successStatus, // 成交状态：已成交
 			form: {			
@@ -220,11 +229,32 @@ export default {
 					this.isStatusExamine = false
 				}
 				// 客户需求背景
-				if(val.demand_bg == '其他') {
+				if(val.demand_bg == '其它') {
 					this.demandBgDisplay = true
 				} else {
 					this.demandBgDisplay = false
 					this.demand_bg_other = ''
+				}
+				// 使用场景
+				if(val.scene == '其它') {
+					this.sceneDisplay = true
+				} else {
+					this.sceneDisplay = false
+					this.scene_other = ''
+				}
+				// 丢单原因
+				if(val.reason == '其它') {
+					this.lostOrderDisplay = true
+				} else {
+					this.lostOrderDisplay = false
+					this.lost_order_other = ''
+				}
+				// 项目客户来源
+				if(val.project_channel == '其它') {
+					this.customerSourceDisplay = true
+				} else {
+					this.customerSourceDisplay = false
+					this.customer_source_other = ''
 				}
 			},
 			deep: true
@@ -253,10 +283,25 @@ export default {
 		},
 		_handleCustomerResData(form) {
 			const customerAdd = form
-			if(customerAdd['demand_bg'].indexOf('其他') != -1) {
+			if(customerAdd['demand_bg'].indexOf('其它') != -1) {
 				const arr = customerAdd['demand_bg'].split('-')
 				customerAdd['demand_bg'] = arr[0]
 				this.demand_bg_other = arr[1]
+			}
+			if(customerAdd['scene'].indexOf('其它') != -1) {
+				const arr = customerAdd['scene'].split('-')
+				customerAdd['scene'] = arr[0]
+				this.scene_other = arr[1]
+			}
+			if(customerAdd['reason'].indexOf('其它') != -1) {
+				const arr = customerAdd['reason'].split('-')
+				customerAdd['reason'] = arr[0]
+				this.lost_order_other = arr[1]
+			}
+			if(customerAdd['project_channel'].indexOf('其它') != -1) {
+				const arr = customerAdd['project_channel'].split('-')
+				customerAdd['project_channel'] = arr[0]
+				this.customer_source_other = arr[1]
 			}
 			if(customerAdd['examine'] && customerAdd['examine']['status'] == 2) {
 				this.isStatusIng = true
@@ -267,9 +312,19 @@ export default {
 		},
 		settingFollow() {
 			const formData = this.form
-			if(formData.demand_bg == '其他') {
-				formData.demand_bg = '其他-'+ this.demand_bg_other
+			if(formData.demand_bg == '其它') {
+				formData.demand_bg = '其它-'+ this.demand_bg_other
 			}
+			if(formData.scene == '其它') {
+				formData.scene = '其它-'+ this.scene_other
+			}
+			if(formData.reason == '其它') {
+				formData.reason = '其它-'+ this.lost_order_other
+			}
+			if(formData.project_channel == '其它') {
+				formData.project_channel = '其它-'+ this.customer_source_other
+			}
+			
 			return formData
 		},
 		submitform: Utils.debounce(function(formName){

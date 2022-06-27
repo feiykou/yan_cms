@@ -1,8 +1,8 @@
 import '@babel/polyfill'
 import Vue from 'vue'
-// import ElementUI from 'element-ui'
+import ElementUI from 'element-ui'
 import Viser from 'viser-vue'
-import '@/lin/plugins/elementui'
+// import '@/lin/plugins/elementui'
 import Utils from '@/lin/utils/util'
 Vue.prototype.$Utils = Utils
     // import echarts from 'echarts'
@@ -32,7 +32,7 @@ import 'element-ui/lib/theme-chalk/display.css'
 
 Vue.config.productionTip = false
 
-// Vue.use(ElementUI)
+Vue.use(ElementUI)
 
 
 Vue.component(CollapseTransition.name, CollapseTransition)

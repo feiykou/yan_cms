@@ -28,6 +28,8 @@ export default {
         return []
       }
       const father = this.stageInfo[this.stageInfo.length - 2]
+      console.log(father);
+      
       if (father.type === 'tab') {
         return father.children.map(item => ({
           icon: item.icon || '',

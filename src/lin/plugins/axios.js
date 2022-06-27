@@ -125,7 +125,13 @@ _axios.interceptors.response.use(
             const { params, url } = res.config
 
             // refresh_token 异常，直接登出
-            if (error_code === 10000 || error_code === 10100) {
+            if (error_code === 10000) {
+                Vue.prototype.$message({
+                    message: msg,
+                    type: 'error',
+                })
+            }
+            if (error_code === 10100) {
                 setTimeout(() => {
                     store.dispatch('loginOut')
                     const { origin } = window.location

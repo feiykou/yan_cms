@@ -1,6 +1,6 @@
 <template>
 	<div class="container">
-		<div class="title">添加客户基本信息 <span class="back" @click="back(false)"> <i class="iconfont icon-fanhui"></i> 返回 </span></div>
+		<div class="title">添加客户基本信息 <span class="back" @click="back(false)" v-if="!inNav"> <i class="iconfont icon-fanhui"></i> 返回 </span></div>
 		<div class="wrap">
 			<el-row>
 				<el-col :lg="16" :md="20" :sm="24" :xs="24">
@@ -68,7 +68,8 @@
 								</template>
 							</el-select>
 						</el-form-item>
-						<el-form-item label="分配用户" prop="dicider_user" v-if="adminName=='super'">
+						<!-- 只有super和仅录入客户信息和分配的人员可以分配客户 -->
+						<el-form-item label="分配用户" prop="dicider_user" v-if="adminName=='super' || authJson.noRelease" :rules="[{required: inNav,message: '请选择分配用户'}]">
 							<el-select size="medium" filterable v-model="form.dicider_user" placeholder="请选择分配用户">
 								<template v-for="(val, index) in cuserLists">
 									<el-option :value="val.id" :key="index" :label="val.username">
@@ -78,7 +79,7 @@
 								</template>
 							</el-select>
 						</el-form-item>
-						<el-form-item label="释放客户" prop="is_release_user">
+						<el-form-item label="释放客户" prop="is_release_user" v-if="!authJson.noRelease">
 							<el-switch
 								v-model="form.is_release_user"
 								active-color="#3963bc"
@@ -96,13 +97,12 @@
 </template>
 
 <script>
-  import { provinceAndCityData, CodeToText } from 'element-china-area-data'
-  import customer from "@/models/customer"
-  import type from "@/models/type"
-  import Admin from '@/lin/models/admin'
-  import store from '@/store'
-  import Utils from '@/lin/utils/util'
-
+import { provinceAndCityData, CodeToText } from 'element-china-area-data'
+import customer from "@/models/customer"
+import type from "@/models/type"
+import Admin from '@/lin/models/admin'
+import store from '@/store'
+import Utils from '@/lin/utils/util'
   
   export default {
 	  name: 'CustomerAdd',
@@ -116,6 +116,7 @@
 				"customer_type": "customerTypeData",
 				"level": "levelData"
 			},
+			inNav: false,
 			channelData: [],
 			followStatuslData: [],
 			levelData: ['A','B','C'],
@@ -150,12 +151,17 @@
 				],
 				purpose: [{ required: true, message: '请输入项目用途', trigger: 'blur' }],
 				channel: [{ required: true, message: '请输入客户来源', trigger: 'blur' }],
+			},
+			authJson: {
+				noRelease: store.state.auths.includes('仅录入客户信息和分配'),
 			}
 		  }
 	  },
 	  created() {
 		  this.getAdminUsers()
 		  this.getTypes()
+		  // 是否是从导航调过来
+		  this.inNav = this.$route.meta.inNav && this.$route.meta.title === '添加客户信息'
 	  },
 	  methods: {
 		submitForm: Utils.debounce(function(formName){
@@ -175,12 +181,14 @@
 						this.form.address = this.handleReqAddress()
 						const res = await customer.addCustomer(this.form)
 						if (res.error_code === 0) {
-							// this.$message.success(`${res.msg}`)
 							this.resetForm(formName)
-							this.back(true, res['result'])
+							if(!this.inNav) {
+								this.back(true, res['result'])
+							} else {
+								this.$message.success(`${res.msg}`)
+							}
 						}
 					} catch (error) {
-						console.log(error)
 						if(error.data) {
 							let message = error.data.msg
 							if(message && typeof message === 'object'){

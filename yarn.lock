@@ -2054,7 +2054,7 @@
 
 "async-validator@~1.8.1":
   "integrity" "sha512-tXBM+1m056MAX0E8TL2iCjg8WvSyXu0Zc8LNtYqrVeyoL3+esHRZ4SieE9fKQyyU09uONjnMEjrNBMqT0mbvmA=="
-  "resolved" "https://registry.npmjs.org/async-validator/-/async-validator-1.8.5.tgz"
+  "resolved" "https://registry.npmmirror.com/async-validator/-/async-validator-1.8.5.tgz"
   "version" "1.8.5"
   dependencies:
     "babel-runtime" "6.x"
@@ -2204,7 +2204,7 @@
 
 "babel-helper-vue-jsx-merge-props@^2.0.0":
   "integrity" "sha512-gsLiKK7Qrb7zYJNgiXKpXblxbV5ffSwR0f5whkPAaBAR4fhi6bwRZxX9wBlIc5M/v8CCkXUbXZL4N/nSE97cqg=="
-  "resolved" "https://registry.npmjs.org/babel-helper-vue-jsx-merge-props/-/babel-helper-vue-jsx-merge-props-2.0.3.tgz"
+  "resolved" "https://registry.npmmirror.com/babel-helper-vue-jsx-merge-props/-/babel-helper-vue-jsx-merge-props-2.0.3.tgz"
   "version" "2.0.3"
 
 "babel-helpers@^6.24.1":
@@ -4493,10 +4493,10 @@
     "china-area-data" "^5.0.1"
     "lodash-es" "^4.17.15"
 
-"element-ui@^2.10.1":
-  "integrity" "sha512-V3WMDoVd1rOT+UI4xasvS8hmUkmc0ezXRuLzlTznBD0bN6jXAiGOeCtmYjj8GFN3lpGNeKyQ/8LCAFuAbxaEww=="
-  "resolved" "https://registry.npmjs.org/element-ui/-/element-ui-2.10.1.tgz"
-  "version" "2.10.1"
+"element-ui@^2.15.9":
+  "integrity" "sha512-dx45nQLt4Hn87/Z9eRr3ex6KFZbxlFAwEU3QoW3wA5EsYftvHTyL9Pq7VnXXD7hu1Eiaup2jcs6kp+/VSFmXuA=="
+  "resolved" "https://registry.npmmirror.com/element-ui/-/element-ui-2.15.9.tgz"
+  "version" "2.15.9"
   dependencies:
     "async-validator" "~1.8.1"
     "babel-helper-vue-jsx-merge-props" "^2.0.0"
@@ -8822,8 +8822,8 @@
   "version" "3.3.0"
 
 "normalize-wheel@^1.0.1":
-  "integrity" "sha1-rsiGr/2wRQcNhWRH32Ls+GFG7EU="
-  "resolved" "https://registry.npmjs.org/normalize-wheel/-/normalize-wheel-1.0.1.tgz"
+  "integrity" "sha512-1OnlAPZ3zgrk8B91HyRj+eVv+kS5u+Z0SCsak6Xil/kmgEia50ga7zfkumayonZrImffAxPU/5WcyGhzetHNPA=="
+  "resolved" "https://registry.npmmirror.com/normalize-wheel/-/normalize-wheel-1.0.1.tgz"
   "version" "1.0.1"
 
 "npm-run-path@^2.0.0":
@@ -10531,7 +10531,7 @@
 
 "resize-observer-polyfill@^1.5.0":
   "integrity" "sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg=="
-  "resolved" "https://registry.npmjs.org/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz"
+  "resolved" "https://registry.npmmirror.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz"
   "version" "1.5.1"
 
 "resolve-cwd@^2.0.0":
@@ -11863,7 +11863,7 @@
 
 "throttle-debounce@^1.0.1":
   "integrity" "sha512-XH8UiPCQcWNuk2LYePibW/4qL97+ZQ1AN3FNXwZRBNPPowo/NRU5fAlDCSNBJIYCKbioZfuYtMhG4quqoJhVzg=="
-  "resolved" "https://registry.npmjs.org/throttle-debounce/-/throttle-debounce-1.1.0.tgz"
+  "resolved" "https://registry.npmmirror.com/throttle-debounce/-/throttle-debounce-1.1.0.tgz"
   "version" "1.1.0"
 
 "through@^2.3.6", "through@~2.3.4", "through@~2.3.8":

@@ -28,6 +28,8 @@ deepTravel(stageConfig, viewConfig => {
             title: viewConfig.title,
             icon: viewConfig.icon,
             right: viewConfig.right,
+            inNav: viewConfig.inNav,
+            name: viewConfig.name,
             type: viewConfig.type,
             blueBaseColor: viewConfig.blueBaseColor ? 'viewConfig.blueBaseColor' : '',
         }

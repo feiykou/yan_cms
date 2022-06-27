@@ -15,6 +15,17 @@ const customerRouter = {
             filePath: 'views/customer/CustomerList.vue',
             inNav: true,
             icon: 'iconfont icon-tushuguanli',
+            right: ['获取客户列表'],
+        },
+        {
+            title: '添加客户信息',
+            type: 'view',
+            name: 'CustomerAdd',
+            route: '/customer/add',
+            filePath: 'views/customer/CustomerAdd.vue',
+            inNav: true,
+            icon: 'iconfont icon-tushuguanli',
+            right: ['仅录入客户信息和分配'],
         },
         {
             title: '客户日志列表',
@@ -50,6 +61,7 @@ const customerRouter = {
             route: '/customer/common',
             filePath: 'views/customer/CustomerCommon.vue',
             inNav: true,
+            right: ['公域池列表'],
             icon: 'iconfont icon-tushuguanli'
         },
         {
@@ -59,6 +71,7 @@ const customerRouter = {
             route: '/customer/log',
             filePath: 'views/customer_log/CustomerLogLists.vue',
             inNav: true,
+            right: ['获取客户日志列表'],
             icon: 'iconfont icon-tushuguanli',
         },
     ]

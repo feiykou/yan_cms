@@ -7,6 +7,7 @@ const categoryRouter = {
     filePath: 'views/config/', // 文件路径
     order: null,
     inNav: true,
+    right: ['选项配置列表'],
     children: [{
             title: '选项配置',
             type: 'view',

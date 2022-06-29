@@ -73,6 +73,14 @@
 		<customer-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></customer-edit>
 		<customer-log-list v-else-if="redirectType === 'log'" :userCode="userCode" :linkCode="linkCode" @close="closePage(true)"></customer-log-list>
 		<customer-project-list v-else-if="redirectType === 'project'" :linkCode="linkCode" @close="closePage"></customer-project-list>
+
+		<el-dialog
+			title="提示消息"
+			:visible.sync="addTipVisible"
+			:before-close="handleClose"
+			width="25%">
+			<span style="display: block; text-align: center; margin-top: -20px;">{{addTipCon}}</span>
+			</el-dialog>
 	</div>
 </template>
 
@@ -102,6 +110,8 @@
 		data() {
 			return {
 				loading: false,
+				addTipVisible: false, // 是否显示添加之后的提示
+				addTipCon: '', // 添加信息提示内容
 				fileList: [],
 				fieldObj: {
 					"follow_status": "followStatusData",
@@ -531,14 +541,13 @@
 			closePage(val, id) {
 				this.redirectType = 'list'
 				if(id) {
-					this.$message({
-						type: 'success',
-						message: `客户信息已创建成功，客户编码：${id}`,
-						showClose: true,
-						duration: 0
-					})
+					this.addTipCon = `客户信息已创建成功，客户编码：${id}`
+					this.addTipVisible = true
 				}
 				if(val) this.getCustomers(this.currentPage - 1)
+			},
+			handleClose() {
+				this.addTipVisible = false
 			},
 		},
 	}

@@ -51,7 +51,6 @@
 						<el-form-item label="客户来源" prop="channel">
 							<el-select size="medium" filterable v-model="form.channel" placeholder="请选择客户来源">
 								<el-option value="" label="请选择客户来源">
-									<!-- <span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">0</span> -->
 									<span style="color: #b4b4b4;">请选择客户来源</span>
 								</el-option>
 								<template v-for="(val, index) in channelData">
@@ -122,6 +121,11 @@ import Utils from '@/lin/utils/util'
   export default {
 	  name: 'CustomerAdd',
 	  data() {
+		  const checkIsMakeUser = (rule, value, callback) => {
+				if(!form.channel && !value) {
+					return callback('请输入抄送管理员')
+				}
+		  }
 		  return {
 			addressData: provinceAndCityData,
 			adminName: store.state.user.username,
@@ -165,7 +169,7 @@ import Utils from '@/lin/utils/util'
 					{ required: true, message: '请选择联系人地址'}
 				],
 				purpose: [{ required: true, message: '请输入项目用途', trigger: 'blur' }],
-				// channel: [{ required: true, message: '请输入客户来源', trigger: 'blur' }],
+				make_copy_user: [{ required: true, message: '请输入抄送管理员', trigger: 'blur' }],
 			},
 			authJson: {
 				noRelease: store.state.auths.includes('仅录入客户信息和分配'),

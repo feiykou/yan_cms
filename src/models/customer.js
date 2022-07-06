@@ -159,6 +159,44 @@ class Customer {
         return res
     }
 
+    /**
+     * 获取当前管理员全部客户待办
+     * @returns {Promise<*>}
+     */
+    async getCustomerDealts(page = 0, searchParams = {}, count = appConfig.pageSize) {
+        let param = {
+            page,
+            count,
+            ...searchParams,
+            handleError: true
+        }
+        const res = await get('v1/customer_dealt', param)
+        return res
+    }
+
+    /**
+     * 获取全部客户待办
+     * @returns {Promise<*>}
+     */
+    async getAllCustomerDealts(page = 0, searchParams = {}, count = appConfig.pageSize) {
+        const res = await get('v1/customer_dealt/all', {
+            page,
+            count,
+            ...searchParams,
+            handleError: true
+        })
+        return res
+    }
+
+    /**
+     * 待办更新客户来源信息
+     * @param info  客户信息
+     * @returns {Promise<*>}
+     */
+    async updateDealtCustomer(info) {
+        const res = await put(`v1/customer_dealt`, info, { handleError: true })
+        return res
+    }
 
 }
 

@@ -16,8 +16,12 @@
 			</sticky-top>
 			<div class="header-table-box">
 				<div class="btn-filter">
-					<el-button size="large" @click="onDealtBtn(1)" :type="dealtType==1?'primary': ''">待办</el-button>
-					<el-button size="large" @click="onDealtBtn(2)" :type="dealtType!=1?'primary': ''">已办</el-button>
+					<el-badge :is-dot="isExistDealt" class="item">
+						<el-button size="large" @click="onDealtBtn(1)" :type="dealtType==1?'primary': ''">待办</el-button>
+					</el-badge>
+					<div class="item">
+						<el-button size="large" @click="onDealtBtn(2)" :type="dealtType!=1?'primary': ''">已办</el-button>
+					</div>
 				</div>
 				<el-divider></el-divider>
 				<!-- 表格 -->
@@ -45,13 +49,16 @@
 			title="编辑"
 			:visible.sync="editVisible"
 			:before-close="handleClose"
-			width="25%">
+			width="45%">
 				<el-form :model="channelForm" status-icon ref="channelForm" v-loading="eLoading" :rules="rules" label-width="120px" @submit.native.prevent>
 					<el-form-item label="客户编号" prop="id">
 						<el-input size="medium" v-model="currenttData.id" disabled placeholder="请填写客户编号"></el-input>
 					</el-form-item>
 					<el-form-item label="客户名" prop="name">
 						<el-input size="medium" v-model="currenttData.name" disabled placeholder="请填写客户名"></el-input>
+					</el-form-item>
+					<el-form-item label="图片信息" prop="img_urls">
+						<upload-imgs ref="uploadImgs" :multiple="true" :rules="imgRules" :value="responseImg()" :sortable="true"  :maxNum="20" />
 					</el-form-item>
 					<el-form-item label="客户来源" prop="channel">
 						<el-select size="medium" filterable v-model="channelForm.channel" placeholder="请选择客户来源">
@@ -77,23 +84,16 @@
 	import customer from '@/models/customer'
 	import type from "@/models/type"
 	import { CodeToText } from 'element-china-area-data'
-	import CustomerAdd from "./CustomerAdd";
-	import CustomerEdit from "./CustomerEdit";
-	import CustomerLogList from "../customer_log/CustomerLogList";
-	import CustomerProjectList from "../customer_project/ProjectList";
 	import store from '@/store'
-	import excel from "@/models/excel"
 	import Config from '@/config'
 	import Utils from '@/lin/utils/util'
+	import UploadImgs from '@/components/base/upload-imgs'
 	export default {
 		name: 'CustomerList',
 		components: {
-			CustomerAdd,
-			CustomerEdit,
-			CustomerLogList,
-			CustomerProjectList,
 			LinSearch,
-			LinDatePicker
+			LinDatePicker,
+			UploadImgs
 		},
 		data() {
 			return {
@@ -140,6 +140,12 @@
 				rules: {
 					channel: [{ required: true, message: '请输入客户来源', trigger: 'blur' }],
 				},
+				imgRules: {
+					minWidth: 100,
+					minHeight: 100,
+					maxSize: 5,
+				},
+				isExistDealt: false
 			}
 		},
 		created() {
@@ -156,9 +162,23 @@
 						this.eLoading = true
 						try {						
 							this.channelForm['id'] = this.currenttData.id
+							// 解析上传数据
+							let mainUrl = await this.$refs.uploadImgs.getValue()
+							mainUrl = Utils.solveUploadMultipleImg(mainUrl)
+							if(mainUrl.length > 0) {
+								this.channelForm['dealt_img_urls'] = mainUrl
+							} else {
+								delete this.channelForm['dealt_img_urls']
+							}
+							// 获取上传图片的id
+							if(this.currenttData['customer_dealt']) {
+								this.channelForm['dealt_id'] = this.currenttData['customer_dealt']['id']
+							}
 							const res = await customer.updateDealtCustomer(this.channelForm)
 							if (res.error_code === 0) {
 								this.$message.success(`${res.msg}`)
+								this.editVisible = false
+								this.getCustomers()
 							}
 						} catch (error) {
 							if(error.data) {
@@ -268,11 +288,24 @@
 					} else {
 						customerLists = await customer.getCustomerDealts(page,this.searchParams)
 					}
+
+					// 判断待办是否有数据
+					
+					if(this.searchParams.type === 1) {
+						
+						if(customerLists.total_nums > 0) {
+							this.isExistDealt = true
+						} else {
+							this.isExistDealt = false
+						}
+					} 
+
 					if (customerLists.total_nums <=0 ){
 						this.tableData = []
 						this.loading = false
 						return;
 					}
+					
 					if (!this.pagination.pageTotal || this.pagination.pageTotal != customerLists.total_nums){
 						this.pagination = {
 							pageTotal: customerLists.total_nums
@@ -329,6 +362,16 @@
 			},
 			handleClose() {
 				this.editVisible = false
+			},
+			// 解析响应的多图
+			responseImg() {
+				const customer_dealt = this.currenttData.customer_dealt
+				if(customer_dealt) {
+					if(customer_dealt['img_urls'] && customer_dealt['img_urls'] != 'undefined') {
+						return Utils.solveReponseMultipleImg(customer_dealt['img_urls'])
+					}
+				}
+				
 			},
 			// 获取类型
 			async getTypes() {
@@ -396,6 +439,12 @@
 		}
 		.header-table-box{
 			padding: 0 30px;
+			.btn-filter{
+				display: flex;				
+				.item{
+					margin-right: 25px;
+				}
+			}
 		}
 		.header {
 			display: flex;

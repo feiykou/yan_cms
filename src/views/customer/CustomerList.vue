@@ -540,6 +540,7 @@
 			rowClick() {},
 			closePage(val, id) {
 				this.redirectType = 'list'
+				document.documentElement.scrollTop = 0
 				if(id) {
 					this.addTipCon = `客户信息已创建成功，客户编码：${id}`
 					this.addTipVisible = true

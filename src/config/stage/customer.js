@@ -81,6 +81,7 @@ const customerRouter = {
             route: '/customer/dealt',
             filePath: 'views/customer/CustomerDealtLists.vue',
             inNav: true,
+            right: ['获取客户待办列表'],
             icon: 'iconfont icon-tushuguanli',
         },
     ]

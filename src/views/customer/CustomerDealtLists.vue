@@ -4,8 +4,8 @@
 		<div class="container yan-container">
 			<sticky-top>
 				<div class="order-header">
-					<div class="header-left"><p class="title">客户列表</p></div>
-					<div class="header-right" v-auth="'搜索日志'">
+					<div class="header-left"><p class="title">客户待办列表</p></div>
+					<div class="header-right">
 						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户编号/客户名/..." />
 						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
 						<el-button type="primary" plain @click="backInit" size="mini" class="back-btn">返回浏览</el-button>
@@ -123,6 +123,7 @@
 					{ prop: 'contacts_name', label: '联系人', width: 150 },
 					{ prop: 'telephone', label: '联系人电话', width: 150 },
 					{ prop: 'channel', label: '客户来源', width: 150 },
+					{ prop: 'img_urls', label: '截图证明', width: 150, type: 'imgs' },
 					{ prop: 'address', label: '地址', width: 150 },
 					{ prop: 'author', label: '责任人', width: 150 },
 					{ prop: 'create_time', label: '录入时间', width: 200 }
@@ -150,7 +151,7 @@
 		},
 		created() {
 			this.operate = [
-				{ name: '编辑', func: 'handleEdit', type: 'primary', icon: 'edit' },
+				{ name: '编辑', func: 'handleEdit', type: 'primary', icon: 'edit', auth: '编辑待办客户来源' },
 			]
 			this.getCustomers()
 			this.getTypes()
@@ -312,8 +313,16 @@
 						}
 					}
 					customerLists.collection.forEach(val => {
-						val['is_release_user'] = val['is_release_user'] === 0 ? '正常' : '已释放'
-						val['status'] = val['status'] === 0 ? '未通过' : '通过'
+						if(val['customer_dealt'] && val['customer_dealt']['img_urls']) {
+							val['img_urls'] = val['customer_dealt']['img_urls']
+							console.log(val['img_urls']);
+							
+							// if(val['img_urls']) {
+							// 	val['img_urls'] = val['img_urls']['src']
+							// }
+						} else {
+							val['img_urls'] = []
+						}
 						val["key"] = val.id
 						if(val['address']) {
 							if(!this.isChinese(val['address']['province'])) {
@@ -339,8 +348,20 @@
 				}
 				this.loading = false
 			},
+			// solveImgPreview(url_imgs) {
+			// 	let urls = {}
+			// 	if(url_imgs) {
+			// 		url_imgs.forEach( imgItem => {
+			// 			arr.push(imgItem.src)
+			// 		})
+			// 		urls['id'+ele.id] = arr
+			// 	}
+				
+			// 	return urls
+			// },
 			// 3天未跟进
 			onDealtBtn(value) {
+				if(this.dealtType === value) return
 				this.dealtType = value
 				this.searchParams['type'] = value // 待办
 				this.getCustomers()

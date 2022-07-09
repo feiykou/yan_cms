@@ -43,6 +43,17 @@
 									fit="cover"></el-image>
 								<span v-else>暂无图片</span>
 							</template>
+              <template v-else-if="item.type === 'imgs'">
+                <template v-if="scope.row[item.prop].length > 0">
+                  <div class="img-box" @click="preview(scope.row[item.prop])">
+                      <el-image class="thumb-item-img" :src="scope.row[item.prop][0].src" fit="cover" style="width: 100px; height: 100px;"></el-image>
+                      <div class="control">
+                          <div class="preview"><i class="el-icon-view"></i></div>
+                      </div>
+                  </div>
+                </template>
+                <span v-else>暂无图片</span>
+              </template>
 							<template v-else-if="item.type === 'input'">
 								<el-input style="width: 60px; text-align: center;" v-model="scope.row[item.prop]"></el-input>
 							</template>
@@ -206,6 +217,16 @@ export default {
     sessionStorage.setItem('selectedTableData', JSON.stringify([]))
   },
   methods: {
+    preview(imgs, index=0) {
+      let images = []
+      imgs.forEach(ele => {
+        images.push(ele.src)
+      })
+      this.$imagePreview({
+          images,
+          index,
+      })
+    },
     // 开发者自定义的函数
     buttonMethods(func, index, row) {
       const _this = this
@@ -491,8 +512,67 @@ export default {
 }
 </style>
 
-<style>
+<style lang="scss" scoped>
 .lin-table .rowClassName {
   cursor: move !important;
+}
+.img-box {
+    border: 1px dashed #d9d9d9;
+    border-radius: 3px;
+    -webkit-transition: all 0.1s;
+    transition: all 0.1s;
+    color: #666666;
+    margin-right: 1em;
+    margin-bottom: 1em;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    line-height: 1.3;
+    flex-direction: column;
+
+    .el-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .control {
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        background-color: rgba(0, 0, 0, 0.3);
+        -webkit-transition: all 0.3s;
+        transition: all 0.3s;
+        -webkit-transition-delay: 0.1s;
+        transition-delay: 0.1s;
+
+        .preview {
+        color: white;
+        font-size: 2em;
+        transition: all 0.2s;
+        }
+    }
+
+    &:hover {
+        .control {
+        opacity: 1;
+        }
+    } 
 }
 </style>

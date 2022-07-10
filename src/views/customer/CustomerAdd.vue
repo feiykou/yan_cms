@@ -198,6 +198,7 @@ import Utils from '@/lin/utils/util'
 								}
 							}
 						}
+						
 						this.form.address = this.handleReqAddress()
 						const res = await customer.addCustomer(this.form)
 						if (res.error_code === 0) {
@@ -265,7 +266,6 @@ import Utils from '@/lin/utils/util'
 			try {
 				res = await Admin.getAdminUsers({ count: 30, page: 0 }) // eslint-disable-line
 				this.cuserLists = [...res.items]
-				console.log(this.cuserLists)
 			} catch (e) {
 			}
 		},

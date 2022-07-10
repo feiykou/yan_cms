@@ -31,14 +31,12 @@
 					:operate="operate"
 					:pagination="pagination"
 					:curPage="currentPage"
-					type="selection"
 					@currentChange="currentChange"
 					@handleEdit="handleEdit"
 					@handleLog="handleLog"
 					@handleProject="handleProject"
 					@handleDelete="handleDelete"
 					@row-click="rowClick"
-					@selection-change="handleSelectionChange"
 					v-loading="loading"
 				></lin-table>
 			</div>
@@ -100,7 +98,6 @@
 				loading: false,
 				eLoading: false, // 编辑加载
 				dealtType: 1, // 待办
-				checkselId: [], // check选中的id值
 				curFollowStatus: -1, // 跟进状态 -1是全部状态
 				searchKeyword: '', // 搜索内容
 				searchDate: '', // 日期
@@ -161,7 +158,7 @@
 				this.$refs[formName].validate(async valid => {
 					if(valid) {
 						this.eLoading = true
-						try {						
+						try {			
 							this.channelForm['id'] = this.currenttData.id
 							// 解析上传数据
 							let mainUrl = await this.$refs.uploadImgs.getValue()
@@ -178,7 +175,9 @@
 							const res = await customer.updateDealtCustomer(this.channelForm)
 							if (res.error_code === 0) {
 								this.$message.success(`${res.msg}`)
+								// 关闭弹窗，格式化数据
 								this.editVisible = false
+								this.currenttData = {}
 								this.getCustomers()
 							}
 						} catch (error) {
@@ -198,16 +197,8 @@
 					}
 				})
 			}, 300),
-			// 触发多选checkbox
-			handleSelectionChange(data) {
-				console.log(data);
-				const checkselId = []
-				data.forEach(ele => {
-					checkselId.push(ele.id)
-				})
-				this.checkselId = checkselId
-			},
 			handleEdit({row}) {
+				this.channelForm = {channel: ''}
 				this.editVisible = true
 				this.currenttData = row
 				this.channelForm.channel = row.channel
@@ -282,6 +273,7 @@
 			async getCustomers(page = 0) {
 				this.loading = true
 				let customerLists = {}
+				this.tableData = []
 				try {
 					if(!this.searchParams.type) this.searchParams.type = 1 // 1是待办
 					if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户待办列表')) {
@@ -383,6 +375,7 @@
 			},
 			handleClose() {
 				this.editVisible = false
+				this.currenttData = {}
 			},
 			// 解析响应的多图
 			responseImg() {
@@ -392,7 +385,6 @@
 						return Utils.solveReponseMultipleImg(customer_dealt['img_urls'])
 					}
 				}
-				
 			},
 			// 获取类型
 			async getTypes() {

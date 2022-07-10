@@ -53,10 +53,23 @@
 
 								<el-form-item label="客户来源" prop="channel">
 									<el-select size="medium" filterable v-model="form.channel" placeholder="请选择客户来源">
+										<el-option value="" label="请选择客户来源">
+											<span style="color: #b4b4b4;">请选择客户来源</span>
+										</el-option>
 										<template v-for="(val, index) in channelData">
 											<el-option :value="val" :key="val" :label="val">
 												<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 												<span>{{ val }}</span>
+											</el-option>
+										</template>
+									</el-select>
+								</el-form-item>
+								<el-form-item label="抄送管理员" prop="make_copy_user" v-if="!form.channel">
+									<el-select size="medium" filterable v-model="form.make_copy_user" placeholder="请选择抄送管理员">
+										<template v-for="(val, index) in cuserLists">
+											<el-option :value="val.id" :key="index" :label="val.username" v-if="val.group_id==4">
+												<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
+												<span>{{ val.username }}</span>
 											</el-option>
 										</template>
 									</el-select>
@@ -74,7 +87,7 @@
 								<el-form-item label="分配用户" prop="dicider_user" v-if="form.author=='super'">
 									<el-select size="medium" filterable v-model="form.dicider_user" placeholder="请选择分配用户">
 										<template v-for="(val, index) in cuserLists">
-											<el-option :value="val.id" :key="index" :label="val.username">
+											<el-option :value="val.id" :key="index" :label="val.username" v-if="val.group_id==2">
 												<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 												<span>{{ val.username }}</span>
 											</el-option>
@@ -203,7 +216,7 @@
 						{ required: true, message: '请选择联系人地址'}
 					],
 					purpose: [{ required: true, message: '请输入项目用途', trigger: 'blur' }],
-					channel: [{ required: true, message: '请输入客户来源', trigger: 'blur' }],
+					make_copy_user: [{ required: true, message: '请输入抄送管理员', trigger: 'blur' }],
 				},
 			}
 		},
@@ -272,9 +285,9 @@
 					}
 					this.$message.error('客户端错误')
 				}
-				if(this.form.author=='super') {
+				// if(this.form.author=='super') {
 					this.getAdminUsers()
-				}
+				// }
 				this.loading = false
 			},
 			submitForm: Utils.debounce(function(formName){

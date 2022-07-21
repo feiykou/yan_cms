@@ -64,7 +64,7 @@
 						<el-form-item label="抄送管理员" prop="make_copy_user" v-if="!form.channel">
 							<el-select size="medium" filterable v-model="form.make_copy_user" placeholder="请选择抄送管理员">
 								<template v-for="(val, index) in cuserLists">
-									<el-option :value="val.id" :key="index" :label="val.username" v-if="val.group_id==4">
+									<el-option :value="val.id" :key="index" :label="val.username">
 										<span style="color: #b4b4b4; margin-right: 15px; font-size: 12px;">{{ index+1}}</span>
 										<span>{{ val.username }}</span>
 									</el-option>

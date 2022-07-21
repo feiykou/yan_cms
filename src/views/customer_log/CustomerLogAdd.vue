@@ -46,7 +46,20 @@
 								</template>
 							</el-select>
 						</el-form-item>
-
+						<el-form-item label="日志文件">
+							<el-upload
+								class="upload-demo"
+								ref="upload"
+								action="/cms/file"
+								:on-preview="handlePreview"
+								:on-remove="handleRemove"
+								:file-list="fileList"
+								:auto-upload="false">
+								<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+								<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+								<div slot="tip" class="el-upload__tip"></div>
+								</el-upload>
+						</el-form-item>
                         <el-form-item label="日志内容" prop="content">
 							<editor id="tinymce" v-model="form.content" :init="editInit"></editor>
 						</el-form-item>
@@ -88,6 +101,7 @@
 		},
 		data() {
 			return {
+				fileList: [],
 				content: '',
 				fieldObj: {
 					"commun_type": "communtypeData"
@@ -98,13 +112,48 @@
 				displayStatus: config.followStatusExamine,
 				editInit: {
 					selector: "#tinymce", //tinymce的id
-					mobile: {
-						menubar: true
-					},
 					language_url: "/tinymce/langs/zh_CN.js",
 					language: "zh_CN",
 					height: "400px",
+					plugins: 'link',
+					toolbar: 'link',
+					file_picker_types: 'file',
 					skin_url: "/tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
+					file_picker_callback: function(callback, value, meta) {
+						//文件分类
+						var filetype='.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4';
+						//后端接收上传文件的地址
+						var upurl='/demo/upfile.php';
+						//模拟出一个input用于添加本地文件
+						var input = document.createElement('input');
+							input.setAttribute('type', 'file');
+							input.setAttribute('accept', filetype);
+						input.click();
+						input.onchange = function() {
+							var file = this.files[0];
+							var xhr, formData;
+							console.log(file.name);
+							xhr = new XMLHttpRequest();
+							xhr.withCredentials = false;
+							xhr.open('POST', upurl);
+							xhr.onload = function() {
+								var json;
+								if (xhr.status != 200) {
+									failure('HTTP Error: ' + xhr.status);
+									return;
+								}
+								json = JSON.parse(xhr.responseText);
+								if (!json || typeof json.location != 'string') {
+									failure('Invalid JSON: ' + xhr.responseText);
+									return;
+								}
+								callback(json.location);
+							};
+							formData = new FormData();
+							formData.append('file', file, file.name );
+							xhr.send(formData);
+						};
+					},
 				},
 				value: '',
 				imgRules: {
@@ -135,6 +184,47 @@
 			}
 		},
 		methods: {
+			submitUpload() {
+				const uploadList = this.$refs.upload.uploadFiles
+				const data = {}
+				uploadList.forEach((item, index) => {
+					if(item.status == "ready") {
+						data[`file_${item.name}`] = item.raw
+					}
+				})
+				this.$axios({
+					method: 'post',
+					url: '/cms/file',
+					data,
+				})
+				.then(res => {
+					res.forEach(item => {
+						this.fileList.push({
+							name: item.key,
+							url: item.url,
+							uid: item.uid,
+							path: item.path
+						})
+					})
+				})
+				.catch(err => {
+					this.$message.error('上传失败')
+				})
+				// this.$refs.upload.submit();
+			},
+			handleRemove(file, fileList) {
+				let curFileList = fileList.filter(item => {
+					if(item.uid) {
+						return item.uid != file.uid
+					} else {
+						return item.path != file.path
+					}
+				})
+				this.fileList = curFileList
+			},
+			handlePreview(file) {
+				console.log(file);
+			},
 			submitForm: Utils.debounce(function(formName){
 				this.$refs[formName].validate(async valid => {
 					if(valid) {
@@ -144,6 +234,11 @@
 							const mainUrl = await this.$refs.uploadImgs.getValue()
 							this.form['img_urls'] = Utils.solveUploadMultipleImg(mainUrl)
 							this.form['customer_id'] = this.customerID
+							console.log(this.fileList);
+							
+							if(this.fileList.length > 0) {
+								this.form['file_urls'] = this.fileList
+							}
 							if(this.userCode) this.form['user_code'] = this.userCode
 							const res = await customer_log.addCustomerLog(this.form)
 							if (res.error_code === 0) {

@@ -45,6 +45,20 @@
 								</template>
 							</el-select>
 						</el-form-item>
+						<el-form-item label="日志文件">
+							<el-upload
+								class="upload-demo"
+								ref="upload"
+								action="/cms/file"
+								:on-preview="handlePreview"
+								:on-remove="handleRemove"
+								:file-list="fileList"
+								:auto-upload="false">
+								<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+								<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+								<div slot="tip" class="el-upload__tip"></div>
+								</el-upload>
+						</el-form-item>
                         <el-form-item label="日志内容" prop="content">
 							<editor id="tinymce" v-model="form.content" :init="editInit"></editor>
 						</el-form-item>
@@ -79,6 +93,7 @@
 		},
 		data() {
 			return {
+				fileList: [],
 				content: '',
 				fieldObj: {
 					"commun_type": "communtypeData"
@@ -124,6 +139,48 @@
 			this.getProjects()
 		},
 		methods: {
+			submitUpload() {
+				const uploadList = this.$refs.upload.uploadFiles
+				const data = {}
+				uploadList.forEach((item, index) => {
+					if(item.status == "ready") {
+						data[`file_${item.name}`] = item.raw
+					}
+				})
+				this.$axios({
+					method: 'post',
+					url: '/cms/file',
+					data,
+				})
+				.then(res => {
+					res.forEach(item => {
+						this.fileList.push({
+							name: item.key,
+							url: item.url,
+							uid: item.uid,
+							path: item.path
+						})
+					})
+				})
+				.catch(err => {
+					this.$message.error('上传失败')
+				})
+				// this.$refs.upload.submit();
+			},
+			handleRemove(file, fileList) {
+				let curFileList = fileList.filter(item => {
+					if(item.uid) {
+						return item.uid != file.uid
+					} else {
+						return item.path != file.path
+					}
+				})
+				this.fileList = curFileList
+			},
+			handlePreview(file) {
+				console.log(file);
+				window.location.href=file.url
+			},
 			_initialize() {
 				this.getCustomerLog()
 			},
@@ -131,6 +188,9 @@
 				this.loading = true
 				try {
 					let form = await customer_log.getCustomerLog(this.editID)
+					if(form.file_urls) {
+						this.fileList = form.file_urls
+					}
 					if(this.projectID) {
 						form.project_id = this.projectID
 					}
@@ -148,8 +208,10 @@
 						try {
 							const mainUrl = await this.$refs.uploadImgs.getValue()
 							this.form['img_urls'] = Utils.solveUploadMultipleImg(mainUrl)
+							if(this.fileList.length > 0) {
+								this.form['file_urls'] = this.fileList
+							}
 							const res = await customer_log.editCustomerLog(this.editID, this.form)
-							
 							if (res.error_code === 0) {
 								this.$message.success(`${res.msg}`)
 								// this.resetForm(formName)

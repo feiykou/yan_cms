@@ -122,10 +122,21 @@ class Customer {
     /**
      * 删除客户
      * @param ids
+     * @param del  1:软删除  0：真实删除
      * @returns {Promise<*>}
      */
-    async delCustomer(ids) {
-        const res = await _delete(`v1/customer`, { ids })
+    async delCustomer(ids, del=1) {
+        const res = await _delete(`v1/customer`, { ids, soft_del: del })
+        return res;
+    }
+
+    /**
+     * 恢复客户
+     * @param id
+     * @returns {Promise<*>}
+     */
+    async recycleDelCustomer(id) {
+        const res = await put(`v1/customer/recycleC`, { id})
         return res;
     }
 

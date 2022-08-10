@@ -1,17 +1,13 @@
 <template>
 	<div>
 		<!-- 列表页面 -->
-		<div class="container yan-container" v-if="redirectType === 'list'">
+		<div class="container yan-container">
 			<sticky-top>
 				<div class="order-header">
-					<div class="header-left"><p class="title">客户列表</p></div>
+					<div class="header-left"><p class="title">客户回收站列表</p></div>
 					<div class="header-right" v-auth="'搜索日志'">
 						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户编号/客户名/..." />
 						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
-						<el-select v-model="curFollowStatus" @change="followStatusChange" size="medium" filterable default-first-option placeholder="请选择跟进状态" prop="curFollowStatus" class="">
-							<el-option label="全部跟进状态" :value="-1"></el-option>
-							<el-option :label="value" v-for="(value, key) in followStatusData" :key="key" :value="value"></el-option>
-						</el-select>
 						<el-button type="primary" plain @click="backInit" size="mini" class="back-btn">返回浏览</el-button>
 					</div>
 				</div>
@@ -19,35 +15,6 @@
 				<el-divider></el-divider>
 			</sticky-top>
 			<div class="header-table-box">
-				<div class="btn-filter">
-					<el-button size="large" @click="noFollowPass" :type="isActiveNoFollow?'primary': ''">新客超3天未跟进</el-button>
-				</div>
-				<el-divider></el-divider>
-				<div class="header">
-					<div class="title">
-						<div class="left-wrap">
-							<el-button class="add-banner-item" type="primary" plain @click="handleAdd">添加客户</el-button>
-							<el-button class="add-banner-item" type="primary" @click="handleCommonPond">释放进公域池</el-button>
-						</div>
-						<div class="right-wrap">
-							<div class="excel-btn">
-								<el-button size="small" type="primary" plain @click="handleExport">导出excel数据</el-button>
-							</div>
-							<el-upload
-								class="upload-demo excel-btn"
-								action=""
-								:on-change="handleChange"
-								:file-list="fileList">
-								<el-button size="small" type="primary">导入excel数据</el-button>
-							</el-upload>
-							<div class="download-icon">
-								<a href="http://api.szfxws.com/static/file/客户信息模板.xlsx" class="link"><img src="@/assets/img/icon/download@icon.png"> 下载模板</a>
-							</div>
-						</div>
-						
-						
-					</div>
-				</div>
 				<!-- 表格 -->
 				<lin-table
 					:tableColumn="tableColumn"
@@ -58,8 +25,6 @@
 					type="selection"
 					@currentChange="currentChange"
 					@handleEdit="handleEdit"
-					@handleLog="handleLog"
-					@handleProject="handleProject"
 					@handleDelete="handleDelete"
 					@row-click="rowClick"
 					@selection-change="handleSelectionChange"
@@ -67,20 +32,6 @@
 				></lin-table>
 			</div>
 		</div>
-
-		<!-- 编辑页面 -->
-		<customer-add v-else-if="redirectType === 'add'" @close="closePage"></customer-add>
-		<customer-edit v-else-if="redirectType === 'edit'" :editID="editID" @close="closePage"></customer-edit>
-		<customer-log-list v-else-if="redirectType === 'log'" :userCode="userCode" :linkCode="linkCode" @close="closePage(true)"></customer-log-list>
-		<customer-project-list v-else-if="redirectType === 'project'" :linkCode="linkCode" @close="closePage"></customer-project-list>
-
-		<el-dialog
-			title="提示消息"
-			:visible.sync="addTipVisible"
-			:before-close="handleClose"
-			width="25%">
-			<span style="display: block; text-align: center; margin-top: -20px;">{{addTipCon}}</span>
-			</el-dialog>
 	</div>
 </template>
 
@@ -90,20 +41,12 @@
 	import customer from '@/models/customer'
 	import type from "@/models/type"
 	import { CodeToText } from 'element-china-area-data'
-	import CustomerAdd from "./CustomerAdd";
-	import CustomerEdit from "./CustomerEdit";
-	import CustomerLogList from "../customer_log/CustomerLogList";
-	import CustomerProjectList from "../customer_project/ProjectList";
 	import store from '@/store'
 	import excel from "@/models/excel"
 	import Config from '@/config'
 	export default {
 		name: 'CustomerList',
 		components: {
-			CustomerAdd,
-			CustomerEdit,
-			CustomerLogList,
-			CustomerProjectList,
 			LinSearch,
 			LinDatePicker
 		},
@@ -158,19 +101,7 @@
 		},
 		created() {
 			this.operate = [
-				{ name: '编辑', func: 'handleEdit', type: 'primary', icon: 'edit' },
-				{
-					name: '日志',
-					func: 'handleLog',
-					type: 'danger',
-					icon: 'chat-line-round'
-				},
-				{
-					name: '项目',
-					func: 'handleProject',
-					type: 'danger',
-					icon: 'service',
-				},
+				{ name: '恢复', func: 'handleEdit', type: 'primary', icon: 'edit' },
 				{
 					name: '删除',
 					func: 'handleDelete',
@@ -189,44 +120,15 @@
 			// 	})
 			// }
 			this.getCustomers()
-			this.getTypes()
 		},
 		methods: {
 			// 触发多选checkbox
 			handleSelectionChange(data) {
-				console.log(data);
-				
 				const checkselId = []
 				data.forEach(ele => {
 					checkselId.push(ele.id)
 				})
 				this.checkselId = checkselId
-			},
-			followStatusChange(val) {
-				this.curFollowStatus = val
-				this.searchParam()
-				this.getCustomers()
-			},
-			// 获取类型
-			async getTypes() {
-				let fields = []
-				const fieldObj = this.fieldObj
-				for(let obj in fieldObj) {
-					fields.push(obj)
-				}
-				fields = fields.join()
-				let result = await type.getTypeByField(fields)
-				if(!result || result.length == 0) return;
-				for(let obj in fieldObj) {
-					const key = fieldObj[obj]
-					const curData = result.find(val => {
-						return val['field'] == obj
-					})
-					if(curData) {
-						this[key] = curData['value']
-					}
-				}
-				
 			},
 			onSelectChange(query) {
 				this.curSearchIndex = query
@@ -241,10 +143,6 @@
 				this.searchDate = date
 				this.searchParam()
 				this.getCustomers()
-			},
-			validateIsChinese(val) {
-				const pattern = new RegExp("[\u4E00-\u9FA5]+")
-				return pattern.test(val)
 			},
 			handleDateChange(date) {
 				this.searchDate = date
@@ -262,7 +160,9 @@
 				await this.getCustomers()
 			},
 			searchParam() {
-				let searchParams = {}
+				let searchParams = {
+					
+				}
 				if (this.curFollowStatus != -1) {
 					searchParams['follow_status'] = this.curFollowStatus
 				}
@@ -294,133 +194,10 @@
 				this.searchParams = searchParams
 				this.isSearch = true
 			},
-			async importCustomer(file) {
-				this.loading = true
-				let res
-				if(this.excelLock) {
-					this.excelLock = false
-					try {
-						res = await excel.importCustomer(file)
-						if (res.error_code === 0) {
-							this.getCustomers(this.currentPage - 1)
-							this.$message({
-								type: 'success',
-								message: `${res.msg}`,
-							})
-						}
-					} catch (error) {
-						console.log(error)
-						if(!error.data) {
-							this.$message.error('客户端错误')
-							this.loading = false
-							return
-						}
-						let message = error.data.msg
-						if(message) {
-							if( typeof message === 'object') {
-								for (const key in message){
-									this.$message.error(message[key])
-									await setTimeout(function () {}, 1000)
-								}
-							} else {
-								this.$message.error(message)
-							}
-						} else {
-							this.$message({
-								type: 'error',
-								message: `导入失败，请重新尝试`,
-							})
-						}
-					}
-				}
-				this.loading = false
-				this.excelLock = true
-				// if (res.error_code === 0) {
-				// 	this.getCustomers(this.currentPage - 1)
-				// 	this.$message({
-				// 		type: 'success',
-				// 		message: `${res.msg}`,
-				// 	})
-				// } else {
-				// 	this.$message({
-				// 		type: 'success',
-				// 		message: `导入失败，请重新尝试`,
-				// 	})
-				// }
-			},
-			async exportCustomer(selIds=[]) {
-				this.loading = true
-				let res
-				if(this.exportExcelLock) {
-					this.exportExcelLock = false
-					try {
-						res = await excel.exportCustomer(selIds)
-						if (res.error_code === 0) {
-							this.$message({
-								type: 'success',
-								message: `${res.msg}`,
-							})
-						}
-					} catch (error) {
-						let message = error.data.msg
-						if(message) {
-							if( typeof message === 'object') {
-								for (const key in message){
-									this.$message.error(message[key])
-									await setTimeout(function () {}, 1000)
-								}
-							} else {
-								this.$message.error(message)
-							}
-						} else {
-							this.$message({
-								type: 'error',
-								message: `导出失败，请重新尝试`,
-							})
-						}
-					}
-				}
-				this.loading = false
-				this.exportExcelLock = true
-			},
-			// 导出excel
-			handleExport() {
-				const selIds = this.checkselId
-				if(selIds.length <= 0) {
-					this.$message({
-						type: 'warning',
-						message: `请先选中客户，再导出`,
-					})
-					return;
-				}
-
-				this.loading = true
-				this.$message({
-					type: 'warning',
-					message: `正在导出中，请稍后`,
-				})
-				
-				// this.exportCustomer(selIds)
-				const baseURL = Config.baseURL || process.env.apiUrl || ''
-				window.location = `${baseURL}/v1/excel/customer?ids=${selIds}`
-
-				setTimeout(() => {
-					this.loading = false
-				},2000)
-			},
-			// 导入excel
-			async handleChange(file, fileList) {
-				try {
-					await this.importCustomer(file)
-				} catch(e) {
-					console.log(e);
-					
-				}
-				
-			},
 			async getCustomers(page = 0) {
 				this.loading = true
 				let customerLists = {}
+				this.searchParams['soft_del'] = 0
 				try {
 					if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
 						customerLists = await customer.getAllCustomers(page,this.searchParams)
@@ -465,17 +242,7 @@
 				}
 				this.loading = false
 			},
-			// 3天未跟进
-			noFollowPass() {
-				if(!this.isActiveNoFollow) {
-					this.isActiveNoFollow = true
-					this.searchParams['type'] = 1
-				} else {
-					this.isActiveNoFollow = false
-					this.searchParams['type'] = -1
-				}
-				this.getCustomers()
-			},
+			
 			isChinese(temp){
 				var re=/[^\u4E00-\u9FA5]/;
 				if (re.test(temp)) return false ;
@@ -487,54 +254,40 @@
 				this.currentPage = page + 1
 				this.getCustomers(page)
 			},
-			async handleCommonPond() {
-				const selIds = this.checkselId
-				if(selIds.length <= 0) {
-					this.$message({
-						type: 'warning',
-						message: `请先选中客户`,
-					})
-					return;
-				}
-				this.loading = true
-				const res = await customer.updateCustomersEntryPublic(selIds)
-				this.loading = false
-				if (res.error_code === 0) {
-					this.getCustomers(this.currentPage - 1)
-					this.$message({
-						type: 'success',
-						message: `${res.msg}`,
-					})
-				}
-			},
-			handleAdd() {
-				this.redirectType = 'add'
-			},
 			handleEdit({ row }) {
-				this.editID = row.id
-				this.redirectType = 'edit'
+				console.log(row.id);
+				
+				this.$confirm('此操作将恢复该客户, 是否继续?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning',
+				}).then(async () => {
+					const id = row.id
+					this.loading = true
+					console.log(id);
+					
+					const res = await customer.recycleDelCustomer(id)
+					this.loading = false
+					if (res.error_code === 0) {
+						this.getCustomers(this.currentPage - 1)
+						this.$message({
+							type: 'success',
+							message: `${res.msg}`,
+						})
+					}
+				})
+				
 			},
-			handleLog({ row }) {
-				this.linkCode = row.link_code
-				this.editID = row.id
-				this.userCode = row.user_code
-				this.redirectType = 'log'
-			},
-			handleProject({ row }) {
-				this.linkCode = row.link_code
-				this.redirectType = 'project'
-			},
+			
 			handleDelete(val) {
-				this.$confirm('此操作删除该客户, 是否继续?', '提示', {
+				this.$confirm('此操作将永久删除该客户, 是否继续?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning',
 				}).then(async () => {
 					const id = [val.row.id]
 					this.loading = true
-					const res = await customer.delCustomer(id)
-					console.log(res);
-					
+					const res = await customer.delCustomer(id, 0)
 					this.loading = false
 					if (res.error_code === 0) {
 						this.getCustomers(this.currentPage - 1)
@@ -547,17 +300,9 @@
 			},
 			rowClick() {},
 			closePage(val, id) {
-				this.redirectType = 'list'
 				document.documentElement.scrollTop = 0
-				if(id) {
-					this.addTipCon = `客户信息已创建成功，客户编码：${id}`
-					this.addTipVisible = true
-				}
 				if(val) this.getCustomers(this.currentPage - 1)
-			},
-			handleClose() {
-				this.addTipVisible = false
-			},
+			}
 		},
 	}
 </script>

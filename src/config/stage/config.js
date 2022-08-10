@@ -17,6 +17,15 @@ const categoryRouter = {
             inNav: true,
             icon: 'iconfont icon-tushuguanli',
         },
+        {
+            title: '客户信息回收站',
+            type: 'view',
+            name: 'CustomerRecycleList',
+            route: '/setting/cRecyclelist',
+            filePath: 'views/setting/CustomerRecycleList.vue',
+            inNav: true,
+            icon: 'iconfont icon-tushuguanli',
+        },
         // {
         //   title: '消息通知',
         //   type: 'view',

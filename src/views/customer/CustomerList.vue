@@ -28,10 +28,11 @@
 						<div class="left-wrap">
 							<el-button class="add-banner-item" type="primary" plain @click="handleAdd">添加客户</el-button>
 							<el-button class="add-banner-item" type="primary" @click="handleCommonPond">释放进公域池</el-button>
+							<span style="margin-left: 10px; color: #999; font-size: 14px;">共{{totalListNum}}条数据</span>
 						</div>
 						<div class="right-wrap">
 							<div class="excel-btn">
-								<el-button size="small" type="primary" plain @click="handleExport">导出excel数据</el-button>
+								<el-button size="small" type="primary" plain @click="handleExport">导出全部数据</el-button>
 							</div>
 							<el-upload
 								class="upload-demo excel-btn"
@@ -127,6 +128,7 @@
 					'客户名','责任人','客户编码','联系人','联系电话','省份'
 				],
 				curSearchIndex: 0,
+				totalListNum: 0,
 				tableColumn: [
 					{ prop: 'id', label: '客户编码', width: 100 },
 					// { prop: 'user_code', label: '客户编码', width: 150 },
@@ -385,25 +387,42 @@
 			},
 			// 导出excel
 			handleExport() {
-				const selIds = this.checkselId
-				if(selIds.length <= 0) {
-					this.$message({
-						type: 'warning',
-						message: `请先选中客户，再导出`,
-					})
-					return;
-				}
+				// const selIds = this.checkselId
+				// if(selIds.length <= 0) {
+				// 	this.$message({
+				// 		type: 'warning',
+				// 		message: `请先选中客户，再导出`,
+				// 	})
+				// 	return;
+				// }
 
 				this.loading = true
 				this.$message({
 					type: 'warning',
 					message: `正在导出中，请稍后`,
 				})
-				
-				// this.exportCustomer(selIds)
+				let searchParams = this.searchParams
+				// let searchKeyArr = Object.keys(searchParams),
+				// 	params = '?'
+				// searchKeyArr.forEach(ele => {
+				// 	params += `${ele}=${searchParams[ele]}&`
+				// })
+				console.log(Object.keys(searchParams).length);
+				let params = JSON.stringify(searchParams)
 				const baseURL = Config.baseURL || process.env.apiUrl || ''
-				window.location = `${baseURL}/v1/excel/customer?ids=${selIds}`
-
+				if(Object.keys(searchParams).length == 0) {
+					window.location = `${baseURL}/v1/excel/customer`
+				} else {
+					params = encodeURIComponent(params)
+					window.location = `${baseURL}/v1/excel/customer?params=${params}`
+				}
+				// this.exportCustomer(selIds)
+				// try{
+				// 	excel.exportCustomer(params)
+				// } catch(e) {
+				// 	console.log(e);
+				// }
+				
 				setTimeout(() => {
 					this.loading = false
 				},2000)
@@ -427,6 +446,7 @@
 					} else {
 						customerLists = await customer.getCustomers(page,this.searchParams)
 					}
+					this.totalListNum = customerLists.total_nums
 					if (customerLists.total_nums <=0 ){
 						this.tableData = []
 						this.loading = false

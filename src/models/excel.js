@@ -34,7 +34,7 @@ class Excel {
      * @returns {Promise<*>}
      */
     async exportCustomer(ids = []) {
-        const res = await get('v1/excel/customer', { ids, handleError: true })
+        const res = await get('v1/excel/customer', { params: ids, handleError: true })
         console.log(res)
         return res
     }

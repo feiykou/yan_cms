@@ -60,7 +60,8 @@
 								</el-upload>
 						</el-form-item>
                         <el-form-item label="日志内容" prop="content">
-							<editor id="tinymce" v-model="form.content" :init="editInit"></editor>
+							<el-input type="textarea" :rows="8" v-model="form.content"></el-input>
+							<!-- <editor id="tinymce" v-model="form.content" :init="editInit"></editor> -->
 						</el-form-item>
 						<el-form-item class="submit">
 							<el-button type="primary" @click="submitForm('form')">保 存</el-button>
@@ -73,10 +74,10 @@
 	</div>
 </template>
 <script>
-	import tinymce from "tinymce"
-	import 'tinymce/themes/silver/theme'
-	import Editor from '@tinymce/tinymce-vue'
-	import 'tinymce/icons/default'
+	// import tinymce from "tinymce"
+	// import 'tinymce/themes/silver/theme'
+	// import Editor from '@tinymce/tinymce-vue'
+	// import 'tinymce/icons/default'
 	import UploadImgs from '@/components/base/upload-imgs'
 	import customer_log from "@/models/customer_log"
 	import Utils from "@/lin/utils/util"
@@ -102,13 +103,13 @@
 				communtypeData: ['见面拜访','微信','钉钉'],
 				projectData: [],
 				displayStatus: config.followStatusExamine,
-				editInit: {
-					selector: "#tinymce", //tinymce的id
-					language_url: "/tinymce/langs/zh_CN.js",
-					language: "zh_CN",
-					height: "400px",
-					skin_url: "/tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
-				},
+				// editInit: {
+				// 	selector: "#tinymce", //tinymce的id
+				// 	language_url: "/tinymce/langs/zh_CN.js",
+				// 	language: "zh_CN",
+				// 	height: "400px",
+				// 	skin_url: "/tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
+				// },
 				value: '',
 				imgRules: {
 					minWidth: 100,
@@ -129,8 +130,7 @@
 			}
 		},
 		components: {
-			UploadImgs,
-			Editor
+			UploadImgs
 		},
 		created() {
 			// 数据初始化

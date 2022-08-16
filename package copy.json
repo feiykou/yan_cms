@@ -13,6 +13,7 @@
         "test:unit": "vue-cli-service test:unit"
     },
     "dependencies": {
+        // "@tinymce/tinymce-vue": "^3.2.8",
         "axios": "~0.18.0",
         "echarts": "^5.2.2",
         "element-china-area-data": "^5.0.2",
@@ -23,6 +24,7 @@
         "lodash": "^4.17.14",
         "moment": "^2.24.0",
         "photoswipe": "^4.1.2",
+        "tinymce": "^5.10.0",
         "viser-vue": "^2.4.8",
         "vue": "^2.6.10",
         "vue-awesome-swiper": "^3.1.3",

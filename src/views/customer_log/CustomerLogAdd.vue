@@ -61,7 +61,8 @@
 								</el-upload>
 						</el-form-item>
                         <el-form-item label="日志内容" prop="content">
-							<editor id="tinymce" v-model="form.content" :init="editInit"></editor>
+							<!-- <editor id="tinymce" v-model="form.content" :init="editInit"></editor> -->
+							 <el-input type="textarea" :rows="8" v-model="form.content"></el-input>
 						</el-form-item>
 						<el-form-item class="submit">
 							<el-button type="primary" @click="submitForm('form')">保 存</el-button>
@@ -75,11 +76,11 @@
 </template>
 
 <script>
-	import tinymce from "tinymce"
+	// import tinymce from "tinymce"
 	// import 'tinymce/themes/modern/theme'
-	import 'tinymce/themes/silver/theme'
-	import Editor from '@tinymce/tinymce-vue'
-	import 'tinymce/icons/default'
+	// import 'tinymce/themes/silver/theme'
+	// import Editor from '@tinymce/tinymce-vue'
+	// import 'tinymce/icons/default'
 	import UploadImgs from '@/components/base/upload-imgs'
 	import customer_log from "@/models/customer_log"
 	import Utils from "@/lin/utils/util"
@@ -96,8 +97,7 @@
 			userCode: String
 		},
 		components: {
-			UploadImgs,
-			Editor
+			UploadImgs
 		},
 		data() {
 			return {
@@ -110,51 +110,51 @@
 				communtypeData: ['见面拜访','微信','钉钉'],
 				projectData: [],
 				displayStatus: config.followStatusExamine,
-				editInit: {
-					selector: "#tinymce", //tinymce的id
-					language_url: "/tinymce/langs/zh_CN.js",
-					language: "zh_CN",
-					height: "400px",
-					plugins: 'link',
-					toolbar: 'link',
-					file_picker_types: 'file',
-					skin_url: "/tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
-					file_picker_callback: function(callback, value, meta) {
-						//文件分类
-						var filetype='.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4';
-						//后端接收上传文件的地址
-						var upurl='/demo/upfile.php';
-						//模拟出一个input用于添加本地文件
-						var input = document.createElement('input');
-							input.setAttribute('type', 'file');
-							input.setAttribute('accept', filetype);
-						input.click();
-						input.onchange = function() {
-							var file = this.files[0];
-							var xhr, formData;
-							console.log(file.name);
-							xhr = new XMLHttpRequest();
-							xhr.withCredentials = false;
-							xhr.open('POST', upurl);
-							xhr.onload = function() {
-								var json;
-								if (xhr.status != 200) {
-									failure('HTTP Error: ' + xhr.status);
-									return;
-								}
-								json = JSON.parse(xhr.responseText);
-								if (!json || typeof json.location != 'string') {
-									failure('Invalid JSON: ' + xhr.responseText);
-									return;
-								}
-								callback(json.location);
-							};
-							formData = new FormData();
-							formData.append('file', file, file.name );
-							xhr.send(formData);
-						};
-					},
-				},
+				// editInit: {
+				// 	selector: "#tinymce", //tinymce的id
+				// 	language_url: "/tinymce/langs/zh_CN.js",
+				// 	language: "zh_CN",
+				// 	height: "400px",
+				// 	plugins: 'link',
+				// 	toolbar: 'link',
+				// 	file_picker_types: 'file',
+				// 	skin_url: "/tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
+				// 	file_picker_callback: function(callback, value, meta) {
+				// 		//文件分类
+				// 		var filetype='.pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4';
+				// 		//后端接收上传文件的地址
+				// 		var upurl='/demo/upfile.php';
+				// 		//模拟出一个input用于添加本地文件
+				// 		var input = document.createElement('input');
+				// 			input.setAttribute('type', 'file');
+				// 			input.setAttribute('accept', filetype);
+				// 		input.click();
+				// 		input.onchange = function() {
+				// 			var file = this.files[0];
+				// 			var xhr, formData;
+				// 			console.log(file.name);
+				// 			xhr = new XMLHttpRequest();
+				// 			xhr.withCredentials = false;
+				// 			xhr.open('POST', upurl);
+				// 			xhr.onload = function() {
+				// 				var json;
+				// 				if (xhr.status != 200) {
+				// 					failure('HTTP Error: ' + xhr.status);
+				// 					return;
+				// 				}
+				// 				json = JSON.parse(xhr.responseText);
+				// 				if (!json || typeof json.location != 'string') {
+				// 					failure('Invalid JSON: ' + xhr.responseText);
+				// 					return;
+				// 				}
+				// 				callback(json.location);
+				// 			};
+				// 			formData = new FormData();
+				// 			formData.append('file', file, file.name );
+				// 			xhr.send(formData);
+				// 		};
+				// 	},
+				// },
 				value: '',
 				imgRules: {
 					minWidth: 100,

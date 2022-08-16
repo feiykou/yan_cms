@@ -25,7 +25,7 @@
 						</div>
 						<div class="right-wrap">
 							<div class="excel-btn">
-								<el-button size="small" type="primary" plain @click="handleExport">导出excel数据</el-button>
+								<el-button size="small" type="primary" plain @click="handleExport">导出全部数据</el-button>
 							</div>
 							<el-upload
 								class="upload-demo excel-btn"
@@ -399,25 +399,50 @@
 			},
 			// 导出excel
 			handleExport() {
-				const selIds = this.checkselId
-				if(selIds.length <= 0) {
-					this.$message({
-						type: 'warning',
-						message: `请先选中客户，再导出`,
-					})
-					return;
-				}
+				// const selIds = this.checkselId
+				// if(selIds.length <= 0) {
+				// 	this.$message({
+				// 		type: 'warning',
+				// 		message: `请先选中客户，再导出`,
+				// 	})
+				// 	return;
+				// }
 				this.loading = true
 				this.$message({
 					type: 'warning',
 					message: `正在导出中，请稍后`,
 				})
-				// this.exportCustomer(selIds)
+				let searchParams = this.searchParams
+				// let searchKeyArr = Object.keys(searchParams),
+				// 	params = '?'
+				// searchKeyArr.forEach(ele => {
+				// 	params += `${ele}=${searchParams[ele]}&`
+				// })
+				console.log(Object.keys(searchParams).length);
+				let params = JSON.stringify(searchParams)
 				const baseURL = Config.baseURL || process.env.apiUrl || ''
-				window.location = `${baseURL}/v1/excel/customer_log?ids=${selIds}`
+				if(Object.keys(searchParams).length == 0) {
+					window.location = `${baseURL}/v1/excel/customer_log`
+				} else {
+					params = encodeURIComponent(params)
+					window.location = `${baseURL}/v1/excel/customer_log?params=${params}`
+				}
+				// this.exportCustomer(selIds)
+				// try{
+				// 	excel.exportCustomer(params)
+				// } catch(e) {
+				// 	console.log(e);
+				// }
+				
 				setTimeout(() => {
 					this.loading = false
 				},2000)
+				// this.exportCustomer(selIds)
+				// const baseURL = Config.baseURL || process.env.apiUrl || ''
+				// window.location = `${baseURL}/v1/excel/customer_log?ids=${selIds}`
+				// setTimeout(() => {
+				// 	this.loading = false
+				// },2000)
 			},
 			// 导入excel
 			async handleChange(file, fileList) {

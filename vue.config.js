@@ -49,7 +49,7 @@ module.exports = {
             )
             config.plugins.push(
                 new webpack.optimize.LimitChunkCountPlugin({
-                    maxChunks: 10
+                    maxChunks: 15
                 })
             )
         }

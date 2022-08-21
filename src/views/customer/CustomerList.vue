@@ -140,7 +140,8 @@
 					{ prop: 'channel', label: '客户来源', width: 150 },
 					{ prop: 'address', label: '地址', width: 150 },
 					{ prop: 'author', label: '责任人', width: 150 },
-					{ prop: 'create_time', label: '录入时间', width: 200 }
+					{ prop: 'create_time', label: '录入时间', width: 200 },
+					{ prop: 'update_time', label: '更新时间', width: 200 }
 				],
 				followStatusData: [],
 				tableData: [],

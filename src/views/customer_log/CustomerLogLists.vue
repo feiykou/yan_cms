@@ -123,7 +123,8 @@
 					{ prop: 'project_name', label: '日志类型', width: 150 },
 					{ prop: 'contacts_name', label: '联系人', width: 100 },
 					{ prop: 'telephone', label: '联系人电话', width: 150 },
-					{ prop: 'create_time', label: '录入时间', width: 200 }
+					{ prop: 'create_time', label: '录入时间', width: 200 },
+					{ prop: 'update_time', label: '更新时间', width: 200 }
 				],
 				tableData: [],
 				operate: [],
@@ -421,12 +422,27 @@
 				console.log(Object.keys(searchParams).length);
 				let params = JSON.stringify(searchParams)
 				const baseURL = Config.baseURL || process.env.apiUrl || ''
-				if(Object.keys(searchParams).length == 0) {
-					window.location = `${baseURL}/v1/excel/customer_log`
-				} else {
-					params = encodeURIComponent(params)
-					window.location = `${baseURL}/v1/excel/customer_log?params=${params}`
-				}
+				console.log(store.state.auths);
+				
+				if(store.state.user.username == 'super' 
+                    || store.state.auths.includes('导出全部日志')) {
+                    // || this.isFromCommonCustomer
+                    // || this.isCommonCustomer
+                    if(Object.keys(searchParams).length == 0) {
+						window.location = `${baseURL}/v1/excel/customer_all_log`
+					} else {
+						params = encodeURIComponent(params)
+						window.location = `${baseURL}/v1/excel/customer_all_log?params=${params}`
+					}
+                } else {
+                    if(Object.keys(searchParams).length == 0) {
+						window.location = `${baseURL}/v1/excel/customer_log`
+					} else {
+						params = encodeURIComponent(params)
+						window.location = `${baseURL}/v1/excel/customer_log?params=${params}`
+					}
+                }
+				
 				// this.exportCustomer(selIds)
 				// try{
 				// 	excel.exportCustomer(params)

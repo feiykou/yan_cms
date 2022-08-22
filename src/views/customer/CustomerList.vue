@@ -409,6 +409,9 @@
 				// 	params += `${ele}=${searchParams[ele]}&`
 				// })
 				console.log(Object.keys(searchParams).length);
+				if(store.state.user.username != 'super') {
+					searchParams['username'] = store.state.user.username
+				}
 				let params = JSON.stringify(searchParams)
 				const baseURL = Config.baseURL || process.env.apiUrl || ''
 				if(Object.keys(searchParams).length == 0) {

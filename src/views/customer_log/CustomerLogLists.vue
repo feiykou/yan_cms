@@ -80,8 +80,6 @@
 	import excel from "@/models/excel"
 	import Config from '@/config'
 
-
-
 	import customer_log from "@/models/customer_log"
 	import type from "@/models/type"
 	export default {
@@ -141,6 +139,7 @@
 			}
 		},
 		created() {
+			
 			this.operate = [
 				{ name: '编辑', func: 'handleEdit', type: 'primary', icon: 'edit' }
 			]
@@ -419,13 +418,13 @@
 				// searchKeyArr.forEach(ele => {
 				// 	params += `${ele}=${searchParams[ele]}&`
 				// })
+				searchParams['name'] = store.state.user.username
 				console.log(Object.keys(searchParams).length);
 				let params = JSON.stringify(searchParams)
 				const baseURL = Config.baseURL || process.env.apiUrl || ''
 				console.log(store.state.auths);
 				
-				if(store.state.user.username == 'super' 
-                    || store.state.auths.includes('导出全部日志')) {
+				if(store.state.user.username == 'super') {
                     // || this.isFromCommonCustomer
                     // || this.isCommonCustomer
                     if(Object.keys(searchParams).length == 0) {
@@ -435,6 +434,7 @@
 						window.location = `${baseURL}/v1/excel/customer_all_log?params=${params}`
 					}
                 } else {
+					
                     if(Object.keys(searchParams).length == 0) {
 						window.location = `${baseURL}/v1/excel/customer_log`
 					} else {

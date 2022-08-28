@@ -22,6 +22,7 @@
 				<div class="header">
 					<div class="title">
 						<div class="left-wrap">
+							<span style="margin-left: 10px; color: #999; font-size: 14px;">共{{totalListNum}}条数据</span>
 						</div>
 						<div class="right-wrap">
 							<div class="excel-btn">
@@ -94,6 +95,7 @@
 		data() {
 			return {
 				loading: false,
+				totalListNum: 0, // 总条数
 				fileList: [],
 				statusData: [],
 				fieldObj: {
@@ -163,6 +165,7 @@
 					} else {
 						customerLists = await customer_log.getCustomerLogs(this.searchParams, page)
 					}
+					this.totalListNum = customerLists.total_nums || 0
 					if (customerLists && customerLists.total_nums <=0 ){
 						this.tableData = []
 						this.loading = false
@@ -173,6 +176,7 @@
 							pageTotal: customerLists.total_nums
 						}
 					}
+					
 					customerLists.collection.forEach(val => {
 						val["key"] = val.id
 					})

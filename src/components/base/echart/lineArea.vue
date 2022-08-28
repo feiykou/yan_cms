@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="m-echart">
         <div :class="className" :id="id" :style="{width: width, height: height}"></div>
     </div>
 </template>
@@ -113,5 +113,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    
+    .m-echart{
+        padding: 15px 20px;
+    }
 </style>

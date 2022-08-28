@@ -21,6 +21,7 @@
 			<div class="header">
 				<div class="left-wrap">
 					<div class="title"><span>客户项目列表</span>  
+						<span style="position:relative; top:1px; margin-left: 10px; color: #999; font-size: 14px;">( 共{{totalListNum}}条数据 )</span>
 						<!-- <el-button v-if="linkCode" class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button> -->
 					</div>
 				</div>
@@ -79,6 +80,7 @@ export default {
 		return {
 			checkselId: [],  // check选中的id值
 			currentPage: 1,
+			totalListNum: 0, // 总共数量
 			tableColumn: [
 				{ prop: 'id', label: 'id', width: 100 },
 				{ prop: 'order_no', label: '订单编号', width: 150 },
@@ -87,6 +89,7 @@ export default {
 				{ prop: 'name', label: '项目名', width: 250},
 				{ prop: 'scene', label: '使用场景', width: 150},
 				{ prop: 'industry', label: '行业', width: 150 },
+				{ prop: 'follow_count', label: '跟进状态', width: 100 },
 				{ prop: 'follow_status', label: '跟进状态', width: 150 },
 				{ prop: 'create_time', label: '生成时间', width: 200},
 				{ prop: 'status_success_time', label: '成交时间', width: 200}
@@ -140,6 +143,7 @@ export default {
 				// 获取当前管理员录入的所有项目
 				projectLists = await project.getCustomerProjects(page, this.searchParams)
 			}
+			this.totalListNum = projectLists.total_nums || 0
 			if (!this.pagination.pageTotal || this.pagination.pageTotal != projectLists.total_nums){
 				this.pagination = {
 					pageTotal: projectLists.total_nums

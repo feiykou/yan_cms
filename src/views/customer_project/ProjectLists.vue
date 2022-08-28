@@ -89,8 +89,8 @@ export default {
 				{ prop: 'name', label: '项目名', width: 250},
 				{ prop: 'scene', label: '使用场景', width: 150},
 				{ prop: 'industry', label: '行业', width: 150 },
-				{ prop: 'follow_count', label: '跟进状态', width: 100 },
 				{ prop: 'follow_status', label: '跟进状态', width: 150 },
+				{ prop: 'follow_count', label: '跟进次数', width: 100 },
 				{ prop: 'create_time', label: '生成时间', width: 200},
 				{ prop: 'status_success_time', label: '成交时间', width: 200}
 			],

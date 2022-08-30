@@ -299,6 +299,7 @@
 			},
 			async importCustomer(file) {
 				this.loading = true
+				
 				let res
 				if(this.excelLock) {
 					this.excelLock = false
@@ -408,7 +409,6 @@
 				// searchKeyArr.forEach(ele => {
 				// 	params += `${ele}=${searchParams[ele]}&`
 				// })
-				console.log(Object.keys(searchParams).length);
 				if(store.state.user.username != 'super') {
 					searchParams['username'] = store.state.user.username
 				}

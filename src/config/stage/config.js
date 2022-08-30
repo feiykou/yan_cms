@@ -7,7 +7,7 @@ const categoryRouter = {
     filePath: 'views/config/', // 文件路径
     order: null,
     inNav: true,
-    right: ['选项配置列表'],
+    right: ['配置'],
     children: [{
             title: '选项配置',
             type: 'view',
@@ -17,15 +17,7 @@ const categoryRouter = {
             inNav: true,
             icon: 'iconfont icon-tushuguanli',
         },
-        {
-            title: '客户信息回收站',
-            type: 'view',
-            name: 'CustomerRecycleList',
-            route: '/setting/cRecyclelist',
-            filePath: 'views/setting/CustomerRecycleList.vue',
-            inNav: true,
-            icon: 'iconfont icon-tushuguanli',
-        },
+        
         // {
         //   title: '消息通知',
         //   type: 'view',

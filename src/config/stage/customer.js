@@ -84,6 +84,16 @@ const customerRouter = {
             right: ['获取客户待办列表'],
             icon: 'iconfont icon-tushuguanli',
         },
+        {
+            title: '客户信息回收站',
+            type: 'view',
+            name: 'CustomerRecycleList',
+            route: '/setting/cRecyclelist',
+            filePath: 'views/setting/CustomerRecycleList.vue',
+            inNav: true,
+            icon: 'iconfont icon-tushuguanli',
+            right: ['恢复客户信息'],
+        },
     ]
 }
 

@@ -222,6 +222,8 @@
 		},
 		
 		created() {
+			console.log(provinceAndCityData);
+			
 			// 数据初始化
 			this._initialize()
 			this.getTypes()
@@ -387,6 +389,7 @@
 				form['is_release_user'] = !!form['is_release_user']
 				if(form['customer_main']) {
 					const mainData = form['customer_main']
+					
 					if(mainData['main_address'] && mainData['main_address'].length > 0) {
 						if(!mainData['user_id'] && mainData['main_address'][0]) {
 							const city = mainData['main_address'][1],
@@ -396,6 +399,9 @@
 								proviceCode = TextToCode[provice].code,
 								addressArr = [proviceCode, cityCode]
 							let areaCode = ''
+							
+					
+							
 							if(area) {
 								areaCode = TextToCode[provice][city][area].code
 								addressArr.push(areaCode)
@@ -416,12 +422,15 @@
 					// 判断地址是否存在，判断地址是否是中文
 					let addressArr = Object.values(form['address'])
 					if(addressArr.length > 0) {
+								console.log(addressArr[0]);
+							console.log(addressArr[1]);
+							console.log(TextToCode[addressArr[1]]['全部']);
 						if(addressArr[0] && this.isChinese(addressArr[0])) {
 							const city = addressArr[0],
 							provice = addressArr[1],
 							cityCode = TextToCode[provice][city].code,
 							proviceCode = TextToCode[provice].code
-							form['address'] = [proviceCode, cityCode]
+							form['address'] = [proviceCode]['450000']
 						}
 					}
 				}

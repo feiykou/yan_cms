@@ -33,6 +33,20 @@ module.exports = {
             })
             // 生产环境相关配置
         if (isProduction) {
+            // config.optimization = {
+            //     runtimeChunk: {
+            //         name: 'mainfest'
+            //     },
+            //     splitChunks: {
+            //         cacheGroups: {
+            //             commons: {
+            //                 test: /[\\/]node_modules[\\/]/,
+            //                 name: "vendor",
+            //                 chunks: "3"
+            //             }
+            //         }
+            //     }
+            // }
             //gzip压缩
             const productionGzipExtensions = ['html', 'js', 'css']
             config.plugins.push(

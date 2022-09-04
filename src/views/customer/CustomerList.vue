@@ -469,7 +469,11 @@
 							if(!this.isChinese(val['address']['province'])) {
 								val['address'] = CodeToText[val['address']['province']] + '-' + CodeToText[val['address']['city']]
 							} else {
-								val['address'] = val['address']['province'] + '-' + val['address']['city']
+								if(val['address']['city'] == '全部') {
+									val['address'] = val['address']['province']
+								} else {
+									val['address'] = val['address']['province'] + '-' + val['address']['city']
+								}
 							}
 						}
 					})

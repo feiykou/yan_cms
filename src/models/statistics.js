@@ -49,6 +49,33 @@ class Statistics {
     }
 
 
+    /**
+     * 获取首页统计数字：
+     * 总客户数量
+     * 新增用户数
+     * 3天未维护客户数量
+     * @returns {Promise<*>}
+     */
+    async getTotalCustomers() {
+        const res = await get('v1/analysis/customer/index', {
+            handleError: true
+        })
+        return res
+    }
+
+    /**
+     * 公域池客户总量
+     * @returns {Promise<*>}
+     */
+    async getPublicCustomers() {
+        const res = await get('v1/analysis/customer/public_customer', {
+            handleError: true
+        })
+        console.log(res);
+        
+        return res
+    }
+
 
 
 

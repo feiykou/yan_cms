@@ -33,6 +33,7 @@
 									<el-cascader
 										size="large"
 										filterable
+										@change="handleChange"
 										:options="formAddresData"
 										v-model="form.address">
 									</el-cascader>
@@ -176,7 +177,8 @@
 				],
 				customerTypeData: ['业主','施工方'],
 				levelData: ['A','B','C'],
-				followStatuslData: ['无意向客户','成交客户','长期跟进','重点跟进','非目标客户'],				
+				followStatuslData: ['无意向客户','成交客户','长期跟进','重点跟进','非目标客户'],	
+				singleArea: ['北京市', '天津市', '重庆市', '上海市'],			
 				loading: false,
 				mainLoading: false,
 				customerData: [], 
@@ -222,15 +224,29 @@
 		},
 		
 		created() {
-			console.log(provinceAndCityData);
-			
+			this.handleArea()
 			// 数据初始化
 			this._initialize()
 			this.getTypes()
 		},
 		methods: {
+			handleChange(e) {
+				console.log(e);
+				
+			},
 			_initialize() {
 				this.getCustomer()
+			},
+			handleArea() {
+				provinceAndCityData.forEach(ele => {
+					if(this.singleArea.indexOf(ele.label) == -1) {
+						ele.children.unshift({
+							label: '全部',
+							value: ''
+						})
+					}
+				})
+				this.formAddresData = provinceAndCityData
 			},
 			// 根据分组 刷新/获取分组内的用户
 			async getAdminUsers() {
@@ -368,12 +384,14 @@
 				let addressArr = this.form.address
 				const keyArr = ['province', 'city']
 				const obj = {}
+				console.log(addressArr);
 				addressArr = addressArr.map((ele, index) => {
-					if(ele) {
-						const key = keyArr[index]
-						obj[key] = CodeToText[ele]
-					}
+					if(!ele) ele = ''
+					const key = keyArr[index]
+					obj[key] = CodeToText[ele]
 				})
+				console.log(obj);
+				
 				return obj
 			},
 			isChinese(temp){
@@ -400,8 +418,6 @@
 								addressArr = [proviceCode, cityCode]
 							let areaCode = ''
 							
-					
-							
 							if(area) {
 								areaCode = TextToCode[provice][city][area].code
 								addressArr.push(areaCode)
@@ -421,17 +437,28 @@
 					// 判断是否是excel导入的mainData['user_id']
 					// 判断地址是否存在，判断地址是否是中文
 					let addressArr = Object.values(form['address'])
+					console.log(form['address']);
+					
 					if(addressArr.length > 0) {
-								console.log(addressArr[0]);
-							console.log(addressArr[1]);
-							console.log(TextToCode[addressArr[1]]['全部']);
-						if(addressArr[0] && this.isChinese(addressArr[0])) {
-							const city = addressArr[0],
-							provice = addressArr[1],
-							cityCode = TextToCode[provice][city].code,
-							proviceCode = TextToCode[provice].code
-							form['address'] = [proviceCode]['450000']
+						if(!addressArr[0] || addressArr[0] == '市') addressArr[0] = '全部'
+						try{
+							if(addressArr[0] && this.isChinese(addressArr[0])) {
+								const city = addressArr[0],
+								provice = addressArr[1],
+								cityCode = TextToCode[provice][city].code,
+								proviceCode = TextToCode[provice].code
+								form['address'] = [proviceCode, cityCode]
+							}
+						} catch(e) {
+							console.log('====s=dsd');
+							
+							form['address'] = []
 						}
+						
+						console.log('==========111========');
+						
+						console.log(form['address']);
+						
 					}
 				}
 				this.form = form

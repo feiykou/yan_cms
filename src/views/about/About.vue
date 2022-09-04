@@ -17,20 +17,39 @@
             <ul class="team-ul">
 							<li>
 								<span class="shadow-box"> <i class="team-shadow"></i> </span> <span class="team-role">管理</span>
-								<span class="team-name">feiy</span>
+								<span class="team-name">
+                  <ul v-if="!showTeam">
+                    <li>余朵</li>
+                    <li>司国伟</li>
+                    <li>谭艳</li>
+                  </ul></span>
+                <span class="team-name"></span>
+                <span class="team-name"></span>
 							</li>
               <li>
-                <span class="shadow-box"> <i class="team-shadow"></i> </span> <span class="team-role">销售</span>
+                <span class="shadow-box"> <i class="team-shadow"></i> </span> <span class="team-role">业务</span>
                 <span class="team-name">
                   <ul v-if="!showTeam">
-                    <li>feiy</li>
-                    <li>zhuo</li>
+                    <li>徐立芬</li>
+                    <li>陈其威</li>
+                    <li>赵广燕</li>
+                    <li>李文政</li>
+                    <li>黄榕</li>
+                    <li>河南代理</li>
+                  </ul>
+                </span>
+              </li>
+              <li>
+                <span class="shadow-box"> <i class="team-shadow"></i> </span> <span class="team-role">推广</span>
+                <span class="team-name">
+                  <ul v-if="!showTeam">
+                    <li>罗其贵</li>
                   </ul>
                 </span>
               </li>
             </ul>
           </div>
-          <div class="team-icon"><img src="../../assets/img/about/qrcode.jpg" alt="" /></div>
+          <!-- <div class="team-icon"><img src="../../assets/img/about/qrcode.jpg" alt="" /></div> -->
           <p class="team-label"></p>
         </div>
       </div>
@@ -41,7 +60,7 @@
           <div class="quantity-detail-box">
             <div class="quantity-title">总客户数量</div>
             <div class="quantity-border-line"></div>
-            <div class="quantity">11,590</div>
+            <div class="quantity">{{totalCustomersData.totalNum || 0}}</div>
           </div>
         </div>
         <div class="quantity-icon"><img src="../../assets/img/about/icon1.png" alt="" /></div>
@@ -51,7 +70,7 @@
           <div class="quantity-detail-box">
             <div class="quantity-title">新增用户数(月)</div>
             <div class="quantity-border-line"></div>
-            <div class="quantity">51,862</div>
+            <div class="quantity">{{totalCustomersData.recentMonthNum || 0}}</div>
           </div>
         </div>
         <div class="quantity-icon"><img src="../../assets/img/about/icon2.png" alt="" /></div>
@@ -61,7 +80,7 @@
           <div class="quantity-detail-box">
             <div class="quantity-title">公域池客户数量</div>
             <div class="quantity-border-line"></div>
-            <div class="quantity">1,862</div>
+            <div class="quantity">{{publicCustomersData['count']}}</div>
           </div>
         </div>
         <div class="quantity-icon"><img src="../../assets/img/about/icon3.png" alt="" /></div>
@@ -71,7 +90,7 @@
           <div class="quantity-detail-box">
             <div class="quantity-title">超3天未维护客户数</div>
             <div class="quantity-border-line"></div>
-            <div class="quantity">1,323</div>
+            <div class="quantity">{{totalCustomersData.thanThreeNum || 0}}</div>
           </div>
         </div>
         <div class="quantity-icon"><img src="../../assets/img/about/icon4.png" alt="" /></div>
@@ -86,28 +105,54 @@
 </template>
 
 <script>
-import brokenAnalysis from '@/components/base/home/broken-analysis'
-import columnarAnalysis from '@/components/base/home/columnar-analysis'
+import statistics from "@/models/statistics"
 export default {
   data() {
     return {
       activeName: 'first',
       showTeam: false,
+      totalCustomersData: {},
+      publicCustomersData: {}
     }
   },
   components: {
-    brokenAnalysis,
-    columnarAnalysis
   },
-  mounted() {
+  async mounted() {
     if (document.body.clientWidth > 1200 && document.body.clientWidth < 1330) {
       this.showTeam = true
     }
+    this.getCustomerChannelStatistics()
+    this.getPublicCustomers()
   },
   methods: {
     handleArticle(link) {
       window.open(link)
     },
+    // 渠道统计
+    async getCustomerChannelStatistics() {
+        let totalCustomersData = {}
+        const that = this
+        try {
+            totalCustomersData = await statistics.getTotalCustomers()
+        } catch (e) {
+            totalCustomersData = {}
+        }
+        
+        
+        this.totalCustomersData = totalCustomersData
+    },
+    // 渠道统计
+    async getPublicCustomers() {
+        let totalCustomersData = {}
+        try {
+            totalCustomersData = await statistics.getPublicCustomers()
+        } catch (e) {
+            totalCustomersData = {}
+        }
+        console.log(totalCustomersData);
+        this.publicCustomersData = totalCustomersData
+    }
+
   },
 }
 </script>
@@ -243,7 +288,7 @@ export default {
 
               .team-name {
                 font-weight: 400;
-                color: #fff;
+                color: #192a5e;
 
                 ul {
                   display: inline;

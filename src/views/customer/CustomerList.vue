@@ -292,7 +292,7 @@
 					} 
 					if(this.curSearchIndex == 5) {
 						searchParams['provice'] = this.searchKeyword
-					} 
+					}
 				}
 				this.searchParams = searchParams
 				this.isSearch = true
@@ -315,7 +315,7 @@
 					} catch (error) {
 						console.log(error)
 						if(!error.data) {
-							this.$message.error('客户端错误')
+							this.$message.error('导入错误，请排查是否表格数据错误，若无法解决请联系管理员排查原因')
 							this.loading = false
 							return
 						}

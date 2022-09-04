@@ -33,20 +33,44 @@ module.exports = {
             })
             // 生产环境相关配置
         if (isProduction) {
-            // config.optimization = {
-            //     runtimeChunk: {
-            //         name: 'mainfest'
-            //     },
-            //     splitChunks: {
-            //         cacheGroups: {
-            //             commons: {
-            //                 test: /[\\/]node_modules[\\/]/,
-            //                 name: "vendor",
-            //                 chunks: "3"
-            //             }
-            //         }
-            //     }
-            // }
+            config.optimization = {
+                
+                splitChunks: {
+                    chunks: 'async',
+                    minSize: 20000,
+                    maxSize: 0,
+                    minChunks: 1,
+                    maxAsyncRequests: 5,
+                    maxInitialRequests: Infinity,
+                    automaticNameDelimiter: '~',
+                    name: true,
+                    cacheGroups: {
+                        vendors: {
+                            name: `chunk-vendors`,
+                            test: /[/]node_modules[/]/,
+                            priority: 9,
+                            minChunks: 2,
+                            reuseExistingChunk: true,
+                            enforce: true,
+                            chunks: 'all',
+                        },
+                        common: {
+                            name: 'commons',
+                            minChunks: 3,
+                            priority: 8,
+                            minSize: 100000,
+                            reuseExistingChunk: true,
+                            reuseExistingChunk: true,
+                            enforce: true,
+                            chunks: 'all',
+                        },
+                        default: {
+                            minChunks: 2,
+                            priority: 7,
+                        }
+                    },
+                }
+            }
             //gzip压缩
             const productionGzipExtensions = ['html', 'js', 'css']
             config.plugins.push(
@@ -63,7 +87,7 @@ module.exports = {
             )
             config.plugins.push(
                 new webpack.optimize.LimitChunkCountPlugin({
-                    maxChunks: 15
+                    maxChunks: 8
                 })
             )
         }

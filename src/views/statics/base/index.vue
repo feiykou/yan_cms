@@ -27,6 +27,7 @@ import type from "@/models/type"
 import statistics from "@/models/statistics"
 import Utils from '../../../lin/utils/util'
 export default {
+   
     components: {
         angle,
         lineArea,

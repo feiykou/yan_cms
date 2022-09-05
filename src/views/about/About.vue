@@ -101,11 +101,13 @@
       <div class="chart-wrap">
       </div>
     </div>
+    <statics></statics>
   </div>
 </template>
 
 <script>
 import statistics from "@/models/statistics"
+import statics from '@/views/statics/base/index'
 export default {
   data() {
     return {
@@ -116,6 +118,7 @@ export default {
     }
   },
   components: {
+    statics
   },
   async mounted() {
     if (document.body.clientWidth > 1200 && document.body.clientWidth < 1330) {

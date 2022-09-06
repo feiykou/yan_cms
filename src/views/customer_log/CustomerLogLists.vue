@@ -428,7 +428,7 @@
 				const baseURL = Config.baseURL || process.env.apiUrl || ''
 				console.log(store.state.auths);
 				
-				if(store.state.user.username == 'super') {
+				if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户日志信息')) {
                     // || this.isFromCommonCustomer
                     // || this.isCommonCustomer
                     if(Object.keys(searchParams).length == 0) {
@@ -438,7 +438,6 @@
 						window.location = `${baseURL}/v1/excel/customer_all_log?params=${params}`
 					}
                 } else {
-					
                     if(Object.keys(searchParams).length == 0) {
 						window.location = `${baseURL}/v1/excel/customer_log`
 					} else {

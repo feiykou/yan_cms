@@ -188,7 +188,7 @@ export default {
                 // }
                 // 通过条件判断，从客户列表和公域池进入，则通过user_code查看所有日志；
                 // 通过项目id，判断根据项目id获取所有日志信息
-                customerLists = await customer_log.getAllCustomerLogs(params, page)
+                customerLists = await customer_log.getAllCustomerLogsByCustomer(params, page)
                 if (customerLists && customerLists.total_nums <=0 ){
                     this.tableData = []
                     this.loading = false

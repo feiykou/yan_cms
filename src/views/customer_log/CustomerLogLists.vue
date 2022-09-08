@@ -160,7 +160,7 @@
 				// 	params['project_id'] = this.projectID
 				// }
 				try {
-					if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户信息')) {
+					if(store.state.user.username == 'super' || store.state.auths.includes('获取全部客户日志列表')) {
 						customerLists = await customer_log.getAllCustomerLogs(this.searchParams, page)
 					} else {
 						customerLists = await customer_log.getCustomerLogs(this.searchParams, page)

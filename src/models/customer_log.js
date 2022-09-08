@@ -34,6 +34,21 @@ class CustomerLog {
     }
 
     /**
+     * 获取客户列表全部客户日志
+     * @returns {Promise<*>}
+     */
+    async getAllCustomerLogsByCustomer(params = { customer_id: 0, project_id: 0 }, page = 0, count = appConfig.pageSize) {
+        let param = {
+            page,
+            count,
+            ...params,
+            handleError: true
+        }
+        const res = await get(`v1/customer_log/all_by_customer`, param)
+        return res
+    }
+    
+    /**
      * 获取单个客户日志，并审核权限
      * @param id
      * @returns {Promise<*>}

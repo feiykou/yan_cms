@@ -8,7 +8,6 @@ import {
     TooltipComponent,
     GridComponent,
     DatasetComponent,
-    DatasetComponentOption,
     TransformComponent,
     VisualMapComponent,
     LegendComponent

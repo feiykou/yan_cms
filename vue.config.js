@@ -26,6 +26,8 @@ module.exports = {
             .loader('vue-markdown-loader/lib/markdown-compiler')
         config.plugin('webpack-bundle-analyzer')
             .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+        config.plugins.delete("prefetch") //移除首次加载多余请求
+        config.plugins.delete('preload'); // 移除 preload 插件
     },
     configureWebpack: (config) => {
         Object.assign(config.resolve, {
@@ -34,9 +36,8 @@ module.exports = {
             // 生产环境相关配置
         if (isProduction) {
             config.optimization = {
-                
                 splitChunks: {
-                    chunks: 'async',
+                    chunks: 'all',
                     minSize: 20000,
                     maxSize: 0,
                     minChunks: 1,
@@ -48,25 +49,32 @@ module.exports = {
                         vendors: {
                             name: `chunk-vendors`,
                             test: /[/]node_modules[/]/,
-                            priority: 9,
-                            minChunks: 2,
-                            reuseExistingChunk: true,
-                            enforce: true,
-                            chunks: 'all',
+                            priority: 10,
+                            minChunks: 1, // 默认1
+                            chunks: 'initial',
                         },
-                        common: {
-                            name: 'commons',
-                            minChunks: 3,
-                            priority: 8,
-                            minSize: 100000,
-                            reuseExistingChunk: true,
-                            reuseExistingChunk: true,
-                            enforce: true,
-                            chunks: 'all',
+                        commons: {
+                            name: 'chunk-commons',
+                            test: resolve('src/components'), // can customize your rules
+                            minChunks: 1, //  minimum common number
+                            priority: 5,
+                            reuseExistingChunk: true
+                        },
+                        elementUI: {
+                            name: "chunk-elementUI", //  split elementUI into a single package
+                            priority: 20, //  the weight needs to be larger than libs and app or it will be packaged into libs or app
+                            test: /[\\/]node_modules[\\/]_?element-ui(.*)/, //  in order to adapt to cnpm
+                        },
+                        lodash: {
+                            name: "chunk-lodash", //  split elementUI into a single package
+                            priority: 20, //  the weight needs to be larger than libs and app or it will be packaged into libs or app
+                            test: /[\\/]node_modules[\\/]_?lodash(.*)/, //  in order to adapt to cnpm
                         },
                         default: {
-                            minChunks: 2,
-                            priority: 7,
+                            name: "common",
+                            minChunks: 5, // 模块被引用2次以上的才抽离
+                            priority: 1,
+                            reuseExistingChunk: true, // 复用公共模块
                         }
                     },
                 }
@@ -87,12 +95,15 @@ module.exports = {
             )
             config.plugins.push(
                 new webpack.optimize.LimitChunkCountPlugin({
-                    maxChunks: 8
+                    maxChunks: 9
                 })
             )
         }
     },
     css: {
+        extract: true,
+        modules: false,
+        sourceMap: false,
         loaderOptions: {
             sass: {
                 data: '@import "@/assets/styles/share.scss";',

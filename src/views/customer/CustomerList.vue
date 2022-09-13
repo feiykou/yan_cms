@@ -409,7 +409,7 @@
 				// searchKeyArr.forEach(ele => {
 				// 	params += `${ele}=${searchParams[ele]}&`
 				// })
-				if(store.state.user.username != 'super') {
+				if(store.state.user.username != 'super' && !store.state.auths.includes('获取全部客户信息')) {
 					searchParams['username'] = store.state.user.username
 				}
 				let params = JSON.stringify(searchParams)
@@ -591,9 +591,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.order-header .header-right{
-		display: flex!important;
-		}
+	
 	.right-wrap{
 		display: flex;
 		align-items: center;

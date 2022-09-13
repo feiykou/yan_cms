@@ -1,8 +1,8 @@
-import moment from 'moment'
+// import moment from 'moment'
 
 // 设置语言为中文
-moment.locale('zh-cn')
-
+// moment.locale('zh-cn')
+import "moment/locale/zh-cn"
 /**
  * @param {number} hours
  */

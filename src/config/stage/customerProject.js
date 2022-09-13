@@ -24,6 +24,7 @@ const customerProjectRouter = {
             route: '/customer_project/examine',
             filePath: 'views/customer_project/ProjectExamineList.vue',
             inNav: true,
+            right: ['获取全部审核项目'],
             icon: 'iconfont icon-tushuguanli',
         }
     ]

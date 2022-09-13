@@ -2,7 +2,7 @@ const path = require('path')
 const CompressionPlugin = require("compression-webpack-plugin");
 const webpack = require('webpack')
 const isProduction = process.env.NODE_ENV !== 'development';
-
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 function resolve(dir) {
     return path.join(__dirname, dir)
 }
@@ -65,11 +65,7 @@ module.exports = {
                             priority: 20, //  the weight needs to be larger than libs and app or it will be packaged into libs or app
                             test: /[\\/]node_modules[\\/]_?element-ui(.*)/, //  in order to adapt to cnpm
                         },
-                        lodash: {
-                            name: "chunk-lodash", //  split elementUI into a single package
-                            priority: 20, //  the weight needs to be larger than libs and app or it will be packaged into libs or app
-                            test: /[\\/]node_modules[\\/]_?lodash(.*)/, //  in order to adapt to cnpm
-                        },
+                  
                         default: {
                             name: "common",
                             minChunks: 5, // 模块被引用2次以上的才抽离
@@ -97,6 +93,12 @@ module.exports = {
                 new webpack.optimize.LimitChunkCountPlugin({
                     maxChunks: 9
                 })
+            )
+            config.plugins.push(
+                new webpack.IgnorePlugin(/^\.\/locale$/,/moment$s/)
+            )
+            config.plugins.push(
+                new LodashModuleReplacementPlugin()
             )
         }
     },

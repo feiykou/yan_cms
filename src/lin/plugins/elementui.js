@@ -39,7 +39,8 @@ import {
     MessageBox,
     Notification,
     Image,
-    Checkbox
+    Checkbox,
+    CheckboxGroup
     // option,
     // option,
 
@@ -81,6 +82,9 @@ Vue.component(Card.name, Card);
 Vue.component(InputNumber.name, InputNumber);
 Vue.component(Image.name, Image)
 Vue.component(Checkbox.name, Checkbox)
+Vue.component(CheckboxGroup.name, CheckboxGroup)
+
+
 Vue.use(Loading.directive)
 
 Vue.prototype.$message = Message

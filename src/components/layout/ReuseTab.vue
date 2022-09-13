@@ -1,31 +1,13 @@
 <template>
   <div v-if="histories.length > 1" ref="resueTab">
-    <swiper :options="swiperOption" class="reuse-tab-wrap">
-      <swiper-slide v-for="(item, index) in histories" :key="item.path">
-        <router-link
-          class="reuse-tab-item"
-          :class="item.path === $route.path ? 'active' : ''"
-          :to="item.path"
-          @contextmenu.prevent.native="onTags"
-        >
-          <i v-if="!filterIcon(stageList[item.stageId].icon)" :class="stageList[item.stageId].icon"></i>
-          <img v-else :src="stageList[item.stageId].icon" style="width:16px;" />
-          <span style="padding: 0 5px;">{{ stageList[item.stageId].title | filterTitle }}</span>
-          <span class="el-icon-close" @click.prevent.stop="close(index)" />
-        </router-link>
-      </swiper-slide>
-    </swiper>
+
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { swiper, swiperSlide } from 'vue-awesome-swiper'
-
-import 'swiper/dist/css/swiper.css' // eslint-disable-line
 
 export default {
-  components: { swiper, swiperSlide },
   data() {
     return {
       histories: [],

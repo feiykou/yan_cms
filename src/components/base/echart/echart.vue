@@ -1,3 +1,4 @@
+<!--
 <template>
     <div class="m-echart">
         <div :class="className" :id="id" :style="{width: width, height: height}"></div>
@@ -36,4 +37,4 @@ export default {
     .m-echart{
         padding: 15px 20px;
     }
-</style>
+</style>-->

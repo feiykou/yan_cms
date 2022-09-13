@@ -56,4 +56,6 @@ export default {
     transition: color 99999s ease-out, background-color 99999s ease-out;
   }
 }
+
+
 </style>

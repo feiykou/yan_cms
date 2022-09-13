@@ -5,7 +5,7 @@
 			<sticky-top>
 				<div class="order-header">
 					<div class="header-left"><p class="title"></p></div>
-					<div class="header-right" v-auth="'搜索日志'">
+					<div class="header-right">
 						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户编码/客户名/项目名" />
 						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
 						<el-select v-model="curFollowStatus" @change="followStatusChange" size="medium" filterable default-first-option placeholder="请选择跟进状态" prop="curFollowStatus" class="">

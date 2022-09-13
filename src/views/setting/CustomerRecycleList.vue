@@ -5,7 +5,7 @@
 			<sticky-top>
 				<div class="order-header">
 					<div class="header-left"><p class="title">客户回收站列表</p></div>
-					<div class="header-right" v-auth="'搜索日志'">
+					<div class="header-right">
 						<lin-search @btn="onQueryChange" :selData="selData" @sel="onSelectChange" ref="searchKeyword" placeholder="请输入客户编号/客户名/..." />
 						<lin-date-picker @dateChange="handleDateChange" ref="searchDate" class="date"> </lin-date-picker>
 						<el-button type="primary" plain @click="backInit" size="mini" class="back-btn">返回浏览</el-button>

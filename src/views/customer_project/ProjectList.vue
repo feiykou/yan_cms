@@ -7,7 +7,7 @@
 					<span>客户项目列表</span>  
 					<el-button class="add-banner-item" type="primary" plain @click="handleAdd">添加项目</el-button>
 				</div>
-				<span class="back" @click="back(false)"> <i class="iconfont icon-fanhui"></i> 返回 </span>
+				<span class="back" @click="back(true)"> <i class="iconfont icon-fanhui"></i> 返回 </span>
 			</div>
 			<!-- 表格 -->
 			<lin-table

@@ -23,7 +23,7 @@
                         </el-upload> -->
                     </div>
                 </div>
-                <span class="back" @click="back(false)"> <i class="iconfont icon-fanhui"></i> 返回 </span>
+                <span class="back" @click="back(true)"> <i class="iconfont icon-fanhui"></i> 返回 </span>
             </div>
 			<div class="block" v-loading="loading">
                 <el-timeline>

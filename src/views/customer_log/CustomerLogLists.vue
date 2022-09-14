@@ -311,7 +311,7 @@
 						searchParams['author'] = this.searchKeyword
 					} 
 					if(this.curSearchIndex == 0) {
-						searchParams['user_code'] = this.searchKeyword
+						searchParams['customer_id'] = this.searchKeyword
 					} 
 				}
 				this.searchParams = searchParams

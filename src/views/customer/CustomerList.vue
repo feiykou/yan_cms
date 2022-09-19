@@ -595,7 +595,6 @@
 	.right-wrap{
 		display: flex;
 		align-items: center;
-
 	}
 	// 上传
 	.excel-btn{

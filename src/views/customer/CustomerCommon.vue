@@ -4,7 +4,15 @@
 		<div class="container" v-if="redirectType === 'list'">
 			<div class="header">
 				<div class="title">
-					<span>客户公域池列表</span>  
+					<div class="left-wrap">
+						<span>客户公域池列表</span>  
+						<span style="margin-left: 10px; color: #999; font-size: 14px;">共{{totalListNum}}条数据</span>
+					</div>
+					<div class="right-wrap">
+						<div class="excel-btn">
+							<el-button size="small" type="primary" plain @click="handleExport">导出全部数据</el-button>
+						</div>
+					</div>
 				</div>
 			</div>
 			<!-- 表格 -->
@@ -37,6 +45,7 @@
 	import CustomerEdit from "./CustomerEdit";
 	import CustomerLogList from "../customer_log/CustomerLogList";
 	import store from '@/store'
+	import Config from '@/config'
 	export default {
 		name: 'CustomerList',
 		components: {
@@ -68,7 +77,8 @@
 				linkCode: '',
 				redirectType: 'list',
 				currentPage: 1,
-				excelLock: true
+				excelLock: true,
+				totalListNum: 0
 			}
 		},
 		created() {
@@ -86,6 +96,7 @@
 			async getCustomers(page = 0) {
 				this.loading = true
 				let customerLists = await customer.getPublicAllCustomers(page)
+				this.totalListNum = customerLists.total_nums
 				if (customerLists.total_nums <=0 ){
 					this.tableData = []
 					this.loading = false
@@ -167,6 +178,33 @@
 					}
 				})
 			},
+			// 导出excel
+			handleExport() {
+				// const selIds = this.checkselId
+				// if(selIds.length <= 0) {
+				// 	this.$message({
+				// 		type: 'warning',
+				// 		message: `请先选中客户，再导出`,
+				// 	})
+				// 	return;
+				// }
+
+				this.loading = true
+				this.$message({
+					type: 'warning',
+					message: `正在导出中，请稍后`,
+				})
+				let params = JSON.stringify({
+					user_id: 0
+				})
+				const baseURL = Config.baseURL || process.env.apiUrl || ''
+				params = encodeURIComponent(params)
+				console.log(`${baseURL}/v1/excel/customer?params=${params}`);
+				window.location = `${baseURL}/v1/excel/customer?params=${params}`
+				setTimeout(() => {
+					this.loading = false
+				},2000)
+			},
 			rowClick() {},
 			closePage(val) {
 				this.redirectType = 'list'
@@ -179,13 +217,19 @@
 <style lang="scss" scoped>
 	.container {
 		padding: 0 30px;
-
+		.right-wrap{
+			display: flex;
+			align-items: center;
+		}
 		.header {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
 
 			.title {
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
 				height: 59px;
 				line-height: 59px;
 				color: $parent-title-color;

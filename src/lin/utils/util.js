@@ -1,5 +1,4 @@
-import {debounce, throttle} from 'lodash/function'
-import {cloneDeep} from 'lodash-es'
+import {debounce, throttle, cloneDeep} from 'lodash/function'
 import config from '@/config'
 
 /* eslint-disable */

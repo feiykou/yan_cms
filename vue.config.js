@@ -116,7 +116,7 @@ module.exports = {
         // proxy: "http://api.szfxws.com",
         proxy: {
             '^/v1|^/cms|^/cloud': {
-                target: 'http://yan.com',
+                target: 'http://yan.com/yan/public',
                 // target: 'http://api.szfxws.com/',
                 ws: true,
                 changeOrigin: true

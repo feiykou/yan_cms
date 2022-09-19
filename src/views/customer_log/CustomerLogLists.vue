@@ -141,7 +141,6 @@
 			}
 		},
 		created() {
-			
 			this.operate = [
 				{ name: '编辑', func: 'handleEdit', type: 'primary', icon: 'edit' }
 			]

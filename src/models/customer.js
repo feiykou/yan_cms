@@ -48,9 +48,10 @@ class Customer {
      * 获取公域池全部客户
      * @param {*} id 
      */
-    async getPublicAllCustomers(page = 0, count = appConfig.pageSize) {
+    async getPublicAllCustomers(page = 0, self = 1, count = appConfig.pageSize) {
         const res = await get('v1/customer/public/all', {
             page,
+            self,
             count,
             handleError: true
         })

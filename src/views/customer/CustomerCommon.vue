@@ -7,8 +7,12 @@
 					<div class="left-wrap">
 						<span>客户公域池列表</span>  
 						<span style="margin-left: 10px; color: #999; font-size: 14px;">共{{totalListNum}}条数据</span>
+						<div class="btn-filter">
+							<el-button size="large" @click="noFollowPass" :type="isActiveNoFollow?'primary': ''">查看自己客户信息</el-button>
+						</div>
 					</div>
 					<div class="right-wrap">
+						
 						<div class="excel-btn">
 							<el-button size="small" type="primary" plain @click="handleExport">导出全部数据</el-button>
 						</div>
@@ -56,6 +60,7 @@
 			return {
 				loading: false,
 				hideLogBtn: true,
+				isActiveNoFollow: false,
 				fileList: [],
 				tableColumn: [
 					{ prop: 'id', label: '客户编码', width: 100 },
@@ -95,7 +100,8 @@
 		methods: {
 			async getCustomers(page = 0) {
 				this.loading = true
-				let customerLists = await customer.getPublicAllCustomers(page)
+				const self = this.isActiveNoFollow?0:1
+				let customerLists = await customer.getPublicAllCustomers(page,self)
 				this.totalListNum = customerLists.total_nums
 				if (customerLists.total_nums <=0 ){
 					this.tableData = []
@@ -152,6 +158,15 @@
 						})
 					}
 				})
+			},
+			// 3天未跟进
+			noFollowPass() {
+				if(!this.isActiveNoFollow) {
+					this.isActiveNoFollow = true
+				} else {
+					this.isActiveNoFollow = false
+				}
+				this.getCustomers()
 			},
 			handleLog({ row }) {
 				this.editID = row.id
@@ -236,6 +251,9 @@
 				font-size: 16px;
 				font-weight: 500;
 			}
+			.left-wrap{
+				display: flex;
+			}
 		}
 
 		// 添加按钮
@@ -248,5 +266,8 @@
 			justify-content: flex-end;
 			margin: 20px;
 		}
+	}
+	.btn-filter{
+		margin-left: 50px;
 	}
 </style>

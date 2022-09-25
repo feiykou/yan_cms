@@ -8,7 +8,7 @@ const Config = {
     sideBarLevel: 3, // 侧边栏层级限制, 3表示三级, 可设置 2 和 3
     showSidebarSearch: false, // 默认打开侧边栏搜索
     defaultRoute: '/about', // 默认打开的路由
-    pageSize: 15, // 分页显示数据数量
+    pageSize: 10, // 分页显示数据数量
     followStatusExamine: '无意向客户',
     successStatus: '已成交'
 }

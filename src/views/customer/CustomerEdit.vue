@@ -165,7 +165,7 @@
 			return {
 				activeName: 'first',
 				addressData: regionDataPlus,
-				formAddresData: provinceAndCityData,	
+				formAddresData: [],	
 				fieldObj: {
 					"channel": "channelData",
 					"follow_status": "followStatuslData",
@@ -224,6 +224,9 @@
 		},
 		
 		created() {
+			console.log('regionDataPlus');
+			console.log(regionDataPlus);
+			
 			this.handleArea()
 			// 数据初始化
 			this._initialize()
@@ -240,12 +243,25 @@
 			handleArea() {
 				provinceAndCityData.forEach(ele => {
 					if(this.singleArea.indexOf(ele.label) == -1) {
+						const isExistAll = ele.children.filter(item => item.label == '全部')
+						if(isExistAll.length > 0) return
 						ele.children.unshift({
 							label: '全部',
 							value: ''
 						})
 					}
 				})
+				const isExistOut = provinceAndCityData.filter(item => item.label == '海外')
+				if(isExistOut.length <= 0) {
+					provinceAndCityData.push({
+						label: '海外',
+						value: '91001',
+						children: [{
+							label: '全部',
+							value: ''
+						}]
+					})
+				}
 				this.formAddresData = provinceAndCityData
 			},
 			// 根据分组 刷新/获取分组内的用户
@@ -288,7 +304,6 @@
 				} catch(error) {
 					console.log(error)	
 					if(!error.data && !error.data.msg) {
-						
 						return
 					}
 					if(error && error.data) {
@@ -384,11 +399,15 @@
 				let addressArr = this.form.address
 				const keyArr = ['province', 'city']
 				const obj = {}
-				console.log(addressArr);
 				addressArr = addressArr.map((ele, index) => {
 					if(!ele) ele = ''
-					const key = keyArr[index]
-					obj[key] = CodeToText[ele]
+					if(ele == '91001') {
+						const key = keyArr[index]
+						obj[key] = '海外'
+					} else {
+						const key = keyArr[index]
+						obj[key] = CodeToText[ele]
+					}
 				})
 				console.log(obj);
 				
@@ -444,9 +463,16 @@
 						try{
 							if(addressArr[0] && this.isChinese(addressArr[0])) {
 								const city = addressArr[0],
-								provice = addressArr[1],
-								cityCode = TextToCode[provice][city].code,
-								proviceCode = TextToCode[provice].code
+								provice = addressArr[1]
+								let cityCode = '',
+									proviceCode = ''
+								if(provice == '海外') {
+									cityCode = ''
+									proviceCode = '91001'
+								} else {
+									cityCode = TextToCode[provice][city].code
+									proviceCode = TextToCode[provice].code
+								}
 								form['address'] = [proviceCode, cityCode]
 							}
 						} catch(e) {

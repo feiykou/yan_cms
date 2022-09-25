@@ -464,6 +464,7 @@
 					customerLists.collection.forEach(val => {
 						val['is_release_user'] = val['is_release_user'] === 0 ? '正常' : '已释放'
 						val['status'] = val['status'] === 0 ? '未通过' : '通过'
+						val['follow_status'] = (val['follow_status'] === '#N/A' || val['follow_status'] == 0) ? '' : val['follow_status']
 						val["key"] = val.id
 						if(val['address']) {
 							if(!this.isChinese(val['address']['province'])) {

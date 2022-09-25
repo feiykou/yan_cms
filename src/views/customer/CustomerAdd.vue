@@ -31,7 +31,7 @@
 							<el-cascader
 								size="large"
 								filterable
-								:options="addressData"
+								:options="formAddresData"
 								v-model="form.address">
 							</el-cascader>
 						</el-form-item>
@@ -127,7 +127,7 @@ import Utils from '@/lin/utils/util'
 				}
 		  }
 		  return {
-			addressData: provinceAndCityData,
+			formAddresData: provinceAndCityData,
 			adminName: store.state.user.username,
 			fieldObj: {
 				"channel": "channelData",
@@ -140,6 +140,7 @@ import Utils from '@/lin/utils/util'
 			followStatuslData: [],
 			levelData: ['A','B','C'],
 			customerTypeData: ['业主','施工方'],
+			singleArea: ['北京市', '天津市', '重庆市', '上海市'],
 			loading: false,
 			columnData: [], // column数据
 			cateData: [],
@@ -180,6 +181,7 @@ import Utils from '@/lin/utils/util'
 	  created() {
 		  this.getAdminUsers()
 		  this.getTypes()
+		  this.handleArea()
 		  // 是否是从导航调过来
 		  this.inNav = this.$route.meta.inNav && this.$route.meta.title === '添加客户信息'
 	  },
@@ -226,12 +228,39 @@ import Utils from '@/lin/utils/util'
 				}
 			})
 		}, 300),
+		handleArea() {
+			console.log(provinceAndCityData);
+			
+			provinceAndCityData.forEach(ele => {
+				if(this.singleArea.indexOf(ele.label) == -1) {
+					const isExistAll = ele.children.filter(item => item.label == '全部')
+					if(isExistAll.length > 0) return
+					ele.children.unshift({
+						label: '全部',
+						value: ''
+					})
+				}
+			})
+			const isExistOut = provinceAndCityData.filter(item => item.label == '海外')
+			if(isExistOut.length <= 0) {
+				provinceAndCityData.push({
+					label: '海外',
+					value: '91001'
+				})
+			}
+			
+			this.formAddresData = provinceAndCityData
+		},
 		handleReqAddress() {
 			let addressArr = this.form.address
 			const keyArr = ['province', 'city']
 			const obj = {}
 			addressArr = addressArr.map((ele, index) => {
-				if(ele) {
+				if(!ele) ele = ''
+				if(ele == '91001') {
+					const key = keyArr[index]
+					obj[key] = '海外'
+				} else {
 					const key = keyArr[index]
 					obj[key] = CodeToText[ele]
 				}

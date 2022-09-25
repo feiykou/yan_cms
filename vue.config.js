@@ -45,12 +45,17 @@ module.exports = {
                     maxInitialRequests: Infinity,
                     automaticNameDelimiter: '~',
                     name: true,
+
+                    // chunks: 'all',
+                    // minSize: 40000,
+                    // minSizeReduction: 10000,
+                    // maxSize: 100000,
                     cacheGroups: {
                         vendors: {
                             name: `chunk-vendors`,
                             test: /[/]node_modules[/]/,
-                            priority: 10,
-                            minChunks: 1, // 默认1
+                            priority: 1,
+                            minChunks: 2, // 默认1
                             chunks: 'initial',
                         },
                         commons: {

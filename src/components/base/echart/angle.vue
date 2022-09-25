@@ -141,7 +141,7 @@ export default {
         height: 50px;
     }
     .el-table__body tr{
-        height: 38px;
+        height: 38px!important;
     }
     .el-table .success-row {
         background: #f0f0f0;

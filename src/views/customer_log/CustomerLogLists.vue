@@ -414,6 +414,7 @@
 				this.$message({
 					type: 'warning',
 					message: `正在导出中，请稍后`,
+					duration: 5000
 				})
 				let searchParams = this.searchParams
 				// let searchKeyArr = Object.keys(searchParams),

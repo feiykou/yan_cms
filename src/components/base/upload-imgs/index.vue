@@ -479,6 +479,8 @@ export default {
           })
         })
         .catch(err => {
+          console.log('图片上传');
+          console.log(err);
           uploadList.forEach(item => {
             item.cb(false)
           })

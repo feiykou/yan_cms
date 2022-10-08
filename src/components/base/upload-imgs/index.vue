@@ -281,7 +281,7 @@ export default {
     rules: {
       type: [Object, Function],
       default: () => ({
-        maxSize: 2,
+        maxSize: 4,
       }),
     },
     /** 是否禁用, 禁用后只可展示 不可进行编辑操作, 包括: 新增, 修改, 删除, 改变顺序 */

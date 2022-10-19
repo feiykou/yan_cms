@@ -46,7 +46,7 @@
 								</template>
 							</el-select>
 						</el-form-item>
-						<el-form-item label="日志文件">
+						<el-form-item label="日志文件" v-loading="fileLoading">
 							<el-upload
 								class="upload-demo"
 								ref="upload"
@@ -112,6 +112,7 @@
 					maxSize: 5,
 				},
 				loading: false,
+				fileLoading: false,
 				columnData: [], // column数据
 				cateData: [],
 				form: {
@@ -137,6 +138,7 @@
 			submitUpload() {
 				const uploadList = this.$refs.upload.uploadFiles
 				const data = {}
+				this.fileLoading = true
 				uploadList.forEach((item, index) => {
 					if(item.status == "ready") {
 						data[`file_${item.name}`] = item.raw
@@ -156,9 +158,11 @@
 							path: item.path
 						})
 					})
+					this.fileLoading = false
 				})
 				.catch(err => {
 					this.$message.error('上传失败')
+					this.fileLoading = false
 				})
 				// this.$refs.upload.submit();
 			},

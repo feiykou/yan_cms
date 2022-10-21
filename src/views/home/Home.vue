@@ -190,7 +190,7 @@ export default {
   background: $header-background;
   height: $header-height !important;
   display: flex;
-  margin-bottom: 30px;
+  // margin-bottom: 30px;
   align-items: center;
   justify-content: space-between;
   box-shadow: 0px 2px 6px 0px rgba(190, 204, 216, 0.4);

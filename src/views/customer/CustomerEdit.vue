@@ -29,7 +29,7 @@
 										</template>
 									</el-select>
 								</el-form-item>
-								<el-form-item label="联系人地址" prop="address">
+								<el-form-item label="项目地址" prop="address">
 									<el-cascader
 										size="large"
 										filterable
@@ -215,7 +215,7 @@
 						{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
 					],
 					address: [
-						{ required: true, message: '请选择联系人地址'}
+						{ required: true, message: '请选择项目地址'}
 					],
 					purpose: [{ required: true, message: '请输入项目用途', trigger: 'blur' }],
 					make_copy_user: [{ required: true, message: '请输入抄送管理员', trigger: 'blur' }],

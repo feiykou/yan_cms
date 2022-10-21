@@ -56,6 +56,7 @@
                                     <el-button
                                         type="danger"
                                         plain
+                                        v-auth="{ auth: '删除客户日志', type: 'disabled' }"
                                         size="mini"
                                         @click="handleDelete(item.id)"
                                         >删除</el-button

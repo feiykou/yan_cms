@@ -55,7 +55,8 @@ export default {
 			currentPage: 1,
 			tableColumn: [
 				{ prop: 'id', label: 'id', width: 150 },
-				{ prop: 'customer_name', label: '客户名', width: 300},
+				{ prop: 'customer_name', label: '客户名', width: 230},
+				{ prop: 'name', label: '项目名', width: 300},
 				{ prop: 'scene', label: '使用场景', width: 200},
 				{ prop: 'author', label: '录入人员', width: 200 },
 				{ prop: 'follow_count', label: '跟进次数', width: 200 },

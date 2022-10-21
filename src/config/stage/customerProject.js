@@ -7,7 +7,7 @@ const customerProjectRouter = {
     filePath: 'views/customer_project/ProjectLists.vue', // 文件路径
     order: null,
     inNav: true,
-    right: ['全部项目信息'],
+    // right: ['全部项目信息'],
     children: [{
             title: '客户项目列表',
             type: 'view',
